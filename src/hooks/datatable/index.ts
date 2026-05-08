@@ -2,7 +2,7 @@ import { reactive, shallowRef, computed, toRefs } from 'vue'
 import { cloneDeep } from 'lodash'
 import type { FilterData, FilterOption, DataTableOptions } from './types'
 
-export function useDataTable<T>(options: DataTableOptions = {}) {
+export function useDataTable<T>(options: DataTableOptions = {}, paginationType: 'page' | 'scroll' = 'page') {
     const state = reactive({
         total: 0, // 总条数
         pageSize: options.pageSize ?? 20, // 每页条数
@@ -39,7 +39,7 @@ export function useDataTable<T>(options: DataTableOptions = {}) {
         if (options.localPagination) {
             state.total = result.length
 
-            if (options.paginationType === 'page') {
+            if (paginationType === 'page') {
                 const startIndex = (state.pageIndex - 1) * state.pageSize
                 const endIndex = state.pageIndex * state.pageSize
                 return result.slice(startIndex, endIndex)
@@ -57,23 +57,21 @@ export function useDataTable<T>(options: DataTableOptions = {}) {
         state.firstLoaded = true
         state.failed = false
 
-        if (state.pageIndex === 1 || options.paginationType === 'page') {
+        if (paginationType === 'page' || state.pageIndex === 1) {
             rawData.value = data
         } else {
             rawData.value = [...rawData.value, ...data]
         }
     }
 
-    // 重置页码
-    const resetPage = () => {
-        state.failed = false
-        state.total = 0
-        return state.pageIndex = 1
-    }
-
     // 下一页
-    const nextPage = () => {
-        return state.pageIndex < pageCount.value ? ++state.pageIndex : 1
+    const nextPage = (isRefresh = false) => {
+        if (isRefresh) {
+            state.failed = false
+            state.pageIndex = 1
+            return true
+        }
+        return state.pageIndex++ < pageCount.value
     }
 
     return {
@@ -82,10 +80,14 @@ export function useDataTable<T>(options: DataTableOptions = {}) {
         hasMore,
         filterData,
         updateItems,
-        resetPage,
         nextPage,
         ...toRefs(state)
     }
+}
+
+// 无限滚动模式列表
+export function useScrollTable<T>(options: DataTableOptions = {}) {
+    return useDataTable<T>(options, 'scroll')
 }
 
 export function useDataFilter<T>(defaultOption: FilterOption<T, keyof T>) {

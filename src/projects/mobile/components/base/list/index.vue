@@ -17,10 +17,9 @@ const props = defineProps({
         type: String,
         default: '没有更多了'
     },
-    // 是否在初始化时立即执行滚动位置检查
     immediateCheck: {
         type: Boolean,
-        default: true
+        default: false
     }
 })
 

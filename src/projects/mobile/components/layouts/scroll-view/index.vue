@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onActivated, shallowRef, computed, watch } from 'vue'
+import { onMounted, onActivated, shallowRef, computed, watch, nextTick } from 'vue'
 import { useScrollParent, useEventListener } from '@vant/use'
 import { debounce } from 'lodash'
 
@@ -71,10 +71,10 @@ useEventListener('scroll', listener, {
 
 onMounted(() => {
     setScrollTop()
-    onActivated(() => setScrollTop())
+    onActivated(setScrollTop)
 })
 
-watch(() => props.scrollName, () => setScrollTop())
+watch(() => props.scrollName, () => nextTick(setScrollTop))
 </script>
 
 <style lang="less">

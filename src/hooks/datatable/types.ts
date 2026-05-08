@@ -2,7 +2,6 @@
  * 数据表配置项
  */
 export interface DataTableOptions {
-    paginationType?: 'page' | 'scroll'; // 分页类型：'page'表示传统分页（上一页/下一页），'scroll'表示无限滚动（上拉加载）
     localPagination?: boolean; // 是否进行本地分页
     pageSize?: number; // 每页条数
     pageIndex?: number; // 当前页码

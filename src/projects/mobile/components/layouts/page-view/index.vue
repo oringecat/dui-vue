@@ -1,7 +1,7 @@
 <template>
     <div class="app-page-view" :class="[`app-page-view--${type}`]">
         <slot name="header"></slot>
-        <app-scroll-view class="app-page-view__container" v-model="scrollTop">
+        <app-scroll-view class="app-page-view__container" v-model="scrollTop" :scroll-name="scrollName">
             <van-sticky class="app-page-view__header--sticky" :class="{ hide: isScrollDown }" position="top">
                 <slot name="header-sticky"></slot>
             </van-sticky>
@@ -21,6 +21,7 @@ import { shallowRef, watch } from 'vue'
 import type { PropType } from 'vue'
 
 const props = defineProps({
+    scrollName: String,
     type: {
         type: String as PropType<'default' | 'primary'>,
         default: 'default'

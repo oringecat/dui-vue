@@ -6,15 +6,15 @@
 
 <script lang="ts" setup>
 import { onUnmounted, shallowRef, nextTick } from 'vue'
+import { useRoute } from 'vue-router'
 import eventBus from '@/utils/bus'
 
 const props = defineProps({
     // 刷新事件唯一标识ID，页面存在多组件时进行匹配刷新
-    refreshId: {
-        type: Number,
-        default: 0
-    }
+    refreshId: [Number, String]
 })
+
+const route = useRoute()
 
 const loading = shallowRef(false)
 const startCounts = shallowRef(0) // 事件触发计数器
@@ -25,7 +25,7 @@ const updateLoading = () => nextTick(() => loading.value = finishCounts.value < 
 
 const onRefresh = () => {
     finishCounts.value = 0
-    startCounts.value = eventBus.emit('pull-refresh-start', props.refreshId)
+    startCounts.value = eventBus.emit('pull-refresh-start', props.refreshId ?? route.path)
     updateLoading()
 }
 
