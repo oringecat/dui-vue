@@ -1,5 +1,22 @@
 /* 动画时长 */
-@transition-duration: 240ms;
+@transition-duration: 300ms;
+
+/* 动画遮罩 */
+.transition-mask(@opacity: 1) {
+    &::after {
+        content: '';
+        position: fixed;
+        z-index: 100;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, .25);
+        opacity: @opacity;
+        transform: translateZ(0);
+        transition: opacity @transition-duration;
+    }
+}
 
 /* 无过渡效果 */
 .delay-leave-active {
@@ -8,9 +25,11 @@
 
 .route-in-leave-from,
 .route-in-enter-from,
-.route-out-enter-from,
+.route-out-leave-from,
 .route-out-enter-from {
     will-change: transform, opacity;
+    backface-visibility: hidden;
+    contain: layout paint;
 }
 
 .route-in-leave-to,
@@ -18,7 +37,7 @@
 .route-out-leave-active,
 .route-out-enter-to {
     pointer-events: none;
-    transition: transform @transition-duration;
+    transition: transform @transition-duration cubic-bezier(.34, .8, .25, 1);
 }
 
 .route-in-leave-from {
@@ -29,18 +48,9 @@
 }
 
 .route-in-leave-to {
-    &::after {
-        content: '';
-        position: absolute;
-        z-index: 100;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background-color: rgba(0, 0, 0, .5);
-        opacity: 1;
-        transition: opacity @transition-duration;
-    }
+    .transition-mask();
+
+    transform: translate3d(-30%, 0, 0);
 }
 
 .route-in-enter-from {
@@ -48,13 +58,13 @@
 }
 
 .route-in-enter-active {
-    position: absolute;
+    position: fixed;
     z-index: 1000;
     top: 0;
 }
 
 .route-out-leave-active {
-    position: absolute;
+    position: fixed;
     z-index: 1000;
     transform: translate3d(100%, 0, 0);
 }
@@ -64,26 +74,19 @@
         content: '';
         opacity: 1;
     }
+
+    transform: translate3d(-25%, 0, 0);
 }
 
 .route-out-enter-to {
-    &::after {
-        content: '';
-        position: absolute;
-        z-index: 100;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background-color: rgba(0, 0, 0, .5);
-        opacity: 0;
-        transition: opacity @transition-duration;
-    }
+    .transition-mask(0);
+
+    transform: translate3d(0, 0, 0);
 }
 
 /* 淡入效果 */
 .fade-enter-active {
-    position: absolute;
+    position: fixed;
     z-index: 1000;
     top: 0;
 }
