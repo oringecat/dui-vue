@@ -1,10 +1,11 @@
 <template>
     <div class="launch">
-        <van-loading />
+        <van-loading v-if="userStore.loading" />
     </div>
 </template>
 
 <script lang="ts" setup>
+import { showConfirmDialog } from 'vant'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 
@@ -12,15 +13,25 @@ const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
 
-// 待优化静默登录（判断当前路由是否需要登录权限）
-userStore.autoLogin().finally(() => {
-    const redirect = route.query.redirect
-    if (redirect) {
-        router.replace(redirect.toString())
-    } else {
-        router.replace('/')
-    }
-})
+const initializeApp = () => {
+    userStore.autoLogin().then(() => {
+        const redirected = route.redirectedFrom
+        if (redirected) {
+            router.replace(redirected.fullPath)
+        } else {
+            router.replace('/')
+        }
+    }).catch((err) => {
+        showConfirmDialog({
+            message: err,
+            confirmButtonText: '重试'
+        }).then(() => {
+            initializeApp()
+        })
+    })
+}
+
+initializeApp()
 </script>
 
 <style lang="less" scoped>

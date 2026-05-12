@@ -32,10 +32,10 @@ export const useUserStore = defineStore('user', () => {
     const tokenRequest = checkToken({ immediate: false })
     const loginRequest = login({ immediate: false })
 
-    // 自动加载初始数据
-    const loadBaseData = (async () => {
+    // 加载初始数据
+    const loadBaseData = async () => {
         await serviceConfig.init()
-    })()
+    }
 
     const getUserInfo = (key: keyof User.UserInfo) => {
         return state.userInfo[key]
@@ -56,7 +56,9 @@ export const useUserStore = defineStore('user', () => {
     const userLogin = async (params: User.LoginParams) => {
         try {
             state.loading = true
-            await loadBaseData
+            await loadBaseData()
+            cleanup()
+
             const res = await loginRequest.fetchAsync(params)
 
             if (state.rememberMe) {
@@ -72,37 +74,46 @@ export const useUserStore = defineStore('user', () => {
 
     // 自动登录
     const autoLogin = async () => {
-        if (token.value) {
-            try {
-                state.loading = true
-                await loadBaseData
-                const res = await tokenRequest.fetchAsync()
-                setUserInfo(res.data)
-            } finally {
-                state.loading = false
-            }
-        } else {
+        if (!token.value) {
             const encryptedData = localData.getValue('autoLoginEncrypted')
 
             if (state.rememberMe && encryptedData) {
                 const decryptedString = decryptAES(encryptedData)
                 const params = JSON.parse(decryptedString)
-                await userLogin(params)
-            } else {
-                await loadBaseData
+                await userLogin(params) // 尝试用加密数据登录
+                return
             }
         }
+
+        try {
+            state.loading = true
+            await loadBaseData() // 失败不清除登录信息
+
+            if (token.value) {
+                try {
+                    const res = await tokenRequest.fetchAsync()
+                    setUserInfo(res.data)
+                } catch {
+                    cleanup()
+                }
+            }
+        } finally {
+            state.loading = false
+        }
+    }
+
+    // 清除登录信息
+    const cleanup = () => {
+        sessionData.reset('token')
+        localData.reset('token')
+        localData.reset('autoLoginEncrypted')
+        state.userInfo = initUserInfo()
     }
 
     // 用户登出
     const userLogout = () => {
         logout()
-
-        sessionData.reset('token')
-        localData.reset('token')
-        localData.reset('autoLoginEncrypted')
-
-        state.userInfo = initUserInfo()
+        cleanup()
         eventBus.emit('logout')
     }
 

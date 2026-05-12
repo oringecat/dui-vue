@@ -4,7 +4,8 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
 import App from './App.vue'
 import createRouter from './router'
-import 'vant/lib/index.css'
+import 'vant/es/toast/style'
+import 'vant/es/dialog/style'
 import layouts from './components/layouts' // 全局布局组件
 
 const pinia = createPinia()

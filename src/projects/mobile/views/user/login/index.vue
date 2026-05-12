@@ -19,10 +19,11 @@
 
 <script lang="ts" setup>
 import { reactive } from 'vue'
-import { useRouter } from 'vue-router'
-import { showLoadingToast, showSuccessToast, showFailToast } from 'vant'
+import { useRoute, useRouter } from 'vue-router'
+import { showLoadingToast, showFailToast, closeToast } from 'vant'
 import { useUserStore } from '@/stores/user'
 
+const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
 
@@ -33,12 +34,22 @@ const formData = reactive<User.LoginParams>({
     version: '1.0.0',
 })
 
+// 判断是否能返回
+const hasBack = !!router.options.history.state.back
+
 const onSubmit = () => {
     showLoadingToast('登录中...')
 
     userStore.userLogin(formData).then(() => {
-        showSuccessToast('登录成功')
-        router.back()
+        const redirected = route.redirectedFrom
+        if (redirected) {
+            router.push({ ...redirected, replace: true })
+        } else if (hasBack) {
+            router.back()
+        } else {
+            router.push({ path: '/', replace: true })
+        }
+        closeToast()
     }).catch((err) => {
         formData.password = ''
         showFailToast(err)

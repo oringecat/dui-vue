@@ -1,17 +1,22 @@
 import { createWebHashHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
 import { useHistoryStore } from './history'
+import { useUserStore } from '@/stores/user'
 import serviceConfig from '@/services/config'
 import MainLayout from '../components/layouts/page-main/index.vue'
 import HomeLayout from '../components/layouts/page-home/index.vue'
 
 export default function createRouter() {
   const historyStore = useHistoryStore()
+  const userStore = useUserStore()
 
   const routes: RouteRecordRaw[] = [
     {
       path: '/',
       component: MainLayout,
+      meta: {
+        ignoreAuth: true
+      },
       children: [
         {
           path: '',
@@ -20,12 +25,12 @@ export default function createRouter() {
             {
               path: '',
               name: 'home',
-              component: () => import('../views/home/index.vue'),
+              component: () => import('../views/home/index.vue')
             },
             {
               path: 'profile',
               name: 'profile',
-              component: () => import('../views/profile/index.vue'),
+              component: () => import('../views/profile/index.vue')
             }
           ]
         },
@@ -36,7 +41,7 @@ export default function createRouter() {
       name: 'launch',
       component: () => import('../views/launch/index.vue'),
       meta: {
-        ignoreAuth: true,
+        ignoreAuth: true
       }
     },
     {
@@ -47,17 +52,34 @@ export default function createRouter() {
           path: 'login',
           name: 'user-login',
           component: () => import('../views/user/login/index.vue'),
+          meta: {
+            ignoreAuth: true
+          }
+        }
+      ]
+    },
+    {
+      path: '/order',
+      component: MainLayout,
+      children: [
+        {
+          path: 'order',
+          name: 'order-list',
+          component: () => import('../views/order/list/index.vue')
         }
       ]
     },
     {
       path: '/setting',
       component: MainLayout,
+      meta: {
+        ignoreAuth: true
+      },
       children: [
         {
           path: 'language',
           name: 'setting-language',
-          component: () => import('../views/setting/language/index.vue'),
+          component: () => import('../views/setting/language/index.vue')
         }
       ]
     }
@@ -70,15 +92,15 @@ export default function createRouter() {
 
   router.beforeEach(async (to) => {
     if (serviceConfig.isReady) {
-      return true
+      if (to.meta.ignoreAuth || userStore.token) {
+        return true
+      }
+      return { name: 'user-login' }
     } else {
       if (to.name === 'launch' || to.name === 'user-login') {
         return true
       } else {
-        return {
-          name: 'launch',
-          query: { redirect: to.fullPath }
-        }
+        return { name: 'launch' }
       }
     }
   })
