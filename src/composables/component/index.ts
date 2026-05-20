@@ -48,14 +48,14 @@ function createComponentManager() {
         }
 
         // 只会在页面回退时生效
-        onBeforeRouteLeave((to, from, next) => {
+        onBeforeRouteLeave(() => {
             if (showComponent.value) {
                 const lastAction = [...closeActions.values()].at(-1)
                 lastAction?.()
-                next(false)
+                return false
             } else {
                 closeActions.clear()
-                next()
+                return true
             }
         })
 
