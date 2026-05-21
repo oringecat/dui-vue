@@ -10,12 +10,16 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        height: 44px;
-        padding: 0 var(--block-padding-md);
+        min-height: 44px;
     }
 
     &__col {
+        flex: auto;
         white-space: nowrap;
+
+        &:empty {
+            display: none;
+        }
 
         &--center {
             position: absolute;
@@ -24,11 +28,9 @@
             display: inline-flex;
             justify-content: center;
             align-items: center;
+            height: 100%;
+            font-size: 18px;
             text-align: center;
-
-            &:empty {
-                display: none;
-            }
         }
 
         &--right {

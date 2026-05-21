@@ -27,6 +27,16 @@ export default function createRouter() {
               component: () => import('../views/home/index.vue')
             },
             {
+              path: 'shop',
+              name: 'shop',
+              component: () => import('../views/shop/list/index.vue')
+            },
+            {
+              path: 'cart',
+              name: 'cart',
+              component: () => import('../views/cart/list/index.vue')
+            },
+            {
               path: 'profile',
               name: 'profile',
               component: () => import('../views/profile/index.vue')

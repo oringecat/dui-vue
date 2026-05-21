@@ -9,7 +9,9 @@
             </router-transition>
         </router-view>
         <van-tabbar v-model="active" :before-change="beforeChange" :fixed="false">
-            <van-tabbar-item name="home" icon="home-o" :to="{ name: 'home' }" replace>首页</van-tabbar-item>
+            <van-tabbar-item name="home" icon="wap-home-o" :to="{ name: 'home' }" replace>首页</van-tabbar-item>
+            <van-tabbar-item name="shop" icon="bag-o" :to="{ name: 'shop' }" replace>推荐</van-tabbar-item>
+            <van-tabbar-item name="cart" icon="cart-o" :to="{ name: 'cart' }" replace>购物车</van-tabbar-item>
             <van-tabbar-item name="profile" icon="friends-o" :to="{ name: 'profile' }" replace>我的</van-tabbar-item>
         </van-tabbar>
     </div>

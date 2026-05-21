@@ -12,7 +12,7 @@ export default [
                 code: 200,
                 message: 'ok',
                 data: Array.from({ length: count }, () => ({
-                    productName: '@ctitle(5,10)', // 随机中文标题（5-10字）
+                    productName: '@ctitle(10,20)', // 随机中文标题（10-20字）
                 })),
                 total: count
             })

@@ -1,9 +1,12 @@
 <template>
-    <app-list class="product-list" v-model:loading="loading" :finished="!hasMore" :error="failed"
-        @load="loadData">
-        <div v-for="(item, index) in dataList" :key="index">
-            {{ item.productName }}
-        </div>
+    <app-list class="product-list" v-model:loading="loading" :finished="!hasMore" :error="failed" @load="loadData">
+        <app-waterfall :data-list="dataList">
+            <template #default="{ item }">
+                <div class="product-list__item">
+                    {{ item.productName }}
+                </div>
+            </template>
+        </app-waterfall>
     </app-list>
 </template>
 
@@ -12,6 +15,7 @@ import { useScrollTable } from '@/composables/datatable'
 import { useRefresh } from '@/composables/refresh'
 import { getProductList } from '@/services/api/product'
 import AppList from '@mobile/components/base/list/index.vue'
+import AppWaterfall from '@mobile/components/base/waterfall/index.vue'
 
 const props = defineProps({
     refreshId: Number
@@ -48,3 +52,7 @@ const { refreshing, refreshFinish } = useRefresh(loadData, {
     refreshId: props.refreshId
 })
 </script>
+
+<style lang="less">
+@import './index.less';
+</style>

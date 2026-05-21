@@ -1,10 +1,10 @@
 <template>
-    <div class="app-nav-back" @click="onBack">
+    <app-block class="app-nav-back" @click="onBack">
         <slot>
             <Icon name="arrow-left" v-if="hasBack" />
             <Icon name="wap-home-o" v-else />
         </slot>
-    </div>
+    </app-block>
 </template>
 
 <script lang="ts" setup>
