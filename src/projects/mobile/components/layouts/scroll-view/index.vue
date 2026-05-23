@@ -17,7 +17,11 @@ const props = defineProps({
     // 滚动元素名称 (用于共用组件缓存不同滚动条位置)
     scrollName: {
         type: String,
-        default: 'default',
+        default: 'default'
+    },
+    threshold: {
+        type: Number,
+        default: 100
     },
     delay: {
         type: Number,
@@ -31,6 +35,10 @@ const scrollRef = shallowRef<HTMLDivElement>()
 const scrollParent = useScrollParent(scrollRef)
 const scrollMap = new Map<string, number>([[props.scrollName, props.modelValue]])
 
+// 避免重复触发
+const isUpperTriggered = shallowRef(false)
+const isLowerTriggered = shallowRef(false)
+
 const scrollTop = computed({
     get: () => props.modelValue,
     set: (val) => emit('update:modelValue', val)
@@ -41,21 +49,38 @@ const setScrollTop = () => {
     if (el) {
         el.scrollTop = scrollMap.get(props.scrollName) ?? scrollTop.value
         scrollTop.value = el.scrollTop
+        isUpperTriggered.value = false
+        isLowerTriggered.value = false
     }
 }
 
-// const onScrollToupper = () => {
-//     emit('scrollToupper')
-// }
-
-// const onScrollTolower = () => {
-//     emit('scrollTolower')
-// }
-
 // 防抖触发滚动事件
 const onScroll = debounce((el: HTMLDivElement) => {
-    scrollMap.set(props.scrollName, el.scrollTop)
+    const { scrollTop, scrollHeight, clientHeight } = el
+    const scrollBottom = scrollHeight - scrollTop - clientHeight
+    
+    scrollMap.set(props.scrollName, scrollTop)
     emit('scroll', el)
+
+    // 触顶事件
+    if (scrollTop <= props.threshold) {
+        if (!isUpperTriggered.value) {
+            isUpperTriggered.value = true
+            emit('scrollToupper')
+        }
+    } else {
+        isUpperTriggered.value = false
+    }
+
+    // 触底事件
+    if (scrollBottom <= props.threshold) {
+        if (!isLowerTriggered.value) {
+            isLowerTriggered.value = true
+            emit('scrollTolower')
+        }
+    } else {
+        isLowerTriggered.value = false
+    }
 }, props.delay)
 
 const listener = (e: Event) => {

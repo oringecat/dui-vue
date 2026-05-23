@@ -1,20 +1,18 @@
 import type { MockMethod } from 'vite-plugin-mock'
-import { randomInt, mockResponse } from './mock-utils'
+import { mockResponse } from './mock-utils'
 
 export default [
     {
         url: '/api/product/list',
         method: 'get',
         rawResponse: (req, res) => {
-            const count = randomInt(5, 10)
-            
             mockResponse(res, {
                 code: 200,
                 message: 'ok',
-                data: Array.from({ length: count }, () => ({
+                data: Array.from({ length: 20 }, () => ({
                     productName: '@ctitle(10,20)', // 随机中文标题（10-20字）
                 })),
-                total: count
+                total: 200
             })
         }
     }
