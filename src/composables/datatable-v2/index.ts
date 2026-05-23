@@ -4,25 +4,19 @@ import type { DataTableOptions } from './types'
 // 刷新清空 rawData
 // 更新替换 rawData
 // 删除标记
-export function useDataTable<T>(options: DataTableOptions = {}, paginationType: 'page' | 'scroll' = 'page') {
+export function useDataTable<T>(options: DataTableOptions = {}) {
     const state = reactive({
-        total: -1, // 总条数
+        total: -1, // 总条数，-1 = 从未加载过
         pageSize: options.pageSize ?? 20, // 每页条数
         pageIndex: options.pageIndex ?? 1, // 当前页码
         failed: false // 是否失败
     })
 
-    const rawData = shallowReactive(new Map<number, T[]>()) // 原始数据
+    const rawData = shallowReactive(new Map<number, T[]>()) // 缓存原始数据
     const isRefreshing = shallowRef(false) // 下拉刷新状态
 
     // 总页数
     const pageCount = computed(() => state.total > 0 ? Math.ceil(state.total / state.pageSize) : 1)
-
-    // 当前页码数据
-    const currentData = computed(() => rawData.get(state.pageIndex) || [])
-
-    // 当前页码是否有数据
-    const hasCurrentData = computed(() => !!currentData.value.length)
 
     // 是否有更多
     const hasMore = computed(() => {
@@ -30,15 +24,13 @@ export function useDataTable<T>(options: DataTableOptions = {}, paginationType: 
         return state.total < 0 || (!isRefreshing.value && state.pageIndex < pageCount.value)
     })
 
-    // 滚动模式返回当前页前后各一页的数据
-    const dataList = computed(() => {
-        const current = state.pageIndex
+    // 当前列表
+    const dataList = computed(() => rawData.get(state.pageIndex) || [])
 
-        if (paginationType === 'page') {
-            return currentData.value
-        }
-
+    // 虚拟列表，返回当前页前后各一页的数据
+    const virtualList = computed(() => {
         const result: T[] = []
+        const current = state.pageIndex
         const start = Math.max(1, current - 1)  // 至少从第1页开始
         const end = current + 1
 
@@ -53,10 +45,14 @@ export function useDataTable<T>(options: DataTableOptions = {}, paginationType: 
     })
 
     // 更新列表
-    const updateItems = (data: T[], count = 0) => {
-        state.total = count || data.length
+    const updateItems = (data: T[], total = 0) => {
+        state.total = total || data.length
         state.failed = false
-        isRefreshing.value = false
+
+        if (isRefreshing.value) {
+            rawData.clear()
+            isRefreshing.value = false
+        }
 
         if (data.length > 0 && data.length === state.total) {
             // 进行本地分页
@@ -84,9 +80,9 @@ export function useDataTable<T>(options: DataTableOptions = {}, paginationType: 
     }
 
     return {
-        dataList,
         pageCount,
-        hasCurrentData,
+        dataList,
+        virtualList,
         hasMore,
         updateItems,
         nextPage,

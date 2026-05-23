@@ -1,15 +1,19 @@
 <template>
     <div class="app-page-view" :class="[`app-page-view--${type}`]">
         <slot name="header"></slot>
-        <app-scroll-view class="app-page-view__container" v-model="scrollTop" :scroll-name="scrollName">
-            <van-sticky class="app-page-view__header--sticky" :class="{ hide: isScrollDown }" position="top">
-                <slot name="header-sticky"></slot>
-            </van-sticky>
-            <div class="app-page-view__header--scroll" :class="{ show: isScrollDown }" v-if="$slots['header-scroll']">
-                <slot name="header-scroll"></slot>
-            </div>
-            <div class="app-page-view__main">
-                <slot></slot>
+        <app-scroll-view v-model="scrollTop" :scroll-name="scrollName" :observer="observer"
+            @scroll-toupper="emit('scrollToupper')" @scroll-tolower="emit('scrollTolower')">
+            <div class="app-page-view__container">
+                <van-sticky class="app-page-view__header--sticky" :class="{ hide: isScrollDown }" position="top">
+                    <slot name="header-sticky"></slot>
+                </van-sticky>
+                <div class="app-page-view__header--scroll" :class="{ show: isScrollDown }"
+                    v-if="$slots['header-scroll']">
+                    <slot name="header-scroll"></slot>
+                </div>
+                <div class="app-page-view__main">
+                    <slot></slot>
+                </div>
             </div>
         </app-scroll-view>
         <slot name="footer"></slot>
@@ -29,8 +33,14 @@ const props = defineProps({
     threshold: {
         type: Number,
         default: 0
+    },
+    observer: {
+        type: Boolean,
+        default: false
     }
 })
+
+const emit = defineEmits(['scrollToupper', 'scrollTolower'])
 
 const isScrollDown = shallowRef(false) // 是否向下滚动（切换两个状态栏）
 const scrollTop = shallowRef(0)
