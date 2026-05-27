@@ -1,6 +1,6 @@
-# vue-mini-base
+# dui-vue（啊对对对）
 
-正在开发中...
+多平台一站式客户端基础框架，正在开发中...
 
 ## Recommended IDE Setup
 

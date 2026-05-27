@@ -1,6 +1,6 @@
 {
-  "AppId": "com.vue.mini.base",
-  "AppName": "Vue Mini Base",
+  "AppId": "com.dui.vue",
+  "AppName": "Dui Vue",
   "version": "1.0.0",
   "versionCode": "10000",
   "baseUrl": "/api/server/config",

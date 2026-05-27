@@ -12,6 +12,7 @@
         <template #header-scroll>
             <app-status-bar>
                 <van-search v-model="keyword" />
+                <div style="background-color: #fff;">{{ virtualList.length }} index {{ pageIndex }}</div>
             </app-status-bar>
         </template>
         <app-pull-refresh>
@@ -22,9 +23,11 @@
                 <van-swipe-item>4</van-swipe-item>
             </van-swipe>
             <app-scroll-view @scroll-toupper="onScrollToupper" @scroll-tolower="onScrollTolower">
-                <template v-for="(item, index) in virtualList" :key="index">
-                    <div style="height: 50px;">{{ item.productName }}</div>
-                </template>
+                <div v-for="{ pageIndex, items } in virtualList" :key="pageIndex" :data-page="pageIndex">
+                    <template v-for="(item, index) in items" :key="index">
+                        <div style="height: 50px;">{{ item.productName }}</div>
+                    </template>
+                </div>
             </app-scroll-view>
         </app-pull-refresh>
     </app-page-view>
@@ -38,7 +41,7 @@ import AppPullRefresh from '@mobile/components/base/pull-refresh/index.vue'
 
 const keyword = shallowRef('')
 
-const { virtualList, pageIndex, pageSize, hasMore, failed, updateItems, nextPage } = useDataTable<Product.ProductItem>()
+const { virtualList, pageIndex, pageSize, hasData, hasMore, updateItems, prevPage, nextPage } = useDataTable<Product.ProductItem>()
 
 const { loading, fetch } = getProductList({
     data: {
@@ -51,11 +54,17 @@ const { loading, fetch } = getProductList({
 })
 
 const onScrollToupper = () => {
-    console.log('触顶')
+    prevPage()
 }
 
 const onScrollTolower = () => {
-    console.log('触底')
+    if (hasMore.value) {
+        if (nextPage() && !hasData.value) {
+            fetch({
+                pageIndex: pageIndex.value
+            })
+        }
+    }
 }
 </script>
 

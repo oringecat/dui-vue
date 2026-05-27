@@ -18,6 +18,9 @@ export function useDataTable<T>(options: DataTableOptions = {}) {
     // 总页数
     const pageCount = computed(() => state.total > 0 ? Math.ceil(state.total / state.pageSize) : 1)
 
+    // 当前页是否有数据（用于判断是否从缓存返回数据）
+    const hasData = computed(() => !!dataList.value.length)
+
     // 是否有更多
     const hasMore = computed(() => {
         if (state.failed) return false
@@ -29,19 +32,18 @@ export function useDataTable<T>(options: DataTableOptions = {}) {
 
     // 虚拟列表，返回当前页前后各一页的数据
     const virtualList = computed(() => {
-        const result: T[] = []
-        const current = state.pageIndex
-        const start = Math.max(1, current - 1)  // 至少从第1页开始
-        const end = current + 1
+        const currentPage = state.pageIndex
+        const totalPage = pageCount.value
 
-        for (let i = start; i <= end; i++) {
-            const data = rawData.get(i)
-            if (data) {
-                result.push(...data)
-            }
-        }
+        const start = Math.max(1, currentPage === totalPage ? currentPage - 2 : currentPage - 1)
+        const pageRange = [start, start + 1, start + 2]
 
-        return result
+        const filtered = pageRange.filter((page) => page <= totalPage)
+
+        return filtered.map((pageIndex) => ({
+            pageIndex,
+            items: rawData.get(pageIndex) ?? []
+        }))
     })
 
     // 更新列表
@@ -66,6 +68,18 @@ export function useDataTable<T>(options: DataTableOptions = {}) {
         }
     }
 
+    // 上一页
+    const prevPage = () => {
+        const prevIndex = state.pageIndex - 1
+
+        if (prevIndex > 0) {
+            state.pageIndex = prevIndex
+            return true
+        }
+
+        return false
+    }
+
     // 下一页
     const nextPage = (refreshing = false) => {
         isRefreshing.value = refreshing
@@ -83,8 +97,10 @@ export function useDataTable<T>(options: DataTableOptions = {}) {
         pageCount,
         dataList,
         virtualList,
+        hasData,
         hasMore,
         updateItems,
+        prevPage,
         nextPage,
         ...toRefs(state)
     }
