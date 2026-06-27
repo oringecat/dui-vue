@@ -1,6 +1,6 @@
 <template>
     <app-list class="product-list" v-model:loading="loading" :finished="!hasMore" :error="failed" @load="loadData">
-        <app-waterfall :data-list="dataList">
+        <app-waterfall :data-list="appendList">
             <template #default="{ item }">
                 <div class="product-list__item">
                     {{ item.productName }}
@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useScrollTable } from '@/composables/datatable'
+import { useDataTable } from '@/composables/datatable'
 import { useRefresh } from '@/composables/refresh'
 import { getProductList } from '@/services/api/product'
 import AppList from '@mobile/components/base/list/index.vue'
@@ -21,10 +21,9 @@ const props = defineProps({
     refreshId: Number
 })
 
-const { dataList, pageIndex, pageSize, hasMore, failed, updateItems, nextPage } = useScrollTable<Product.ProductItem>()
+const { appendList, pageIndex, pageSize, hasMore, failed, updateItems, nextPage } = useDataTable<Product.ProductItem>()
 
 const { loading, fetch } = getProductList({
-    immediate: false,
     data: {
         pageSize: pageSize.value,
         pageIndex: pageIndex.value

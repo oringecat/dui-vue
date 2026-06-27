@@ -7,6 +7,8 @@ import { AuthType } from './types'
 import type { AuthRoute } from './types'
 
 export const useAuthStore = defineStore('auth', () => {
+    const { loading, rawFetch } = getUserAuths()
+
     // 用户权限
     const userAuths = shallowRef<AuthRoute[]>([])
 
@@ -21,10 +23,6 @@ export const useAuthStore = defineStore('auth', () => {
 
     // 是否有权限
     const hasAuth = computed(() => userRoutes.value.length > 0)
-
-    const { loading, rawFetch } = getUserAuths({
-        immediate: false
-    })
 
     // 递归查找路由第一个有效路径
     const getFirstRoutePath = (routes: RouteRecordRaw[]): string => {

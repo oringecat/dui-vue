@@ -40,7 +40,7 @@ const hasBack = !!router.options.history.state.back
 const onSubmit = () => {
     showLoadingToast('登录中...')
 
-    userStore.userLogin(formData).then(() => {
+    userStore.userLogin(formData, true).then(() => {
         const redirected = route.redirectedFrom
         if (redirected) {
             router.push({ ...redirected, replace: true })

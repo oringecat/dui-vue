@@ -38,7 +38,7 @@ const authStore = useAuthStore()
 
 // 手动给组件添加 name 属性，处理缓存 exclude 无效的问题
 const handleComponent = (component: Component, route: RouteLocationNormalized) => {
-    if ('type' in component) {
+    if (component && 'type' in component) {
         component.type.name = route.name
     }
     return component

@@ -2,7 +2,6 @@
  * 数据表配置项
  */
 export interface DataTableOptions {
-    localPagination?: boolean; // 是否进行本地分页
     pageSize?: number; // 每页条数
     pageIndex?: number; // 当前页码
 }
@@ -15,22 +14,37 @@ export interface FilterData<T> {
     values: (T[keyof T])[]; // 多选过滤或模糊查询
 }
 
-/**
- * 过滤选项
+/** 
+ * 按钮基类
  */
-export interface FilterOption<T, K extends keyof T> {
-    filters: FilterItem<T, K>[];
-    buttons?: ActionButton[];
+export interface BaseButton {
+    label: string;
+    className?: string;
+    reset?: boolean;  // 是否重置表单
+    refresh?: boolean; // 是否立即刷新
 }
 
 /** 
- * 过滤项
+ * 动作按钮
  */
-export interface FilterItem<T, K extends keyof T> {
+export interface ActionButton<T> extends BaseButton {
+    resolveParams?: (params: Partial<T>) => Partial<T> | Promise<Partial<T>>;
+}
+
+/** 
+ * 表单按钮
+ */
+export interface FormButton extends BaseButton {
+    buildQueryParams: () => void | Promise<void>;
+}
+
+/** 
+ * 过滤字段
+ */
+export interface FilterField<T, K extends keyof T> {
     field: K;
     label?: string;
     value?: T[K];
-    locked?: boolean; // 重置时是否阻止清空当前值
     placeholder?: string;
     multiple?: boolean;
     required?: boolean;
@@ -38,17 +52,30 @@ export interface FilterItem<T, K extends keyof T> {
     visibility?: () => boolean; // 控制元素显示或隐藏
     options?: () => {
         label: string;
-        value: T[K];
+        value: NonNullable<T[K]>;
     }[];
     onChange?: (value?: T[K]) => void;
 }
 
-/** 
- * 动作按钮
+/**
+ * 映射索引项
  */
-export interface ActionButton {
-    label: string;
-    className?: string;
-    validateEvent?: boolean; // 是否触发表单验证
-    onClick: () => void;
+export type FilterItem<T> = {
+    [K in keyof T]: FilterField<T, K>
+}[keyof T & string]
+
+/**
+ * 过滤选项
+ */
+export interface FilterOptions<T> {
+    filters: FilterItem<T>[];
+    buttons?: ActionButton<T>[];
+}
+
+/**
+ * 表单选项
+ */
+export interface FormOptions<T> {
+    filters: FilterItem<T>[];
+    buttons: FormButton[];
 }

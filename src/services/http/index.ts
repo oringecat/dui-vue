@@ -116,7 +116,7 @@ export default new (class {
         }
 
         // 默认立即请求
-        if (options.immediate ?? true) {
+        if (options.immediate) {
             fetch()
         }
 

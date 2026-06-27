@@ -13,7 +13,8 @@ export default new (class {
         this.onReady(() => {
             // 同步服务器时间
             getServerTime({
-                success: (res) => {
+                immediate: true,
+                onSuccess: (res) => {
                     const serverTime = dayjs(res.data)
                     this.serverDiffTime = dayjs().diff(serverTime)
                 }

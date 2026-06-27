@@ -6,7 +6,7 @@
         <app-pull-refresh>
             <app-list class="order-list" v-model:loading="loading" :finished="!hasMore" :error="failed"
                 @load="loadData">
-                <div v-for="(item, index) in dataList" :key="index">
+                <div v-for="(item, index) in appendList" :key="index">
                     {{ item.productName }}
                     <van-button type="primary" @click="openComponent('detail')">详情</van-button>
                 </div>
@@ -19,7 +19,7 @@
 <script lang="ts" setup>
 import { defineAsyncComponent, type Component } from 'vue'
 import { useComponent } from '@/composables/component'
-import { useScrollTable } from '@/composables/datatable'
+import { useDataTable } from '@/composables/datatable'
 import { useRefresh } from '@/composables/refresh'
 import { getProductList } from '@/services/api/product'
 import AppPullRefresh from '@mobile/components/base/pull-refresh/index.vue'
@@ -31,10 +31,9 @@ const components: Record<string, Component> = {
 
 const { showComponent, componentId, openComponent, closeComponent } = useComponent()
 
-const { dataList, pageIndex, pageSize, hasMore, failed, updateItems, nextPage } = useScrollTable<Product.ProductItem>()
+const { appendList, pageIndex, pageSize, hasMore,  failed, updateItems, nextPage } = useDataTable<Product.ProductItem>()
 
 const { loading, fetch } = getProductList({
-    immediate: false,
     data: {
         pageSize: pageSize.value,
         pageIndex: pageIndex.value

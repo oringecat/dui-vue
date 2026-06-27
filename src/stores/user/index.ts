@@ -1,4 +1,4 @@
-import { reactive, toRefs, computed, watch } from 'vue'
+import { reactive, toRefs, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { encryptAES, decryptAES } from '@/utils/crypto'
 import { login, logout, checkToken } from '@/services/api/user'
@@ -23,14 +23,14 @@ export const useUserStore = defineStore('user', () => {
 
     const state = reactive({
         loading: false,
-        rememberMe: localData.getValue('rememberMe'),
         userInfo: initUserInfo(),
     })
 
     const token = computed(() => state.userInfo.token)
 
-    const tokenRequest = checkToken({ immediate: false })
-    const loginRequest = login({ immediate: false })
+    const tokenRequest = checkToken()
+    const loginRequest = login()
+    const logoutRequest = logout()
 
     // 加载初始数据
     const loadBaseData = async () => {
@@ -53,15 +53,16 @@ export const useUserStore = defineStore('user', () => {
     }
 
     // 用户登录
-    const userLogin = async (params: User.LoginParams) => {
+    const userLogin = async (params: User.LoginParams, rememberMe = false) => {
         try {
             state.loading = true
-            await loadBaseData()
             cleanup()
+
+            await loadBaseData()
 
             const res = await loginRequest.rawFetch(params)
 
-            if (state.rememberMe) {
+            if (rememberMe) {
                 const encryptedString = encryptAES(JSON.stringify(params)) // 数据加密
                 localData.setValue('autoLoginEncrypted', encryptedString)
             }
@@ -77,10 +78,10 @@ export const useUserStore = defineStore('user', () => {
         if (!token.value) {
             const encryptedData = localData.getValue('autoLoginEncrypted')
 
-            if (state.rememberMe && encryptedData) {
+            if (encryptedData) {
                 const decryptedString = decryptAES(encryptedData)
-                const params = JSON.parse(decryptedString)
-                await userLogin(params) // 尝试用加密数据登录
+                const loginParams = JSON.parse(decryptedString)
+                await userLogin(loginParams, true) // 尝试用加密数据登录
                 return
             }
         }
@@ -112,15 +113,10 @@ export const useUserStore = defineStore('user', () => {
 
     // 用户登出
     const userLogout = () => {
-        logout()
         cleanup()
+        logoutRequest.rawFetch()
         eventBus.emit('logout')
     }
-
-    // 监听状态变化
-    watch(() => state.rememberMe, (newVal) => {
-        localData.setValue('rememberMe', newVal)
-    })
 
     return {
         token,

@@ -5,8 +5,7 @@ import type { LocalStorageKeys, SessionStorageKeys } from './types'
 export const localData = new WebStorage<LocalStorageKeys>(localStorage, {
     language: navigator.language,
     accessToken: '',
-    autoLoginEncrypted: '',
-    rememberMe: false
+    autoLoginEncrypted: ''
 })
 
 // 会话存储
