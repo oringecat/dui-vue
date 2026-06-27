@@ -138,6 +138,7 @@ export function useDataTable<T>(options: DataTableOptions = {}) {
     }
 }
 
+// （待实现联动筛选）
 export function useDataFilter<T>(options: FilterOptions<T>) {
     const rawOptions = cloneDeep(options) // 原始副本
     const queryParams = shallowRef<Partial<T>>({})
@@ -154,16 +155,7 @@ export function useDataFilter<T>(options: FilterOptions<T>) {
             return {
                 ...rest,
                 buildQueryParams: async () => {
-                    if (item.reset) resetFilters()
-
-                    const params: Partial<T> = {}
-
-                    filterOptions.filters.forEach((e) => {
-                        if (e.value !== undefined) {
-                            params[e.field] = e.value
-                        }
-                    })
-
+                    const params = getQueryParams(item.reset)
                     queryParams.value = await (resolveParams?.(params) ?? params)
                 }
             }
@@ -182,22 +174,19 @@ export function useDataFilter<T>(options: FilterOptions<T>) {
         })
     }
 
-    // 获取过滤参数，支持多条件查询（待实现）
+    // 获取查询参数，支持多条件查询（待实现）
     const getQueryParams = (reset = false) => {
         if (reset) resetFilters()
-        const options: FilterData<T>[] = []
 
-        // filterOption.items.forEach((e) => {
-        //     const { keys, value } = e
-        //     if (value) {
-        //         options.push({
-        //             keys,
-        //             filteredValue: [value],
-        //         })
-        //     }
-        // })
+        const params: Partial<T> = {}
 
-        return options
+        filterOptions.filters.forEach((e) => {
+            if (e.value !== undefined) {
+                params[e.field] = e.value
+            }
+        })
+
+        return params
     }
 
     const getFilterValue = <K extends keyof T>(field: K) => {

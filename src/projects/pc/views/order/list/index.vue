@@ -9,7 +9,7 @@
                     </el-select>
                 </el-form-item>
                 <template v-if="item.value === 4">
-                    <el-form-item :label="item.label" prop="date">
+                    <el-form-item label="日期" prop="date">
                         <el-date-picker type="daterange" v-model="dateValue" value-format="YYYY-MM-DD"
                             start-placeholder="开始日期" end-placeholder="结束日期" />
                     </el-form-item>
