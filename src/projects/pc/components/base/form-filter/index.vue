@@ -3,8 +3,8 @@
     <slot name="before"></slot>
     <template v-for="(item, index) in options.filters" :key="index">
       <template v-if="item.visibility?.() ?? true">
-        <slot :name="item.field" :item="item">
-          <el-form-item :label="item.label" :prop="item.field">
+        <slot :name="getFieldName(item.field)" :item="item">
+          <el-form-item :label="item.label" :prop="getFieldName(item.field)">
             <el-select :placeholder="item.placeholder ?? '请选择'" v-model="item.value" :multiple="item.multiple"
               collapse-tags clearable @change="item.onChange" :style="handleStyle(item.width)" v-if="item.options">
               <el-option v-for="option in item.options()" :key="option.value" :value="option.value"
@@ -66,11 +66,15 @@ const formRules = computed<FormRules>(() => {
   const rules = { ...props.rules }
   props.options.filters.forEach(({ field, required }) => {
     if (required) {
-      rules[field] = [{ required }]
+      rules[getFieldName(field)] = [{ required }]
     }
   })
   return rules
 })
+
+const getFieldName = (field: string | (keyof T)[]) => {
+  return Array.isArray(field) ? field.join('-') : field
+}
 
 const handleStyle = (width?: number) => {
   const style: Partial<CSSStyleDeclaration> = {}

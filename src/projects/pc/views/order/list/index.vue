@@ -16,13 +16,13 @@
                 </template>
             </template>
         </app-filter>
-        <el-table :data="dataList" v-loading="loading" border>
+        <app-table :data="dataList" :columns="[]" v-loading="loading" border>
             <el-table-column prop="id" label="ID" />
             <el-table-column prop="orderNumber" label="订单号" />
             <el-table-column prop="status" label="状态" />
             <el-table-column prop="orderTime" label="订单日期" />
-        </el-table>
-        <el-pagination :total="pageTotal" v-model:page-size="pageSize" v-model:current-page="pageIndex"
+        </app-table>
+        <app-pagination :total="pageTotal" v-model:page-size="pageSize" v-model:current-page="pageIndex"
             @change="loadData" />
     </pc-view>
 </template>
@@ -32,7 +32,9 @@ import { shallowRef } from 'vue'
 import { type FormRules } from 'element-plus'
 import { useDataTable, useDataFilter } from '@/composables/datatable'
 import { getOrderList } from '@/services/api/order'
+import AppTable from '@pc/components/base/table/index.vue'
 import AppFilter from '@pc/components/base/form-filter/index.vue'
+import AppPagination from '@pc/components/base/pagination/index.vue'
 
 const dateValue = shallowRef<string[]>()
 
