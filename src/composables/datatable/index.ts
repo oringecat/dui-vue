@@ -1,9 +1,8 @@
 import { reactive, shallowReactive, shallowRef, computed, toRefs } from 'vue'
-import { cloneDeep } from 'lodash'
-import type { FilterData, DataTableOptions, FilterOptions, FormOptions } from './types'
+import type { DataTableOptions, FilterOptions, FormOptions } from './types'
 
 // 自适应全量和接口分页数据
-export function useDataTable<T>(options: DataTableOptions = {}) {
+export function useDataTable<T extends object>(options: DataTableOptions = {}) {
     const state = reactive({
         pageSize: options.pageSize ?? 20, // 每页条数
         pageIndex: options.pageIndex ?? 1, // 当前页码
@@ -13,15 +12,17 @@ export function useDataTable<T>(options: DataTableOptions = {}) {
     const rawData = shallowReactive(new Map<number, T[]>()) // 缓存原始数据
     const rawTotal = shallowRef(-1) // 原始总条数，-1 = 从未加载过
     const isRefreshing = shallowRef(false) // 下拉刷新状态
-    const filterData = shallowRef<FilterData<T>[]>([]) // 本地过滤项
+    const localFilterParams = shallowRef<Partial<T>>({}) // 本地过滤项参数
 
-    const matchesFilter = (row: T, filter: FilterData<T>) => {
-        return filter.fields.some((field) => {
-            const value = row[field]
-            if (typeof value === 'number') {
-                return filter.values.includes(value)
+    const matchesFilter = (row: T) => {
+        const entries = Object.entries(localFilterParams.value)
+        return entries.every(([key, value]) => {
+            if (value) {
+                const rowValue = Reflect.get(row, key)
+                // 模糊匹配（暂不考虑 value 和 rowValue 为数组的问题）
+                return String(rowValue).toLowerCase().includes(String(value).toLowerCase())
             }
-            return filter.values.some((text) => String(value).toLowerCase().includes(String(text).toLowerCase()))
+            return true
         })
     }
 
@@ -29,7 +30,7 @@ export function useDataTable<T>(options: DataTableOptions = {}) {
     const fullData = computed(() => {
         const firstData = rawData.get(1) || []
         if (firstData.length > 0 && firstData.length === rawTotal.value) {
-            return firstData.filter((item) => filterData.value.every((filter) => matchesFilter(item, filter)))
+            return firstData.filter((item) => matchesFilter(item))
         }
         return []
     })
@@ -128,7 +129,7 @@ export function useDataTable<T>(options: DataTableOptions = {}) {
         dataList,
         appendList,
         virtualList,
-        filterData,
+        localFilterParams,
         hasData,
         hasMore,
         updateItems,
@@ -139,18 +140,18 @@ export function useDataTable<T>(options: DataTableOptions = {}) {
 }
 
 // （待实现联动筛选）
-export function useDataFilter<T>(options: FilterOptions<T>) {
-    const rawOptions = cloneDeep(options) // 原始副本
+export function useDataFilter<T extends object>({ filters, buttons }: FilterOptions<T>) {
+    const rawValues = filters.map((item) => item.value) // 保存原始值
     const queryParams = shallowRef<Partial<T>>({})
 
     const filterOptions = reactive({
-        filters: options.filters,
+        filters,
         buttons: []
     }) as FormOptions<T>
 
-    if (options.buttons) {
-        // 组合参数，resolveParams 追加额外查询参数
-        filterOptions.buttons = options.buttons.map((item) => {
+    if (buttons) {
+        // 重新映射按钮，resolveParams 追加额外参数
+        filterOptions.buttons = buttons.map((item) => {
             const { resolveParams, ...rest } = item
             return {
                 ...rest,
@@ -163,18 +164,15 @@ export function useDataFilter<T>(options: FilterOptions<T>) {
     }
 
     // 重置过滤条件
-    const resetFilters = (...fields: (keyof T)[]) => {
-        rawOptions.filters.forEach((rawItem, index) => {
-            const currentItem = filterOptions.filters[index]
-            if (currentItem && !rawItem.required) {
-                if (!fields.length || fields.includes(rawItem.field)) {
-                    currentItem.value = rawItem.value
-                }
+    const resetFilters = () => {
+        filterOptions.filters.forEach((item, index) => {
+            if (item && !item.required) {
+                item.value = rawValues[index]
             }
         })
     }
 
-    // 获取查询参数，支持多条件查询（待实现）
+    // 获取查询参数，支持多字段模糊查询
     const getQueryParams = (reset = false) => {
         if (reset) resetFilters()
 
@@ -182,7 +180,10 @@ export function useDataFilter<T>(options: FilterOptions<T>) {
 
         filterOptions.filters.forEach((e) => {
             if (e.value !== undefined) {
-                params[e.field] = e.value
+                const fields = Array.isArray(e.field) ? e.field : [e.field]
+                fields.forEach((field) => {
+                    params[field] = e.value
+                })
             }
         })
 

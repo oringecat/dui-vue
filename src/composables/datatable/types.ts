@@ -7,14 +7,6 @@ export interface DataTableOptions {
 }
 
 /** 
- * 数据过滤项
- */
-export interface FilterData<T> {
-    fields: (keyof T)[]; // 多条件字段
-    values: (T[keyof T])[]; // 多选过滤或模糊查询
-}
-
-/** 
  * 按钮基类
  */
 export interface BaseButton {
@@ -42,7 +34,7 @@ export interface FormButton extends BaseButton {
  * 过滤字段
  */
 export interface FilterField<T, K extends keyof T> {
-    field: K;
+    field: K | (keyof T)[];
     label?: string;
     value?: T[K];
     placeholder?: string;

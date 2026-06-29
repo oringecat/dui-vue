@@ -16,17 +16,37 @@
                 </template>
             </template>
         </app-filter>
-        <div>订单列表</div>
+        <el-table :data="dataList" v-loading="loading" border>
+            <el-table-column prop="id" label="ID" />
+            <el-table-column prop="orderNumber" label="订单号" />
+            <el-table-column prop="status" label="状态" />
+            <el-table-column prop="orderTime" label="订单日期" />
+        </el-table>
+        <el-pagination :total="pageTotal" v-model:page-size="pageSize" v-model:current-page="pageIndex"
+            @change="loadData" />
     </pc-view>
 </template>
 
 <script lang="ts" setup>
 import { shallowRef } from 'vue'
 import { type FormRules } from 'element-plus'
-import { useDataFilter } from '@/composables/datatable'
+import { useDataTable, useDataFilter } from '@/composables/datatable'
+import { getOrderList } from '@/services/api/order'
 import AppFilter from '@pc/components/base/form-filter/index.vue'
 
 const dateValue = shallowRef<string[]>()
+
+const { dataList, pageIndex, pageSize, pageTotal, updateItems } = useDataTable<Order.OrderItem>()
+
+const { loading, fetch } = getOrderList({
+    data: {
+        pageSize: pageSize.value,
+        pageIndex: pageIndex.value
+    },
+    onSuccess: (res) => {
+        updateItems(res.data, res.total)
+    }
+})
 
 const { filterOptions, queryParams } = useDataFilter<Order.OrderParams>({
     filters: [
@@ -44,8 +64,7 @@ const { filterOptions, queryParams } = useDataFilter<Order.OrderParams>({
                 { label: '待发货', value: 2 },
                 { label: '待收货', value: 3 },
                 { label: '已完成', value: 4 }
-            ],
-            required: true
+            ]
         }
     ],
     buttons: [
@@ -63,11 +82,17 @@ const filterRules: FormRules = {
 }
 
 const loadData = () => {
-    console.log('发送请求', queryParams.value)
+    fetch({
+        pageIndex: pageIndex.value,
+        pageSize: pageSize.value,
+        ...queryParams.value
+    })
 }
 
 const buildQueryParams = (qs: Partial<Order.OrderParams>) => {
-    if (qs.status === 4) {
+    if (qs.status === 0) {
+        delete qs.status
+    } else if (qs.status === 4) {
         const [startTime, endTime] = dateValue.value || []
         qs.startTime = startTime
         qs.endTime = endTime
