@@ -41,7 +41,7 @@ export interface FilterField<T, K extends keyof T> {
     multiple?: boolean;
     required?: boolean;
     width?: number;
-    visibility?: () => boolean; // 控制元素显示或隐藏
+    visibility?: (params: Partial<T>) => boolean; // 控制元素显示或隐藏
     options?: () => {
         label: string;
         value: NonNullable<T[K]>;

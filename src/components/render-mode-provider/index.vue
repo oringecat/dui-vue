@@ -4,7 +4,7 @@
 
 <script lang="ts" setup>
 import { computed, provide } from 'vue'
-import { RenderModeKey, type RenderMode } from './hook'
+import { RenderModeKey, type RenderMode } from './use-render-mode'
 
 const props = defineProps<{
   mode: RenderMode

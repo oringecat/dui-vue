@@ -1,26 +1,17 @@
 <template>
     <pc-view class="order-list">
         <app-filter :options="filterOptions" :model="queryParams" :rules="filterRules" @submit="loadData">
-            <template #status="{ item }">
-                <el-form-item :label="item.label">
-                    <el-select v-model="item.value" placeholder="请选择">
-                        <el-option v-for="option in item.options?.()" :key="option.value" :label="option.label"
-                            :value="option.value" />
-                    </el-select>
+            <template #startTime-endTime="{ item }">
+                <el-form-item :label="item.label" prop="date">
+                    <el-date-picker type="daterange" v-model="dateValue" value-format="YYYY-MM-DD"
+                        start-placeholder="开始日期" end-placeholder="结束日期" />
                 </el-form-item>
-                <template v-if="item.value === 4">
-                    <el-form-item label="日期" prop="date">
-                        <el-date-picker type="daterange" v-model="dateValue" value-format="YYYY-MM-DD"
-                            start-placeholder="开始日期" end-placeholder="结束日期" />
-                    </el-form-item>
-                </template>
             </template>
         </app-filter>
-        <app-table :data="dataList" :columns="[]" v-loading="loading" border>
-            <el-table-column prop="id" label="ID" />
-            <el-table-column prop="orderNumber" label="订单号" />
-            <el-table-column prop="status" label="状态" />
-            <el-table-column prop="orderTime" label="订单日期" />
+        <app-table :data="dataList" :columns="tableColumns" v-loading="loading" border>
+            <template #action="{ row }">
+                <el-button type="primary" @click="openDetailView(row)">详情</el-button>
+            </template>
         </app-table>
         <app-pagination :total="pageTotal" v-model:page-size="pageSize" v-model:current-page="pageIndex"
             @change="loadData" />
@@ -30,9 +21,9 @@
 <script lang="ts" setup>
 import { shallowRef } from 'vue'
 import { type FormRules } from 'element-plus'
-import { useDataTable, useDataFilter } from '@/composables/datatable'
 import { getOrderList } from '@/services/api/order'
-import AppTable from '@pc/components/base/table/index.vue'
+import { useDataTable, useDataFilter } from '@/composables/datatable'
+import AppTable, { useTableView } from '@pc/components/base/table'
 import AppFilter from '@pc/components/base/form-filter/index.vue'
 import AppPagination from '@pc/components/base/pagination/index.vue'
 
@@ -48,6 +39,16 @@ const { loading, fetch } = getOrderList({
     onSuccess: (res) => {
         updateItems(res.data, res.total)
     }
+})
+
+const { tableColumns } = useTableView<Order.OrderItem>({
+    columns: [
+        { field: 'id', label: 'ID' },
+        { field: 'orderNumber', label: '订单号' },
+        { field: 'status', label: '状态' },
+        { field: 'orderTime', label: '订单日期', formatValue: (row) => row.orderTime },
+        { field: 'action', label: '操作' }
+    ]
 })
 
 const { filterOptions, queryParams } = useDataFilter<Order.OrderParams>({
@@ -67,7 +68,12 @@ const { filterOptions, queryParams } = useDataFilter<Order.OrderParams>({
                 { label: '待收货', value: 3 },
                 { label: '已完成', value: 4 }
             ]
-        }
+        },
+        {
+            field: ['startTime', 'endTime'],
+            label: '日期',
+            visibility: (qs) => qs.status === 4
+        },
     ],
     buttons: [
         { label: '查询', resolveParams: (qs) => buildQueryParams(qs) },
@@ -99,6 +105,12 @@ const buildQueryParams = (qs: Partial<Order.OrderParams>) => {
         qs.startTime = startTime
         qs.endTime = endTime
     }
+
+    pageIndex.value = 1
     return qs
+}
+
+const openDetailView = (row: Order.OrderParams) => {
+    console.log(row)
 }
 </script>

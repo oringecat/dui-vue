@@ -11,7 +11,7 @@
 import { useAttrs, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { Icon } from 'vant'
-import { useRenderMode } from '@/components/render-mode-provider/hook'
+import { useRenderMode } from '@/components/render-mode-provider/use-render-mode'
 
 const emit = defineEmits()
 

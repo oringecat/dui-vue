@@ -139,7 +139,7 @@ export function useDataTable<T extends object>(options: DataTableOptions = {}) {
     }
 }
 
-// （待实现联动筛选）
+// 多字段过滤，支持联动显示/隐藏
 export function useDataFilter<T extends object>({ filters, buttons }: FilterOptions<T>) {
     const rawValues = filters.map((item) => item.value) // 保存原始值
     const queryParams = shallowRef<Partial<T>>({})
@@ -190,6 +190,13 @@ export function useDataFilter<T extends object>({ filters, buttons }: FilterOpti
         return params
     }
 
+    const setFilterValue = <K extends keyof T>(field: K, value: T[K & string]) => {
+        const filtered = filterOptions.filters.find((item) => item.field === field)
+        if (filtered) {
+            filtered.value = value
+        }
+    }
+
     const getFilterValue = <K extends keyof T>(field: K) => {
         const filtered = filterOptions.filters.find((item) => item.field === field)
         return filtered?.value
@@ -199,6 +206,7 @@ export function useDataFilter<T extends object>({ filters, buttons }: FilterOpti
         queryParams,
         filterOptions,
         getQueryParams,
+        setFilterValue,
         getFilterValue
     }
 }

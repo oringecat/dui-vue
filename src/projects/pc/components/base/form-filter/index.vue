@@ -2,7 +2,7 @@
   <el-form ref="formRef" class="el-form--filter" :rules="formRules" :show-message="false">
     <slot name="before"></slot>
     <template v-for="(item, index) in options.filters" :key="index">
-      <template v-if="item.visibility?.() ?? true">
+      <template v-if="item.visibility?.(currentParams) ?? true">
         <slot :name="getFieldName(item.field)" :item="item">
           <el-form-item :label="item.label" :prop="getFieldName(item.field)">
             <el-select :placeholder="item.placeholder ?? '请选择'" v-model="item.value" :multiple="item.multiple"
@@ -19,7 +19,7 @@
     <slot name="after"></slot>
     <el-form-item v-if="options.buttons.length">
       <template v-for="(item, index) in options.buttons" :key="index">
-        <el-button :class="item.className" :disabled="loading" @click="handleButtonClick(item)">
+        <el-button :class="item.className ?? 'el-button--primary'" :disabled="loading" @click="handleButtonClick(item)">
           {{ item.label }}
         </el-button>
       </template>
@@ -36,6 +36,8 @@ import type { FormOptions, FormButton, FilterField } from '@/composables/datatab
 // 声明 slot 类型
 defineSlots<{
   [K in keyof T]: (props: { item: FilterField<T, K> }) => VNode[]
+} & {
+  [key: string]: (props: { item: FilterField<T, keyof T> }) => VNode[]
 } & {
   before?: () => VNode[]
   after?: () => VNode[]
@@ -60,6 +62,18 @@ const props = defineProps({
 const emit = defineEmits(['submit'])
 
 const formRef = shallowRef<FormInstance>()
+
+// 当前过滤参数
+const currentParams = computed(() => {
+  const params: Partial<T> = {}
+  props.options.filters.forEach((e) => {
+    if (e.value !== undefined) {
+      const fields = Array.isArray(e.field) ? e.field : [e.field]
+      fields.forEach((field) => params[field] = e.value)
+    }
+  })
+  return params
+})
 
 // 表单验证规则
 const formRules = computed<FormRules>(() => {
