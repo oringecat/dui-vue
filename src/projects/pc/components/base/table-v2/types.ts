@@ -1,22 +1,22 @@
-import type { ColumnAlignment } from 'element-plus'
+import type { ColumnAlignment, TableV2FixedDir } from 'element-plus'
 
 export interface TableOptions<T> {
-    columns: TableColumn<T>[];
+    columns?: TableColumn<T>[];
 }
 
 /**
  * 表格字段
  */
-export interface ColumnField<T, K extends keyof T> {
+export interface TableField<T, K extends keyof T> {
     field: K | (string & {});
     label: string | (() => string);
     className?: string;
     align?: ColumnAlignment;
     width?: number;
     sortable?: boolean;
-    show?: boolean;
+    visibility?: boolean | (() => boolean); // 控制元素显示或隐藏
     decimal?: number; // 保留小数点位数
-    fixed?: boolean | 'left' | 'right';
+    fixed?: true | TableV2FixedDir;
     formatValue?: (row: T) => unknown
 }
 
@@ -24,5 +24,5 @@ export interface ColumnField<T, K extends keyof T> {
  * 表格列
  */
 export type TableColumn<T> = {
-    [K in keyof T]: ColumnField<T, K>
+    [K in keyof T]: TableField<T, K>
 }[keyof T & string]

@@ -13,7 +13,7 @@ export default [
                     id: 1000 + i,
                     orderNumber: String(Math.floor(1000000000 + Math.random() * 9000000000)), // 随机订单号
                     status: 1,
-                    orderTime: new Date(Date.now() - Math.floor(Math.random() * 90 * 24 * 60 * 60 * 1000)).toISOString()
+                    orderTime: Date.now() - Math.floor(Math.random() * 90 * 24 * 60 * 60 * 1000)
                 })),
                 total: 200
             })

@@ -8,7 +8,13 @@
                 </el-form-item>
             </template>
         </app-filter>
-        <app-table :data="dataList" :columns="tableColumns" v-loading="loading" border>
+        <app-table :data="dataList" :columns="tableColumns" v-loading="loading" style="height: 400px;">
+            <template #toolbar>
+                <app-column-setting :columns="rawColumns" v-model:hidden-keys="hiddenKeys" />
+            </template>
+            <template #orderTime="{ value }">
+                {{ dayjs(value).format('YYYY-MM-DD HH:mm:ss') }}
+            </template>
             <template #action="{ row }">
                 <el-button type="primary" @click="openDetailView(row)">详情</el-button>
             </template>
@@ -23,13 +29,15 @@ import { shallowRef } from 'vue'
 import { type FormRules } from 'element-plus'
 import { getOrderList } from '@/services/api/order'
 import { useDataTable, useDataFilter } from '@/composables/datatable'
-import AppTable, { useTableView } from '@pc/components/base/table'
+import dayjs from 'dayjs'
+import AppTable, { useTableView } from '@pc/components/base/table-v2'
+import AppColumnSetting, { useTableColumns } from '@pc/components/base/column-setting'
 import AppFilter from '@pc/components/base/form-filter/index.vue'
 import AppPagination from '@pc/components/base/pagination/index.vue'
 
 const dateValue = shallowRef<string[]>()
 
-const { dataList, pageIndex, pageSize, pageTotal, updateItems } = useDataTable<Order.OrderItem>()
+const { dataList, pageIndex, pageSize, pageTotal, hasData, updateItems } = useDataTable<Order.OrderItem>()
 
 const { loading, fetch } = getOrderList({
     data: {
@@ -41,15 +49,13 @@ const { loading, fetch } = getOrderList({
     }
 })
 
-const { tableColumns } = useTableView<Order.OrderItem>({
-    columns: [
-        { field: 'id', label: 'ID' },
-        { field: 'orderNumber', label: '订单号' },
-        { field: 'status', label: '状态' },
-        { field: 'orderTime', label: '订单日期', formatValue: (row) => row.orderTime },
-        { field: 'action', label: '操作' }
-    ]
-})
+const { rawColumns, tableColumns, hiddenKeys } = useTableColumns<Order.OrderItem>('order-list', [
+    { field: 'id', label: 'ID' },
+    { field: 'orderNumber', label: '订单号' },
+    { field: 'status', label: '状态' },
+    { field: 'orderTime', label: '订单日期', formatValue: (row) => row.orderTime },
+    { field: 'action', label: '操作' }
+])
 
 const { filterOptions, queryParams } = useDataFilter<Order.OrderParams>({
     filters: [
@@ -90,11 +96,13 @@ const filterRules: FormRules = {
 }
 
 const loadData = () => {
-    fetch({
-        pageIndex: pageIndex.value,
-        pageSize: pageSize.value,
-        ...queryParams.value
-    })
+    if (!hasData.value) {
+        fetch({
+            pageIndex: pageIndex.value,
+            pageSize: pageSize.value,
+            ...queryParams.value
+        })
+    }
 }
 
 const buildQueryParams = (qs: Partial<Order.OrderParams>) => {
@@ -110,7 +118,7 @@ const buildQueryParams = (qs: Partial<Order.OrderParams>) => {
     return qs
 }
 
-const openDetailView = (row: Order.OrderParams) => {
+const openDetailView = (row: Order.OrderItem) => {
     console.log(row)
 }
 </script>

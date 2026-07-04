@@ -3,40 +3,6 @@ import Page from '@pc/components/layouts/page/index.vue'
 
 export const authRoutes: AuthRoute[] = [
     {
-        code: 'product',
-        title: '商品管理',
-        authType: AuthType.Route,
-        url: '/product',
-        component: Page,
-        icon: 'default',
-        children: [
-            {
-                code: 'product-list',
-                title: '商品列表',
-                authType: AuthType.Route,
-                url: '/product/list',
-                component: () => import('@pc/views/product/list/index.vue'),
-                icon: 'default',
-                children: [
-                    {
-                        code: 'product-list-modify',
-                        title: '修改',
-                        authType: AuthType.Operation,
-                        component: () => import('@pc/views/product/components/edit/index.vue'),
-                        icon: 'edit'
-                    },
-                    {
-                        code: 'product-list-delete',
-                        title: '删除',
-                        authType: AuthType.Operation,
-                        component: () => import('@pc/views/product/components/delete/index.vue'),
-                        icon: 'delete'
-                    }
-                ]
-            }
-        ]
-    },
-    {
         code: 'order',
         title: '订单管理',
         authType: AuthType.Route,
@@ -72,6 +38,40 @@ export const authRoutes: AuthRoute[] = [
                         authType: AuthType.Component,
                         component: () => import('@pc/views/order/aftersale/index.vue'),
                         icon: 'aftersale'
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        code: 'product',
+        title: '商品管理',
+        authType: AuthType.Route,
+        url: '/product',
+        component: Page,
+        icon: 'default',
+        children: [
+            {
+                code: 'product-list',
+                title: '商品列表',
+                authType: AuthType.Route,
+                url: '/product/list',
+                component: () => import('@pc/views/product/list/index.vue'),
+                icon: 'default',
+                children: [
+                    {
+                        code: 'product-list-modify',
+                        title: '修改',
+                        authType: AuthType.Operation,
+                        component: () => import('@pc/views/product/components/edit/index.vue'),
+                        icon: 'edit'
+                    },
+                    {
+                        code: 'product-list-delete',
+                        title: '删除',
+                        authType: AuthType.Operation,
+                        component: () => import('@pc/views/product/components/delete/index.vue'),
+                        icon: 'delete'
                     }
                 ]
             }

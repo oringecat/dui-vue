@@ -4,8 +4,8 @@ export interface SocketOptions {
     heartbeatMessage?: () => MessageEvent['data'];
     onOpen?: () => void;
     onMessage: (data: MessageEvent['data']) => void;
-    onClose?: () => void;
-    onError?: (err: Event) => void;
+    onClose?: (event?: CloseEvent) => void;
+    onError?: (error: Event) => void;
     onBeforeReconnect?: (count: number) => void;
     onReconnect?: () => void;
 }

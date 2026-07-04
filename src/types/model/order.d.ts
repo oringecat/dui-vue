@@ -13,6 +13,6 @@ declare namespace Order {
         userId: number;
         orderNumber: string;
         status: number;
-        orderTime: string;
+        orderTime: number; // 时间戳日期
     }
 }

@@ -1,8 +1,4 @@
-import type { ColumnAlignment } from 'element-plus'
-
-export interface TableOptions<T> {
-    columns: TableColumn<T>[];
-}
+import type { ColumnAlignment, TableV2FixedDir } from 'element-plus'
 
 /**
  * 表格字段
@@ -14,9 +10,9 @@ export interface ColumnField<T, K extends keyof T> {
     align?: ColumnAlignment;
     width?: number;
     sortable?: boolean;
-    show?: boolean;
+    visibility?: boolean | (() => boolean); // 控制元素显示或隐藏
     decimal?: number; // 保留小数点位数
-    fixed?: boolean | 'left' | 'right';
+    fixed?: true | TableV2FixedDir;
     formatValue?: (row: T) => unknown
 }
 

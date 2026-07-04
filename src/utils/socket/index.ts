@@ -14,13 +14,13 @@ export default class {
     private heartbeatInterval = 1000 * 30; // 心跳间隔时间
     private reconnectTimer = 0; // 重连定时器
     private reconnectCount = 0; // 本次已重连次数
-    private reconnectLimit = 10; // 限制重连次数，0 = 无限制
+    private reconnectLimit = 5; // 限制重连次数，0 = 无限制
 
     private heartbeatMessage?: () => string | Blob | BufferSource; // 心跳消息
     private onOpen?: () => void; // 连接成功的事件
     private onMessage: (data: MessageEvent['data']) => void; // 消息事件
-    private onClose?: () => void; // 连接断开的事件
-    private onError?: (err: Event) => void; // 连接发生错误的事件
+    private onClose?: (event?: CloseEvent) => void; // 连接断开的事件
+    private onError?: (error: Event) => void; // 连接发生错误的事件
     private onBeforeReconnect?: (count: number) => void; // 重连之前的事件
     private onReconnect?: () => void; // 重连成功之后的事件
 
@@ -97,7 +97,7 @@ export default class {
             }
 
             // 连接断开
-            ws.onclose = () => {
+            ws.onclose = (event) => {
                 // 判断是否当前实例，重连时不处理旧 WebSocket 事件
                 if (this.connectionId === currentConnectionId) {
                     this.stopHeartbeat()
@@ -111,7 +111,7 @@ export default class {
                     if (this.reconnectCount === 0) {
                         console.error(this.url, '连接已断开')
                         this.readyState = WebSocket.CLOSED
-                        this.onClose?.()
+                        this.onClose?.(event)
                     }
                 }
             }
@@ -184,7 +184,7 @@ export default class {
         }
 
         // 重连次数小于限制次数则继续重连
-        if (this.reconnectCount < this.reconnectLimit) {
+        if (this.reconnectLimit === 0 || this.reconnectCount < this.reconnectLimit) {
             this.isReconnecting = true
             this.reconnectCount++
             this.onBeforeReconnect?.(this.reconnectCount)

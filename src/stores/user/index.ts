@@ -37,7 +37,7 @@ export const useUserStore = defineStore('user', () => {
         await serviceConfig.init()
     }
 
-    const getUserInfo = (key: keyof User.UserInfo) => {
+    const getUserInfo = <K extends keyof User.UserInfo>(key: K) => {
         return state.userInfo[key]
     }
 
