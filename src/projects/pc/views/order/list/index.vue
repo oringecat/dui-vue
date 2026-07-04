@@ -1,6 +1,6 @@
 <template>
     <pc-view class="order-list">
-        <app-filter :options="filterOptions" :model="queryParams" :rules="filterRules" @submit="loadData">
+        <app-filter :options="filterOptions" :model="queryParams" :rules="filterRules" @submit="onSearch">
             <template #startTime-endTime="{ item }">
                 <el-form-item :label="item.label" prop="date">
                     <el-date-picker type="daterange" v-model="dateValue" value-format="YYYY-MM-DD"
@@ -8,7 +8,8 @@
                 </el-form-item>
             </template>
         </app-filter>
-        <app-table :data="dataList" :columns="tableColumns" v-loading="loading" style="height: 400px;">
+        <app-table :data="dataList" :columns="tableColumns" v-loading="loading"
+            style="height: 400px; overflow: hidden;">
             <template #toolbar>
                 <app-column-setting :columns="rawColumns" v-model:hidden-keys="hiddenKeys" />
             </template>
@@ -36,6 +37,14 @@ import AppFilter from '@pc/components/base/form-filter/index.vue'
 import AppPagination from '@pc/components/base/pagination/index.vue'
 
 const dateValue = shallowRef<string[]>()
+
+// 表单验证规则
+const filterRules: FormRules = {
+    date: [{
+        required: true,
+        validator: () => dateValue.value?.length === 2
+    }]
+}
 
 const { dataList, pageIndex, pageSize, pageTotal, hasData, updateItems } = useDataTable<Order.OrderItem>()
 
@@ -66,9 +75,7 @@ const { filterOptions, queryParams } = useDataFilter<Order.OrderParams>({
         {
             field: 'status',
             label: '状态',
-            value: 0,
             options: () => [
-                { label: '全部', value: 0 },
                 { label: '待付款', value: 1 },
                 { label: '待发货', value: 2 },
                 { label: '待收货', value: 3 },
@@ -87,16 +94,19 @@ const { filterOptions, queryParams } = useDataFilter<Order.OrderParams>({
     ]
 })
 
-// 表单验证规则
-const filterRules: FormRules = {
-    date: [{
-        required: true,
-        validator: () => dateValue.value?.length === 2
-    }]
+const buildQueryParams = (qs: Partial<Order.OrderParams>) => {
+    if (qs.status === 4) {
+        const [startTime, endTime] = dateValue.value || []
+        qs.startTime = startTime
+        qs.endTime = endTime
+    } else {
+        dateValue.value = []
+    }
+    return qs
 }
 
-const loadData = () => {
-    if (!hasData.value) {
+const loadData = (force = false) => {
+    if (force || !hasData.value) {
         fetch({
             pageIndex: pageIndex.value,
             pageSize: pageSize.value,
@@ -105,17 +115,9 @@ const loadData = () => {
     }
 }
 
-const buildQueryParams = (qs: Partial<Order.OrderParams>) => {
-    if (qs.status === 0) {
-        delete qs.status
-    } else if (qs.status === 4) {
-        const [startTime, endTime] = dateValue.value || []
-        qs.startTime = startTime
-        qs.endTime = endTime
-    }
-
+const onSearch = () => {
     pageIndex.value = 1
-    return qs
+    loadData(true)
 }
 
 const openDetailView = (row: Order.OrderItem) => {

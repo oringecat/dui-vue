@@ -1,12 +1,10 @@
 <template>
-    <el-pagination :total="total" :page-size="size" :current-page="current" :page-sizes="[10, 20, 30, 50]"
+    <el-pagination :total="total" :page-size="pageSize" :current-page="currentPage" :page-sizes="[10, 20, 30, 50]"
         layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange"
         @current-change="handleCurrentChange" background />
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue'
-
 const props = defineProps({
     // 总条数
     total: {
@@ -27,23 +25,16 @@ const props = defineProps({
 
 const emit = defineEmits(['update:currentPage', 'update:pageSize', 'change'])
 
-const size = computed({
-    get: () => props.pageSize,
-    set: (val) => emit('update:pageSize', val)
-})
-
-const current = computed({
-    get: () => props.currentPage,
-    set: (val) => emit('update:currentPage', val)
-})
-
 const handleSizeChange = (val: number) => {
-    size.value = val
-    if (props.total > 0) handleCurrentChange(1)
+    emit('update:pageSize', val)
+
+    if (props.total > 0) {
+        handleCurrentChange(1, true)
+    }
 }
 
-const handleCurrentChange = (val: number) => {
-    current.value = val
-    emit('change')
+const handleCurrentChange = (val: number, reset = false) => {
+    emit('update:currentPage', val)
+    emit('change', reset)
 }
 </script>

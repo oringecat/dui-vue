@@ -42,7 +42,7 @@ export function useDataTable<T extends object>(options: DataTableOptions = {}) {
     const pageCount = computed(() => pageTotal.value > 0 ? Math.ceil(pageTotal.value / state.pageSize) : 1)
 
     // 当前页是否有数据
-    const hasData = computed(() => !!rawData.get(state.pageIndex)?.length)
+    const hasData = computed(() => getPageItems(state.pageIndex).length > 0)
 
     // 是否有更多
     const hasMore = computed(() => {
