@@ -16,9 +16,9 @@ export function useTableColumns<T extends object>(columnsKey: string, columns?: 
         return `table-columns:user-${scope}:${columnsKey}`
     })
 
-    const tableColumns = computed(() => rawColumns.value.filter((column) => {
-        const visible = typeof column.visibility === 'function' ? column.visibility() : (column.visibility ?? true)
-        return visible && !hiddenKeys.value.has(String(column.field))
+    const tableColumns = computed(() => rawColumns.value.filter((col) => {
+        const visible = typeof col.visibility === 'function' ? col.visibility() : (col.visibility ?? true)
+        return visible && !hiddenKeys.value.has(col.field)
     }))
 
     // 加载本地配置

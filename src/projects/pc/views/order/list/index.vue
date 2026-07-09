@@ -1,6 +1,6 @@
 <template>
     <pc-view class="order-list">
-        <app-filter :options="filterOptions" :model="queryParams" :rules="filterRules" @submit="onSearch">
+        <app-filter :options="filterOptions" :rules="filterRules" @submit="onSearch">
             <template #startTime-endTime="{ item }">
                 <el-form-item :label="item.label" prop="date">
                     <el-date-picker type="daterange" v-model="dateValue" value-format="YYYY-MM-DD"
@@ -8,7 +8,7 @@
                 </el-form-item>
             </template>
         </app-filter>
-        <app-table :data="dataList" :columns="tableColumns" v-loading="loading"
+        <app-table :data="dataList" :columns="tableColumns" :context-menus="contextMenus" v-loading="loading"
             style="height: 400px; overflow: hidden;">
             <template #toolbar>
                 <app-column-setting :columns="rawColumns" v-model:hidden-keys="hiddenKeys" />
@@ -45,6 +45,8 @@ const filterRules: FormRules = {
         validator: () => dateValue.value?.length === 2
     }]
 }
+
+const { contextMenus } = useTableView()
 
 const { dataList, pageIndex, pageSize, pageTotal, hasData, updateItems } = useDataTable<Order.OrderItem>()
 

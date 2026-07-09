@@ -1,12 +1,13 @@
 <template>
-  <el-form ref="formRef" class="el-form--filter" :rules="formRules" :show-message="false">
+  <el-form ref="formRef" class="el-form--filter" :model="formData" :rules="formRules" :show-message="false">
     <slot name="before"></slot>
     <template v-for="(item, index) in options.filters" :key="index">
-      <template v-if="item.visibility?.(currentParams) ?? true">
+      <template v-if="item.visibility?.(formData) ?? true">
         <slot :name="getFieldName(item.field)" :item="item">
           <el-form-item :label="item.label" :prop="getFieldName(item.field)">
             <el-select :placeholder="item.placeholder ?? '请选择'" v-model="item.value" :multiple="item.multiple"
-              collapse-tags clearable @change="item.onChange" :style="handleStyle(item.width)" v-if="item.options">
+              :clearable="!item.required" collapse-tags @change="item.onChange" :style="handleStyle(item.width)"
+              v-if="item.options">
               <el-option v-for="option in item.options()" :key="option.value" :value="option.value"
                 :label="option.label" />
             </el-select>
@@ -63,16 +64,14 @@ const emit = defineEmits(['submit'])
 
 const formRef = shallowRef<FormInstance>()
 
-// 当前过滤参数
-const currentParams = computed(() => {
-  const params: Partial<T> = {}
+// 表单数据映射
+const formData = computed(() => {
+  const model: Partial<T> = {}
   props.options.filters.forEach((e) => {
-    if (e.value !== undefined) {
-      const fields = Array.isArray(e.field) ? e.field : [e.field]
-      fields.forEach((field) => params[field] = e.value)
-    }
+    const fields = Array.isArray(e.field) ? e.field : [e.field]
+    fields.forEach((field) => model[field] = e.value)
   })
-  return params
+  return model
 })
 
 // 表单验证规则

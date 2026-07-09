@@ -41,9 +41,6 @@ export function useDataTable<T extends object>(options: DataTableOptions = {}) {
     // 总页数
     const pageCount = computed(() => pageTotal.value > 0 ? Math.ceil(pageTotal.value / state.pageSize) : 1)
 
-    // 当前页是否有数据
-    const hasData = computed(() => getPageItems(state.pageIndex).length > 0)
-
     // 是否有更多
     const hasMore = computed(() => {
         if (state.failed) return false
@@ -60,6 +57,9 @@ export function useDataTable<T extends object>(options: DataTableOptions = {}) {
 
     // 当前列表（有缓存直接返回列表数据）
     const dataList = computed(() => getPageItems(state.pageIndex))
+
+    // 当前页是否有数据
+    const hasData = computed(() => dataList.value.length > 0)
 
     // 追加列表
     const appendList = computed(() => {
@@ -85,7 +85,7 @@ export function useDataTable<T extends object>(options: DataTableOptions = {}) {
 
     // 更新列表
     const updateItems = (data: T[], total = 0) => {
-        // 当前页 hasData == true 说明是二次请求，数据可能发生了变化，为防止前后页数据错乱，清空缓存数据
+        // 总条数变更或重复请求当前页时数据可能发生了变化，避免分页数据错乱，清空缓存
         if (total !== rawTotal.value || hasData.value) {
             rawData.clear()
         }
@@ -199,7 +199,7 @@ export function useDataFilter<T extends object>({ filters, buttons }: FilterOpti
 
     const getFilterValue = <K extends keyof T>(field: K) => {
         const filtered = filterOptions.filters.find((item) => item.field === field)
-        return filtered?.value
+        return filtered?.value as T[K] | undefined
     }
 
     return {

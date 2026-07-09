@@ -26,3 +26,25 @@ export interface TableField<T, K extends keyof T> {
 export type TableColumn<T> = {
     [K in keyof T]: TableField<T, K>
 }[keyof T & string]
+
+/**
+ * 右键菜单
+ */
+export interface ContextMenuState<T> {
+    x: number;
+    y: number;
+    index: number;
+    row: T;
+}
+
+/**
+ * 右键菜单项
+ */
+export interface ContextMenuItem<T> {
+    title: string;
+    icon?: string;
+    className?: string;
+    onClick: (state: ContextMenuState<T>) => void;
+    disabled?: (state: ContextMenuState<T>) => boolean;
+    visibility?: (state: ContextMenuState<T>) => boolean;
+}
