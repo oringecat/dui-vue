@@ -1,5 +1,12 @@
 <template>
     <pc-view class="order-list">
+        <el-tabs v-if="viewComponents.length">
+            <template v-for="{ code, title, component } in viewComponents" :key="code">
+                <el-tab-pane :label="title" :name="code">
+                    <component :is="defineAsyncComponent(component)" :auth-code="code" v-if="component" />
+                </el-tab-pane>
+            </template>
+        </el-tabs>
         <app-filter :options="filterOptions" :rules="filterRules" @submit="onSearch">
             <template #startTime-endTime="{ item }">
                 <el-form-item :label="item.label" prop="date">
@@ -16,23 +23,28 @@
             <template #orderTime="{ value }">
                 {{ dayjs(value).format('YYYY-MM-DD HH:mm:ss') }}
             </template>
-            <template #action="{ row }">
-                <el-button type="primary" @click="openDetailView(row)">详情</el-button>
+            <template #action="{ row, index }">
+                <el-button v-for="action in getRowActions(row, index)" :key="action.code" type="primary"
+                    :disabled="action.disabled" @click="action.onClick">
+                    {{ action.title }}
+                </el-button>
             </template>
         </app-table>
         <app-pagination :total="pageTotal" v-model:page-size="pageSize" v-model:current-page="pageIndex"
             @change="loadData" />
+        <component :is="currentComponent" v-if="currentComponent" />
     </pc-view>
 </template>
 
 <script lang="ts" setup>
-import { shallowRef } from 'vue'
+import { shallowRef, defineAsyncComponent } from 'vue'
 import { type FormRules } from 'element-plus'
 import { getOrderList } from '@/services/api/order'
 import { useDataTable, useDataFilter } from '@/composables/datatable'
+import { useAuthComponents } from '@/composables/auth-components'
 import dayjs from 'dayjs'
-import AppTable, { useTableView } from '@pc/components/base/table-v2'
 import AppColumnSetting, { useTableColumns } from '@pc/components/base/column-setting'
+import AppTable from '@pc/components/base/table-v2/index.vue'
 import AppFilter from '@pc/components/base/form-filter/index.vue'
 import AppPagination from '@pc/components/base/pagination/index.vue'
 
@@ -46,7 +58,7 @@ const filterRules: FormRules = {
     }]
 }
 
-const { contextMenus } = useTableView()
+const { currentComponent, viewComponents, contextMenus, getRowActions } = useAuthComponents()
 
 const { dataList, pageIndex, pageSize, pageTotal, hasData, updateItems } = useDataTable<Order.OrderItem>()
 
@@ -60,7 +72,7 @@ const { loading, fetch } = getOrderList({
     }
 })
 
-const { rawColumns, tableColumns, hiddenKeys } = useTableColumns<Order.OrderItem>('order-list', [
+const { rawColumns, tableColumns, hiddenKeys } = useTableColumns<Order.OrderItem>([
     { field: 'id', label: 'ID' },
     { field: 'orderNumber', label: '订单号' },
     { field: 'status', label: '状态' },
@@ -120,9 +132,5 @@ const loadData = (force = false) => {
 const onSearch = () => {
     pageIndex.value = 1
     loadData(true)
-}
-
-const openDetailView = (row: Order.OrderItem) => {
-    console.log(row)
 }
 </script>

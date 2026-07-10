@@ -3,8 +3,7 @@ import { defineStore } from 'pinia'
 import type { Router, RouteRecordRaw } from 'vue-router'
 import { getUserAuths } from '@/services/api/user'
 import { authRoutes } from './routes'
-import { AuthType } from './types'
-import type { AuthRoute } from './types'
+import { AuthType, type AuthRoute } from './types'
 
 export const useAuthStore = defineStore('auth', () => {
     const { loading, rawFetch } = getUserAuths()
@@ -89,6 +88,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     return {
         loading,
+        userAuths,
         userRoutes,
         userMenus,
         hasAuth,

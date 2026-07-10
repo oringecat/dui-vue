@@ -15,7 +15,8 @@
                 @click.stop>
                 <ul>
                     <template v-for="(menu, index) in visibleContextMenus" :key="index">
-                        <li :class="menu.className" @click="menu.onClick(contextMenu)">
+                        <li :class="[menu.className, { 'is-disabled': menu.disabled(contextMenu) }]"
+                            @click="onContextMenuClick(menu)">
                             {{ menu.title }}
                         </li>
                     </template>
@@ -28,7 +29,8 @@
 <script lang="ts" generic="T extends object" setup>
 import { onMounted, onBeforeUnmount, shallowRef, computed, useSlots, h, Fragment, type PropType, type VNode } from 'vue'
 import type { Column, RowEventHandlers } from 'element-plus'
-import type { TableColumn, ContextMenuState, ContextMenuItem } from './types'
+import type { ContextMenuState, ContextMenuItem } from '@/composables/auth-components/types'
+import type { TableColumn } from './types'
 
 // 声明 slot 类型
 defineSlots<{
@@ -78,7 +80,7 @@ const rowEventHandlers: RowEventHandlers = {
 // 可见的右键菜单列表
 const visibleContextMenus = computed(() => props.contextMenus.filter(({ visibility }) => {
     const state = contextMenu.value
-    return visibility && state ? visibility(state) : true
+    return state ? visibility(state) : true
 }))
 
 // 可见的表格列
@@ -134,6 +136,14 @@ const getCellValue = (row: T, column: TableColumn<T>) => {
     }
 
     return value
+}
+
+// 右键菜单点击事件
+const onContextMenuClick = (menu: ContextMenuItem<T>) => {
+    if (contextMenu.value) {
+        menu.onClick(contextMenu.value)
+    }
+    hideContextMenu()
 }
 
 // 点击空白区域隐藏右键菜单

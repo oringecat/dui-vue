@@ -1,4 +1,4 @@
-import type { Component } from 'vue'
+import type { AsyncComponentLoader } from 'vue'
 
 /**
  * 权限路由
@@ -8,7 +8,7 @@ export interface AuthRoute {
     title: string;
     authType: AuthType;
     url?: string;
-    component?: Component;
+    component?: AsyncComponentLoader;
     icon?: string;
     remark?: string;
     children?: AuthRoute[];
@@ -20,7 +20,7 @@ export interface AuthRoute {
 export enum AuthType {
     Route = 1, // 路由
     Component = 2, // 组件
-    Operation = 3, // 操作权限
+    Action = 3, // 动作
     Link = 4, // 外链
     Iframe = 5, // 内联框架
 }

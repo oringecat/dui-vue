@@ -1,56 +1,93 @@
 <template>
-    <div class="block">
-        <div>
-            <app-category @submit="(item) => categorys.push(item)" />
-        </div>
-        <div>
-            <pre>{{ categorys }}</pre>
-        </div>
-    </div>
-    <div class="block" v-if="categorys.length">
-        <div>
-            <app-sales v-bind="{ categorys }" @submit="(item) => sales.push(item)" />
-        </div>
-        <div>
-            <pre>{{ sales }}</pre>
-        </div>
-    </div>
-    <div class="block" v-if="sales.length">
-        <div>
-            <app-spec v-bind="{ categorys, sales }" @submit="(item) => specs.push(item)" />
-        </div>
-        <div>
-            <pre>{{ specs }}</pre>
-        </div>
-    </div>
-    <div class="block" v-if="specs.length">
-        <div>
-            <app-sku v-bind="{ categorys, sales, specs }" @submit="(item) => skus.push(item)" />
-        </div>
-    </div>
+    <pc-view class="product-list">
+        <app-filter :options="filterOptions" @submit="onSearch" />
+        <app-table :data="dataList" :columns="tableColumns" :context-menus="contextMenus" v-loading="loading"
+            style="height: 400px; overflow: hidden;">
+            <template #toolbar>
+                <el-button v-for="action in getActions('product-list-add')" :key="action.code" @click="action.onClick">
+                    {{ action.title }}
+                </el-button>
+            </template>
+            <template #action="{ row, index }">
+                <el-button v-for="action in getRowActions(row, index)" :key="action.code" type="primary"
+                    :disabled="action.disabled" @click="action.onClick">
+                    {{ action.title }}
+                </el-button>
+            </template>
+        </app-table>
+        <app-pagination :total="pageTotal" v-model:page-size="pageSize" v-model:current-page="pageIndex"
+            @change="loadData" />
+        <component :is="currentComponent" v-if="currentComponent" />
+    </pc-view>
 </template>
 
 <script lang="ts" setup>
-import { reactive } from 'vue'
-import type { ProductSku, Category, SaleAttribute, SaleSpec } from '@/types/product'
-import AppCategory from './components/category/index.vue'
-import AppSales from './components/sales/index.vue'
-import AppSpec from './components/spec/index.vue'
-import AppSku from './components/sku/index.vue'
+import { getProductList } from '@/services/api/product'
+import { useDataTable, useDataFilter } from '@/composables/datatable'
+import { useAuthComponents } from '@/composables/auth-components'
+import { useTableColumns } from '@pc/components/base/column-setting'
+import AppTable from '@pc/components/base/table-v2/index.vue'
+import AppFilter from '@pc/components/base/form-filter/index.vue'
+import AppPagination from '@pc/components/base/pagination/index.vue'
 
-const categorys = reactive<Category[]>([])
-const sales = reactive<SaleAttribute[]>([])
-const specs = reactive<SaleSpec[]>([])
-const skus = reactive<ProductSku[]>([])
-</script>
+const { currentComponent, contextMenus, getActions, getRowActions } = useAuthComponents<Product.ProductItem>({
+    actions: {
+        'product-list-shelve': { visibility: (row) => row.status === 2 },
+        'product-list-delete': { disabled: (row) => row.status === 1 }
+    }
+})
 
-<style lang="less">
-.block {
-    display: flex;
-    border-bottom: 1px solid #f2f2f2;
+const { dataList, pageIndex, pageSize, pageTotal, hasData, updateItems } = useDataTable<Product.ProductItem>()
 
-    .el-select {
-        min-width: 160px;
+const { loading, fetch } = getProductList({
+    data: {
+        pageSize: pageSize.value,
+        pageIndex: pageIndex.value
+    },
+    onSuccess: (res) => {
+        updateItems(res.data, res.total)
+    }
+})
+
+const { tableColumns } = useTableColumns<Product.ProductItem>([
+    { field: 'id', label: 'ID' },
+    { field: 'productName', label: '商品名称' },
+    { field: 'action', label: '操作' }
+])
+
+const { filterOptions, queryParams } = useDataFilter<Product.ProductParams>({
+    filters: [
+        {
+            field: 'categoryId',
+            label: '分类'
+        },
+        {
+            field: 'status',
+            label: '状态',
+            options: () => [
+                { label: '已上架', value: 1 },
+                { label: '已下架', value: 2 }
+            ]
+        }
+    ],
+    buttons: [
+        { label: '查询' },
+        { label: '重置', reset: true }
+    ]
+})
+
+const loadData = (force = false) => {
+    if (force || !hasData.value) {
+        fetch({
+            pageIndex: pageIndex.value,
+            pageSize: pageSize.value,
+            ...queryParams.value
+        })
     }
 }
-</style>
+
+const onSearch = () => {
+    pageIndex.value = 1
+    loadData(true)
+}
+</script>

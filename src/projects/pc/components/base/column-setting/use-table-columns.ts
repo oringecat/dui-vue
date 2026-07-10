@@ -1,9 +1,12 @@
 import { shallowRef, computed, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import type { TableColumn } from './types'
 
-export function useTableColumns<T extends object>(columnsKey: string, columns?: TableColumn<T>[]) {
+export function useTableColumns<T extends object>(columns: TableColumn<T>[], key?: string) {
+    const route = useRoute()
     const userStore = useUserStore()
+    const columnsKey = key ?? route.path
 
     // 原始列
     const rawColumns = shallowRef(columns ?? [])
@@ -53,7 +56,7 @@ export function useTableColumns<T extends object>(columnsKey: string, columns?: 
     }
 
     const toggleColumn = (field: string, visible?: boolean) => {
-        const targetKeys  = new Set(hiddenKeys.value)
+        const targetKeys = new Set(hiddenKeys.value)
         const shouldHide = visible === undefined ? !targetKeys.has(field) : !visible
 
         if (shouldHide) {

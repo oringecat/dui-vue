@@ -49,7 +49,7 @@ export default [
         url: '/api/user/auths',
         method: 'get',
         rawResponse: (req, res) => {
-            const data = ['product', 'order', 'product-list', 'order-list-aftersale', 'order-list']
+            const data = ['product', 'product-list', 'product-list-add', 'product-list-shelve', 'product-list-modify', 'product-list-delete', 'order', 'order-list', 'order-list-unshipped', 'order-list-aftersale']
             const total = data.length
 
             mockResponse(res, {
