@@ -4,15 +4,10 @@
         <app-table :data="dataList" :columns="tableColumns" :context-menus="contextMenus" v-loading="loading"
             style="height: 400px; overflow: hidden;">
             <template #toolbar>
-                <el-button v-for="action in getActions('product-list-add')" :key="action.code" @click="action.onClick">
-                    {{ action.title }}
-                </el-button>
+                <app-action :actions="getActions('product-list-add')" />
             </template>
             <template #action="{ row, index }">
-                <el-button v-for="action in getRowActions(row, index)" :key="action.code" type="primary"
-                    :disabled="action.disabled" @click="action.onClick">
-                    {{ action.title }}
-                </el-button>
+                <app-action :actions="getRowActions(row, index)" type="primary" size="small" />
             </template>
         </app-table>
         <app-pagination :total="pageTotal" v-model:page-size="pageSize" v-model:current-page="pageIndex"
@@ -29,6 +24,7 @@ import { useTableColumns } from '@pc/components/base/column-setting'
 import AppTable from '@pc/components/base/table-v2/index.vue'
 import AppFilter from '@pc/components/base/form-filter/index.vue'
 import AppPagination from '@pc/components/base/pagination/index.vue'
+import AppAction from '@pc/components/base/action/index.vue'
 
 const { currentComponent, contextMenus, getActions, getRowActions } = useAuthComponents<Product.ProductItem>({
     actions: {

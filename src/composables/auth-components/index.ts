@@ -1,4 +1,4 @@
-import { shallowRef, shallowReactive, computed, defineAsyncComponent, h } from 'vue'
+import { shallowRef, shallowReactive, computed, defineAsyncComponent, h, type Component } from 'vue'
 import { useRoute } from 'vue-router'
 import { findTreeNodeById } from '@/helpers/filters'
 import { useAuthStore } from '@/stores/auth'
@@ -20,7 +20,7 @@ export function useAuthComponents<T extends object>(options: Partial<AuthCompone
     const usedCodes = shallowReactive(new Set<string>()) // 缓存已被占用的 actions
 
     const showComponent = shallowRef(false)
-    const currentComponent = shallowRef()
+    const currentComponent = shallowRef<Component>()
 
     // 打开组件
     const openComponent = ({ code, component }: AuthRoute, row?: T) => {

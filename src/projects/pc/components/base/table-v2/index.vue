@@ -83,11 +83,8 @@ const visibleContextMenus = computed(() => props.contextMenus.filter(({ visibili
     return state ? visibility(state) : true
 }))
 
-// 可见的表格列
-const visibleColumns = computed(() => props.columns.filter(({ visibility }) => typeof visibility === 'function' ? visibility() : visibility ?? true))
-
 // 计算出固定宽度
-const fixedWidth = computed(() => visibleColumns.value.reduce((pre, cur) => {
+const fixedWidth = computed(() => props.columns.reduce((pre, cur) => {
     if (cur.width) {
         pre.length += 1
         pre.width += cur.width
@@ -99,9 +96,9 @@ const generateColumns = (width: number): Column<T>[] => {
     // 最小宽度
     const minWidth = 120
     // 计算平均剩余宽度，减去 --el-table-scrollbar-size 宽度
-    const defaultWidth = (width - 6 - fixedWidth.value.width) / (visibleColumns.value.length - fixedWidth.value.length)
+    const defaultWidth = (width - 6 - fixedWidth.value.width) / (props.columns.length - fixedWidth.value.length)
 
-    return visibleColumns.value.map((prop) => ({
+    return props.columns.map((prop) => ({
         key: prop.field,
         dataKey: prop.field,
         title: getColumnLabel(prop.label),
