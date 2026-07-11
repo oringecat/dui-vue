@@ -1,37 +1,28 @@
 <template>
     <div class="app-table-v2">
-        <div class="app-table-v2__toolbar">
+        <div class="app-table-v2__toolbar" v-if="slots.toolbar">
             <slot name="toolbar"></slot>
         </div>
-        <el-auto-resizer>
+        <el-auto-resizer class="app-table-v2__resizer">
             <template #default="{ height, width }">
                 <el-table-v2 :data="data" :columns="generateColumns(width)" :row-key="rowKey" :width="width"
-                    :height="height" :row-event-handlers="rowEventHandlers" />
+                    :height="height" :row-event-handlers="rowEventHandlers" fixed />
             </template>
         </el-auto-resizer>
-        <!-- 右键菜单 -->
-        <teleport to="body" v-if="contextMenu && visibleContextMenus.length">
-            <div class="app-table-v2__context-menu" :style="{ left: contextMenu.x + 'px', top: contextMenu.y + 'px' }"
-                @click.stop>
-                <ul>
-                    <template v-for="(menu, index) in visibleContextMenus" :key="index">
-                        <li :class="[menu.className, { 'is-disabled': menu.disabled(contextMenu) }]"
-                            @click="onContextMenuClick(menu)">
-                            {{ menu.title }}
-                        </li>
-                    </template>
-                </ul>
-            </div>
-        </teleport>
+        <div class="app-table-v2__footer" v-if="slots.footer">
+            <slot name="footer"></slot>
+        </div>
+        <app-context-menu v-model:state="contextMenuState" :context-menus="contextMenus" v-if="contextMenus.length" />
     </div>
 </template>
 
 <script lang="ts" generic="T extends object" setup>
-import { onMounted, onBeforeUnmount, shallowRef, computed, useSlots, h, Fragment, type PropType, type VNode } from 'vue'
+import { shallowRef, computed, useSlots, h, Fragment, type VNode } from 'vue'
 import type { Column, RowEventHandlers } from 'element-plus'
 import { getNestedValue } from '@/helpers/filters'
-import type { ContextMenuState, ContextMenuItem } from '@/composables/auth-components/types'
-import type { TableColumn } from './types'
+import type { TableColumn } from '@pc/components/ui/column-setting'
+import type { ContextMenuState, ContextMenuItem } from '@pc/components/ui/context-menu/types'
+import AppContextMenu from '@pc/components/ui/context-menu/index.vue'
 
 // 声明 slot 类型
 defineSlots<{
@@ -40,49 +31,38 @@ defineSlots<{
     [key: string]: (props: { row: T; value: unknown; index: number }) => VNode[]
 } & {
     toolbar?: () => VNode[]
+    footer?: () => VNode[]
 }>()
 
-const props = defineProps({
-    data: {
-        type: Array as PropType<T[]>,
-        required: true
-    },
-    columns: {
-        type: Array as PropType<TableColumn<T>[]>,
-        required: true
-    },
-    rowKey: {
-        type: [String, Number, Symbol]
-    },
-    contextMenus: {
-        type: Array as PropType<ContextMenuItem<T>[]>,
-        default: () => ([])
-    }
+const props = withDefaults(defineProps<{
+    data: T[]
+    rowKey?: string | number | symbol
+    border?: boolean
+    columns: TableColumn<T>[]
+    contextMenus?: ContextMenuItem<T>[]
+}>(), {
+    contextMenus: () => []
 })
 
 const slots = useSlots()
 
-const contextMenu = shallowRef<ContextMenuState<T>>()
+const contextMenuState = shallowRef<ContextMenuState<T>>()
 
 const rowEventHandlers: RowEventHandlers = {
     onContextmenu: ({ event, rowData, rowIndex }) => {
-        const e = event as MouseEvent
-        e.preventDefault()
+        if (props.contextMenus.length) {
+            const e = event as MouseEvent
+            e.preventDefault()
 
-        contextMenu.value = {
-            x: e.clientX,
-            y: e.clientY,
-            index: rowIndex,
-            row: rowData
+            contextMenuState.value = {
+                x: e.clientX,
+                y: e.clientY,
+                index: rowIndex,
+                row: rowData
+            }
         }
     }
 }
-
-// 可见的右键菜单列表
-const visibleContextMenus = computed(() => props.contextMenus.filter(({ visibility }) => {
-    const state = contextMenu.value
-    return state ? visibility(state) : true
-}))
 
 // 计算出固定宽度
 const fixedWidth = computed(() => props.columns.reduce((pre, cur) => {
@@ -121,27 +101,6 @@ const generateColumns = (width: number): Column<T>[] => {
 const getColumnLabel = (label: unknown) => {
     return typeof label === 'function' ? label() : label
 }
-
-// 右键菜单点击事件
-const onContextMenuClick = (menu: ContextMenuItem<T>) => {
-    if (contextMenu.value) {
-        menu.onClick(contextMenu.value)
-    }
-    hideContextMenu()
-}
-
-// 点击空白区域隐藏右键菜单
-const hideContextMenu = () => {
-    contextMenu.value = undefined
-}
-
-onMounted(() => {
-    document.addEventListener('click', hideContextMenu)
-})
-
-onBeforeUnmount(() => {
-    document.removeEventListener('click', hideContextMenu)
-})
 </script>
 
 <style lang="less">

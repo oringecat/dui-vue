@@ -13,32 +13,45 @@ export const authRoutes: AuthRoute[] = [
         children: [
             {
                 code: 'order-list',
-                title: '订单列表',
+                title: '平台订单',
                 authType: AuthType.Route,
                 url: '/order/list',
-                component: () => import('@pc/views/order/list/index.vue'),
+                component: () => import('@pc/views/order/index.vue'),
                 icon: 'default',
                 children: [
                     {
-                        code: 'order-list-unshipped',
-                        title: '未发货',
+                        code: 'order-list-tb',
+                        title: '淘宝',
                         authType: AuthType.Component,
-                        component: () => import('@pc/views/order/unshipped/index.vue'),
-                        icon: 'unshipped'
+                        component: () => import('@pc/views/order/list/index.vue'),
+                        children: [
+                            {
+                                code: 'order-list-tb-ship',
+                                title: '发货',
+                                authType: AuthType.Action,
+                                component: () => import('@pc/views/order/ship/index.vue'),
+                                icon: 'Van'
+                            },
+                            {
+                                code: 'order-list-tb-details',
+                                title: '详情',
+                                authType: AuthType.Action,
+                                component: () => import('@pc/views/order/details/index.vue'),
+                                icon: 'Search'
+                            }
+                        ]
                     },
                     {
-                        code: 'order-list-shipped',
-                        title: '已发货',
+                        code: 'order-list-jd',
+                        title: '京东',
                         authType: AuthType.Component,
-                        component: () => import('@pc/views/order/shipped/index.vue'),
-                        icon: 'shipped'
+                        component: () => import('@pc/views/order/list/index.vue')
                     },
                     {
-                        code: 'order-list-aftersale',
-                        title: '售后',
+                        code: 'order-list-wx',
+                        title: '微信',
                         authType: AuthType.Component,
-                        component: () => import('@pc/views/order/aftersale/index.vue'),
-                        icon: 'aftersale'
+                        component: () => import('@pc/views/order/list/index.vue')
                     }
                 ]
             }
@@ -65,28 +78,35 @@ export const authRoutes: AuthRoute[] = [
                         title: '新增',
                         authType: AuthType.Action,
                         component: () => import('@pc/views/product/components/edit/index.vue'),
-                        icon: 'plus'
+                        icon: 'Plus'
                     },
                     {
                         code: 'product-list-shelve',
                         title: '上架',
                         authType: AuthType.Action,
                         component: () => import('@pc/views/product/components/shelve/index.vue'),
-                        icon: 'shelve'
+                        icon: 'Sell'
+                    },
+                    {
+                        code: 'product-list-unshelve',
+                        title: '下架',
+                        authType: AuthType.Action,
+                        component: () => import('@pc/views/product/components/shelve/index.vue'),
+                        icon: 'SoldOut'
                     },
                     {
                         code: 'product-list-modify',
                         title: '修改',
                         authType: AuthType.Action,
                         component: () => import('@pc/views/product/components/edit/index.vue'),
-                        icon: 'edit'
+                        icon: 'Edit'
                     },
                     {
                         code: 'product-list-delete',
                         title: '删除',
                         authType: AuthType.Action,
                         component: () => import('@pc/views/product/components/delete/index.vue'),
-                        icon: 'delete'
+                        icon: 'Delete'
                     }
                 ]
             }
@@ -113,14 +133,14 @@ export const authRoutes: AuthRoute[] = [
                         title: '详情',
                         authType: AuthType.Action,
                         component: () => import('@pc/views/user/components/details/index.vue'),
-                        icon: 'detail'
+                        icon: 'Search'
                     },
                     {
                         code: 'user-list-modify',
                         title: '修改',
                         authType: AuthType.Action,
                         component: () => import('@pc/views/user/components/edit/index.vue'),
-                        icon: 'edit'
+                        icon: 'Edit'
                     }
                 ]
             }

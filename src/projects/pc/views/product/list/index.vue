@@ -1,10 +1,10 @@
 <template>
     <pc-view class="product-list">
-        <app-filter :options="filterOptions" @submit="onSearch" />
-        <app-table :data="dataList" :columns="tableColumns" :context-menus="contextMenus" v-loading="loading"
-            style="height: 400px; overflow: hidden;">
+        <app-filter :options="filterOptions" @submit="loadData(true)" />
+        <app-table :data="dataList" :columns="tableColumns" :context-menus="contextMenus" v-loading="loading">
             <template #toolbar>
                 <app-action :actions="getActions('product-list-add')" />
+                <app-column-setting :columns="rawColumns" v-model:hidden-keys="hiddenKeys" />
             </template>
             <template #action="{ row, index }">
                 <app-action :actions="getRowActions(row, index)" type="primary" size="small" />
@@ -20,8 +20,8 @@
 import { getProductList } from '@/services/api/product'
 import { useDataTable, useDataFilter } from '@/composables/datatable'
 import { useAuthComponents } from '@/composables/auth-components'
-import { useTableColumns } from '@pc/components/ui/column-setting'
-import AppTable from '@pc/components/ui/table-v2/index.vue'
+import AppColumnSetting, { useTableColumns } from '@pc/components/ui/column-setting'
+import AppTable from '@pc/components/ui/table/index.vue'
 import AppFilter from '@pc/components/ui/form-filter/index.vue'
 import AppPagination from '@pc/components/ui/pagination/index.vue'
 import AppAction from '@pc/components/ui/action/index.vue'
@@ -29,6 +29,7 @@ import AppAction from '@pc/components/ui/action/index.vue'
 const { currentComponent, contextMenus, getActions, getRowActions } = useAuthComponents<Product.ProductItem>({
     actions: {
         'product-list-shelve': { visibility: (row) => row.status === 2 },
+        'product-list-unshelve': { visibility: (row) => row.status === 1 },
         'product-list-delete': { disabled: (row) => row.status === 1 }
     }
 })
@@ -42,13 +43,14 @@ const { loading, fetch } = getProductList({
     },
     onSuccess: (res) => {
         updateItems(res.data, res.total)
-    }
+    },
+    immediate: true
 })
 
-const { tableColumns } = useTableColumns<Product.ProductItem>([
+const { rawColumns, tableColumns, hiddenKeys } = useTableColumns<Product.ProductItem>([
     { field: 'id', label: 'ID' },
     { field: 'productName', label: '商品名称' },
-    { field: 'action', label: '操作' }
+    { field: 'action', label: '操作', fixed: 'right' }
 ])
 
 const { filterOptions, queryParams } = useDataFilter<Product.ProductParams>({
@@ -73,17 +75,14 @@ const { filterOptions, queryParams } = useDataFilter<Product.ProductParams>({
 })
 
 const loadData = (force = false) => {
-    if (force || !hasData.value) {
-        fetch({
-            pageIndex: pageIndex.value,
-            pageSize: pageSize.value,
-            ...queryParams.value
-        })
-    }
-}
+    if (!force && hasData.value) return
 
-const onSearch = () => {
-    pageIndex.value = 1
-    loadData(true)
+    if (force) pageIndex.value = 1
+
+    fetch({
+        pageIndex: pageIndex.value,
+        pageSize: pageSize.value,
+        ...queryParams.value
+    })
 }
 </script>

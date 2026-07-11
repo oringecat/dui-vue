@@ -13,7 +13,7 @@
 import type { Component } from 'vue'
 import type { RouteLocationNormalized } from 'vue-router'
 import { useTransitionStore } from '@/stores/transition'
-import { useHistoryStore } from '@/projects/mobile/router/history'
+import { useHistoryStore } from '@mobile/router/history'
 import RouterTransition from '@mobile/components/ui/router-transition/index.vue'
 
 const transitionStore = useTransitionStore()

@@ -31,7 +31,7 @@
 import type { Component } from 'vue'
 import type { RouteLocationNormalized } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { useHistoryStore } from '@/projects/pc/router/history'
+import { useHistoryStore } from '@pc/router/history'
 
 const historyStore = useHistoryStore()
 const authStore = useAuthStore()

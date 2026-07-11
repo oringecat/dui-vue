@@ -3,13 +3,14 @@ import { useRoute } from 'vue-router'
 import { findTreeNodeById } from '@/helpers/filters'
 import { useAuthStore } from '@/stores/auth'
 import { AuthType, type AuthRoute } from '@/stores/auth/types'
-import type { AuthComponentsOptions, ContextMenuState, ContextMenuItem, ActionItem } from './types'
+import type { ContextMenuState, ContextMenuItem } from '@pc/components/ui/context-menu/types'
+import type { AuthComponentsOptions, ActionItem } from './types'
 
 // 动态权限组件
 export function useAuthComponents<T extends object>(options: Partial<AuthComponentsOptions<T>> = {}) {
     const route = useRoute()
     const authStore = useAuthStore()
-    const authCode = options.parentCode ?? String(route.name)
+    const authCode = options.authCode ?? String(route.name)
 
     const { children = [] } = findTreeNodeById(authStore.userAuths, authCode, { id: 'code' }) ?? {}
 
@@ -98,10 +99,13 @@ export function useAuthComponents<T extends object>(options: Partial<AuthCompone
         }, [])
     }
 
+    const hasRowAction = computed(() => contextMenus.value.length > 0)
+
     return {
         viewComponents,
         currentComponent,
         contextMenus,
+        hasRowAction,
         getActions,
         getRowActions
     }

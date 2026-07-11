@@ -1,35 +1,66 @@
 <template>
-    <el-table>
-        <component :is="renderColumns" />
-    </el-table>
+    <div class="app-table">
+        <div class="app-table__toolbar" v-if="slots.toolbar">
+            <slot name="toolbar"></slot>
+        </div>
+        <el-table class="app-table__body" :data="data" :border="border" @row-contextmenu="onContextmenu">
+            <component :is="renderColumns" />
+        </el-table>
+        <div class="app-table__footer" v-if="slots.footer">
+            <slot name="footer"></slot>
+        </div>
+        <app-context-menu v-model:state="contextMenuState" :context-menus="contextMenus" v-if="contextMenus.length" />
+    </div>
 </template>
 
 <script lang="ts" generic="T extends object" setup>
-import { computed, useSlots, h, type PropType, type VNode } from 'vue'
-//import type { TableColumnCtx } from 'element-plus'
+import { shallowRef, useSlots, h, type VNode } from 'vue'
+import type { TableColumnCtx } from 'element-plus'
 import { getNestedValue } from '@/helpers/filters'
-import type { TableColumn } from './types'
+import type { TableColumn } from '@pc/components/ui/column-setting'
+import type { ContextMenuState, ContextMenuItem } from '@pc/components/ui/context-menu/types'
+import AppContextMenu from '@pc/components/ui/context-menu/index.vue'
 
 // 声明 slot 类型
 defineSlots<{
     [K in keyof T]: (props: { row: T; value: T[K]; index: number }) => VNode[]
 } & {
     [key: string]: (props: { row: T; value: unknown; index: number }) => VNode[]
+} & {
+    toolbar?: () => VNode[]
+    footer?: () => VNode[]
 }>()
 
-const props = defineProps({
-    columns: {
-        type: Array as PropType<TableColumn<T>[]>,
-        required: true
-    }
+const props = withDefaults(defineProps<{
+    data: T[]
+    rowKey?: string | number | symbol
+    border?: boolean
+    columns: TableColumn<T>[]
+    contextMenus?: ContextMenuItem<T>[]
+}>(), {
+    border: true,
+    contextMenus: () => []
 })
 
 const slots = useSlots()
 
-const visibleColumns = computed(() => props.columns.filter((item) => item.show ?? true))
+const contextMenuState = shallowRef<ContextMenuState<T>>()
+
+// 鼠标右键
+const onContextmenu = (row: T, column: TableColumnCtx<T>, event: PointerEvent) => {
+    if (props.contextMenus.length) {
+        event.preventDefault()
+        contextMenuState.value = {
+            x: event.clientX,
+            y: event.clientY,
+            index: column.getColumnIndex(),
+            row
+        }
+    }
+}
 
 // 渲染数据列
-const renderColumns = () => visibleColumns.value.map((item) =>
+const renderColumns = () => props.columns.map((item) =>
     h(
         ElTableColumn,
         {
@@ -58,3 +89,7 @@ const getColumnLabel = (label: unknown) => {
     return typeof label === 'function' ? label() : label
 }
 </script>
+
+<style lang="less">
+@import './index.less';
+</style>
