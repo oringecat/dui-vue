@@ -22,8 +22,8 @@ import { useComponent } from '@/composables/component'
 import { useDataTable } from '@/composables/datatable'
 import { useRefresh } from '@/composables/refresh'
 import { getProductList } from '@/services/api/product'
-import AppPullRefresh from '@mobile/components/base/pull-refresh/index.vue'
-import AppList from '@mobile/components/base/list/index.vue'
+import AppPullRefresh from '@mobile/components/ui/pull-refresh/index.vue'
+import AppList from '@mobile/components/ui/list/index.vue'
 
 const components: Record<string, Component> = {
     detail: defineAsyncComponent(() => import('../detail/index.vue'))

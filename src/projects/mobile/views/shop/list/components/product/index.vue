@@ -14,7 +14,7 @@
 import { useDataTable } from '@/composables/datatable'
 import { useRefresh } from '@/composables/refresh'
 import { getProductList } from '@/services/api/product'
-import AppList from '@mobile/components/base/list/index.vue'
+import AppList from '@mobile/components/ui/list/index.vue'
 import AppWaterfall from '@/components/waterfall/index.vue'
 
 const props = defineProps({

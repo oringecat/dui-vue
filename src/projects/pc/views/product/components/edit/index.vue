@@ -35,7 +35,7 @@
 <script lang="ts" setup>
 import { reactive } from 'vue'
 import type { ProductSku, Category, SaleAttribute, SaleSpec } from '@/types/product'
-import AppDialog from '@pc/components/base/dialog/index.vue'
+import AppDialog from '@pc/components/ui/dialog/index.vue'
 import AppCategory from './category/index.vue'
 import AppSales from './sales/index.vue'
 import AppSpec from './spec/index.vue'

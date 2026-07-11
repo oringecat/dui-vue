@@ -13,7 +13,7 @@
 <script lang="ts" setup>
 import { defineAsyncComponent, type Component } from 'vue'
 import { useComponent } from '@/composables/component'
-import AppPopup from '@mobile/components/base/popup/index.vue'
+import AppPopup from '@mobile/components/ui/popup/index.vue'
 
 const components: Record<string, Component> = {
     after: defineAsyncComponent(() => import('../after/index.vue'))

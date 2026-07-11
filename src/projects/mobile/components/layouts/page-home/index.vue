@@ -20,7 +20,7 @@
 <script lang="ts" setup>
 import { shallowRef, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import RouterTransition from '../../base/router-transition/index.vue'
+import RouterTransition from '@mobile/components/ui/router-transition/index.vue'
 
 const route = useRoute()
 const router = useRouter()

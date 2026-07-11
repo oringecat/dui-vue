@@ -11,7 +11,7 @@
 
 <script lang="ts" setup>
 import { shallowRef } from 'vue'
-import AppPopup from '@mobile/components/base/popup/index.vue'
+import AppPopup from '@mobile/components/ui/popup/index.vue'
 
 defineProps<{
     show: boolean;

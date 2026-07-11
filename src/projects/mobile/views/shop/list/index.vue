@@ -28,7 +28,7 @@
 
 <script lang="ts" setup>
 import { shallowRef, defineAsyncComponent } from 'vue'
-import AppPullRefresh from '@mobile/components/base/pull-refresh/index.vue'
+import AppPullRefresh from '@mobile/components/ui/pull-refresh/index.vue'
 
 const ProductList = defineAsyncComponent(() => import('./components/product/index.vue'))
 

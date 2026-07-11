@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts" setup>
-import AppDialog from '@pc/components/base/dialog/index.vue'
+import AppDialog from '@pc/components/ui/dialog/index.vue'
 
 const props = defineProps<{
     selectedRow?: Product.ProductItem

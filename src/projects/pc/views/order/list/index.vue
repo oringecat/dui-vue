@@ -43,10 +43,10 @@ import { getOrderList } from '@/services/api/order'
 import { useDataTable, useDataFilter } from '@/composables/datatable'
 import { useAuthComponents } from '@/composables/auth-components'
 import dayjs from 'dayjs'
-import AppColumnSetting, { useTableColumns } from '@pc/components/base/column-setting'
-import AppTable from '@pc/components/base/table-v2/index.vue'
-import AppFilter from '@pc/components/base/form-filter/index.vue'
-import AppPagination from '@pc/components/base/pagination/index.vue'
+import AppColumnSetting, { useTableColumns } from '@pc/components/ui/column-setting'
+import AppTable from '@pc/components/ui/table-v2/index.vue'
+import AppFilter from '@pc/components/ui/form-filter/index.vue'
+import AppPagination from '@pc/components/ui/pagination/index.vue'
 
 const dateValue = shallowRef<string[]>()
 

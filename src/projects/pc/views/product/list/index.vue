@@ -20,11 +20,11 @@
 import { getProductList } from '@/services/api/product'
 import { useDataTable, useDataFilter } from '@/composables/datatable'
 import { useAuthComponents } from '@/composables/auth-components'
-import { useTableColumns } from '@pc/components/base/column-setting'
-import AppTable from '@pc/components/base/table-v2/index.vue'
-import AppFilter from '@pc/components/base/form-filter/index.vue'
-import AppPagination from '@pc/components/base/pagination/index.vue'
-import AppAction from '@pc/components/base/action/index.vue'
+import { useTableColumns } from '@pc/components/ui/column-setting'
+import AppTable from '@pc/components/ui/table-v2/index.vue'
+import AppFilter from '@pc/components/ui/form-filter/index.vue'
+import AppPagination from '@pc/components/ui/pagination/index.vue'
+import AppAction from '@pc/components/ui/action/index.vue'
 
 const { currentComponent, contextMenus, getActions, getRowActions } = useAuthComponents<Product.ProductItem>({
     actions: {

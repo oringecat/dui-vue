@@ -28,7 +28,7 @@
 
 <script lang="ts" setup>
 import { shallowRef } from 'vue'
-import AppPullRefresh from '@mobile/components/base/pull-refresh/index.vue'
+import AppPullRefresh from '@mobile/components/ui/pull-refresh/index.vue'
 
 const keyword = shallowRef('')
 </script>
