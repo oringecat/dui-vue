@@ -7,6 +7,7 @@
 <script lang="ts" generic="T extends object" setup>
 import { computed, useSlots, h, type PropType, type VNode } from 'vue'
 //import type { TableColumnCtx } from 'element-plus'
+import { getNestedValue } from '@/helpers/filters'
 import type { TableColumn } from './types'
 
 // 声明 slot 类型
@@ -43,7 +44,7 @@ const renderColumns = () => visibleColumns.value.map((item) =>
         {
             default: ({ row, $index }: { row: T; $index: number }) => {
                 const renderSlot = slots[item.field]
-                const value = getCellValue(row, item)
+                const value = getNestedValue(row, item.field)
                 if (renderSlot) {
                     return renderSlot({ row, value, index: $index })
                 }
@@ -55,19 +56,5 @@ const renderColumns = () => visibleColumns.value.map((item) =>
 
 const getColumnLabel = (label: unknown) => {
     return typeof label === 'function' ? label() : label
-}
-
-const getCellValue = (row: T, column: TableColumn<T>) => {
-    const keys = String(column.field).split('.') // 对象路径
-    let value: unknown = row
-
-    for (const key of keys) {
-        if (value == null || typeof value !== 'object') {
-            return undefined
-        }
-        value = (value as Record<string, unknown>)[key]
-    }
-
-    return value
 }
 </script>

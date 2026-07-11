@@ -29,6 +29,7 @@
 <script lang="ts" generic="T extends object" setup>
 import { onMounted, onBeforeUnmount, shallowRef, computed, useSlots, h, Fragment, type PropType, type VNode } from 'vue'
 import type { Column, RowEventHandlers } from 'element-plus'
+import { getNestedValue } from '@/helpers/filters'
 import type { ContextMenuState, ContextMenuItem } from '@/composables/auth-components/types'
 import type { TableColumn } from './types'
 
@@ -108,7 +109,7 @@ const generateColumns = (width: number): Column<T>[] => {
         fixed: prop.fixed,
         cellRenderer: ({ rowData, rowIndex }: { rowData: T; rowIndex: number }) => {
             const renderSlot = slots[prop.field]
-            const value = getCellValue(rowData, prop)
+            const value = getNestedValue(rowData, prop.field)
             if (renderSlot) {
                 return h(Fragment, null, renderSlot({ row: rowData, value, index: rowIndex }))
             }
@@ -119,20 +120,6 @@ const generateColumns = (width: number): Column<T>[] => {
 
 const getColumnLabel = (label: unknown) => {
     return typeof label === 'function' ? label() : label
-}
-
-const getCellValue = (row: T, column: TableColumn<T>) => {
-    const keys = String(column.field).split('.') // 对象路径
-    let value: unknown = row
-
-    for (const key of keys) {
-        if (value == null || typeof value !== 'object') {
-            return undefined
-        }
-        value = (value as Record<string, unknown>)[key]
-    }
-
-    return value
 }
 
 // 右键菜单点击事件

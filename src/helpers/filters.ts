@@ -75,3 +75,22 @@ export function hasValueInTree<T extends object, K extends keyof T>(data: T[], v
     }
     return data.some(checkItem)
 }
+
+/**
+ * 获取对象嵌套属性值
+ * @param obj 
+ * @param path 
+ * @returns 
+ */
+export function getNestedValue(obj: unknown, path: string) {
+    const keys = path.split('.')
+
+    for (const key of keys) {
+        if (obj == null || typeof obj !== 'object') {
+            return undefined
+        }
+        obj = (obj as Record<string, unknown>)[key]
+    }
+
+    return obj
+}
