@@ -21,7 +21,7 @@ import { defineAsyncComponent, type Component } from 'vue'
 import { useComponent } from '@/composables/component'
 import { useDataTable } from '@/composables/datatable'
 import { useRefresh } from '@/composables/refresh'
-import { getProductList } from '@/services/api/product'
+import { createProductList } from '@/services/api/product'
 import AppPullRefresh from '@mobile/components/ui/pull-refresh/index.vue'
 import AppList from '@mobile/components/ui/list/index.vue'
 
@@ -33,7 +33,7 @@ const { showComponent, componentId, openComponent, closeComponent } = useCompone
 
 const { appendList, pageIndex, pageSize, hasMore,  failed, updateItems, nextPage } = useDataTable<Product.ProductItem>()
 
-const { loading, fetch } = getProductList({
+const { loading, fetch } = createProductList({
     data: {
         pageSize: pageSize.value,
         pageIndex: pageIndex.value

@@ -7,17 +7,17 @@
                 <app-column-setting :columns="rawColumns" v-model:hidden-keys="hiddenKeys" />
             </template>
             <template #action="{ row, index }">
-                <app-action :actions="getRowActions(row, index)" type="primary" size="small" />
+                <app-action :actions="getRowActions(row, index)" :button-props="{ type: 'primary', size: 'small' }" />
             </template>
         </app-table>
         <app-pagination :total="pageTotal" v-model:page-size="pageSize" v-model:current-page="pageIndex"
             @change="loadData" />
-        <component :is="currentComponent" v-if="currentComponent" />
+        <component :is="actionComponent" v-if="actionComponent" />
     </pc-view>
 </template>
 
 <script lang="ts" setup>
-import { getProductList } from '@/services/api/product'
+import { createProductList } from '@/services/api/product'
 import { useDataTable, useDataFilter } from '@/composables/datatable'
 import { useAuthComponents } from '@/composables/auth-components'
 import AppColumnSetting, { useTableColumns } from '@pc/components/ui/column-setting'
@@ -26,8 +26,8 @@ import AppFilter from '@pc/components/ui/form-filter/index.vue'
 import AppPagination from '@pc/components/ui/pagination/index.vue'
 import AppAction from '@pc/components/ui/action/index.vue'
 
-const { currentComponent, contextMenus, getActions, getRowActions } = useAuthComponents<Product.ProductItem>({
-    actions: {
+const { actionComponent, contextMenus, getActions, getRowActions } = useAuthComponents<Product.ProductItem>({
+    rowActions: {
         'product-list-shelve': { visibility: (row) => row.status === 2 },
         'product-list-unshelve': { visibility: (row) => row.status === 1 },
         'product-list-delete': { disabled: (row) => row.status === 1 }
@@ -36,7 +36,7 @@ const { currentComponent, contextMenus, getActions, getRowActions } = useAuthCom
 
 const { dataList, pageIndex, pageSize, pageTotal, hasData, updateItems } = useDataTable<Product.ProductItem>()
 
-const { loading, fetch } = getProductList({
+const { loading, fetch } = createProductList({
     data: {
         pageSize: pageSize.value,
         pageIndex: pageIndex.value

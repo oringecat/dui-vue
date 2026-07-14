@@ -13,7 +13,7 @@
 <script lang="ts" setup>
 import { useDataTable } from '@/composables/datatable'
 import { useRefresh } from '@/composables/refresh'
-import { getProductList } from '@/services/api/product'
+import { createProductList } from '@/services/api/product'
 import AppList from '@mobile/components/ui/list/index.vue'
 import AppWaterfall from '@/components/waterfall/index.vue'
 
@@ -23,7 +23,7 @@ const props = defineProps({
 
 const { appendList, pageIndex, pageSize, hasMore, failed, updateItems, nextPage } = useDataTable<Product.ProductItem>()
 
-const { loading, fetch } = getProductList({
+const { loading, fetch } = createProductList({
     data: {
         pageSize: pageSize.value,
         pageIndex: pageIndex.value

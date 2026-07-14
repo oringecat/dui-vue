@@ -42,7 +42,7 @@ export interface FilterField<T, K extends keyof T> {
     required?: boolean;
     width?: number;
     visibility?: (params: Partial<T>) => boolean; // 控制元素显示或隐藏
-    options?: () => {
+    options?: (params: Partial<T>) => {
         label: string;
         value: NonNullable<T[K]>;
     }[];
@@ -62,6 +62,7 @@ export type FilterItem<T> = {
 export interface FilterOptions<T> {
     filters: FilterItem<T>[];
     buttons?: ActionButton<T>[];
+    onReset?: () => void;
 }
 
 /**

@@ -8,7 +8,7 @@
             <el-select :placeholder="item.placeholder ?? '请选择'" v-model="item.value" :multiple="item.multiple"
               :clearable="!item.required" collapse-tags @change="item.onChange" :style="handleStyle(item.width)"
               v-if="item.options">
-              <el-option v-for="option in item.options()" :key="option.value" :value="option.value"
+              <el-option v-for="option in item.options(formData)" :key="option.value" :value="option.value"
                 :label="option.label" />
             </el-select>
             <el-input :placeholder="item.placeholder ?? '请输入'" v-model="item.value" :style="handleStyle(item.width)"

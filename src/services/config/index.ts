@@ -2,7 +2,7 @@ import dayjs from 'dayjs'
 import plus from '@/utils/plus'
 import { TaskQueue } from '@/utils/queue'
 import type { AppConfig, ServiceConfig } from './types'
-import { getServerTime } from '../api/common'
+import { createServerTime } from '../api/common'
 
 export default new (class {
     constructor() {
@@ -12,7 +12,7 @@ export default new (class {
 
         this.onReady(() => {
             // 同步服务器时间
-            getServerTime({
+            createServerTime({
                 immediate: true,
                 onSuccess: (res) => {
                     const serverTime = dayjs(res.data)

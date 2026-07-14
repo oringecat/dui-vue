@@ -1,12 +1,12 @@
 import { shallowRef, computed } from 'vue'
 import { defineStore } from 'pinia'
 import type { Router, RouteRecordRaw } from 'vue-router'
-import { getUserAuths } from '@/services/api/user'
+import { createUserAuths } from '@/services/api/user'
 import { authRoutes } from './routes'
 import { AuthType, type AuthRoute } from './types'
 
 export const useAuthStore = defineStore('auth', () => {
-    const { loading, rawFetch } = getUserAuths()
+    const { loading, rawFetch } = createUserAuths()
 
     // 用户权限
     const userAuths = shallowRef<AuthRoute[]>([])

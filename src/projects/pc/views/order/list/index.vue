@@ -6,17 +6,17 @@
                 {{ dayjs(value).format('YYYY-MM-DD HH:mm:ss') }}
             </template>
             <template #action="{ row, index }">
-                <app-action :actions="getRowActions(row, index)" type="primary" size="small" />
+                <app-action :actions="getRowActions(row, index)" :button-props="{ type: 'primary', size: 'small' }" />
             </template>
         </app-table>
         <app-pagination :total="pageTotal" v-model:page-size="pageSize" v-model:current-page="pageIndex"
             @change="loadData" />
-        <component :is="currentComponent" v-if="currentComponent" />
+        <component :is="actionComponent" v-if="actionComponent" />
     </pc-view>
 </template>
 
 <script lang="ts" setup>
-import { getOrderList } from '@/services/api/order'
+import { createOrderList } from '@/services/api/order'
 import { useDataTable } from '@/composables/datatable'
 import { useAuthComponents } from '@/composables/auth-components'
 import { useTableColumns } from '@pc/components/ui/column-setting'
@@ -30,13 +30,13 @@ const props = defineProps<{
     queryParams: Partial<Order.OrderParams>
 }>()
 
-const { currentComponent, contextMenus, hasRowAction, getRowActions } = useAuthComponents({
+const { actionComponent, contextMenus, hasRowAction, getRowActions } = useAuthComponents({
     authCode: props.componentId
 })
 
 const { dataList, pageIndex, pageSize, pageTotal, hasData, updateItems } = useDataTable<Order.OrderItem>()
 
-const { loading, fetch } = getOrderList({
+const { loading, fetch } = createOrderList({
     data: {
         pageSize: pageSize.value,
         pageIndex: pageIndex.value

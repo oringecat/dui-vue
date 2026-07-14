@@ -1,4 +1,4 @@
-import { shallowRef, shallowReactive, computed, defineAsyncComponent, h, type Component } from 'vue'
+import { shallowRef, shallowReactive, computed, defineAsyncComponent, toRaw, h, type Component } from 'vue'
 import { useRoute } from 'vue-router'
 import { findTreeNodeById } from '@/helpers/filters'
 import { useAuthStore } from '@/stores/auth'
@@ -21,7 +21,7 @@ export function useAuthComponents<T extends object>(options: Partial<AuthCompone
     const usedCodes = shallowReactive(new Set<string>()) // 缓存已被占用的 actions
 
     const showComponent = shallowRef(false)
-    const currentComponent = shallowRef<Component>()
+    const actionComponent = shallowRef<Component>()
 
     // 打开组件
     const openComponent = ({ code, component }: AuthRoute, row?: T) => {
@@ -30,11 +30,12 @@ export function useAuthComponents<T extends object>(options: Partial<AuthCompone
             showComponent.value = true
 
             // 创建组件
-            currentComponent.value = h(asyncComponent, {
+            actionComponent.value = h(asyncComponent, {
                 show: showComponent.value,
-                selectedRow: row,
+                selectedRow: toRaw(row),
                 onClosed: () => {
                     showComponent.value = false
+                    actionComponent.value = undefined
                     options.onClosed?.(code)
                 }
             })
@@ -62,7 +63,7 @@ export function useAuthComponents<T extends object>(options: Partial<AuthCompone
         const filtered = actions.filter(({ code }) => !usedCodes.has(code))
 
         return filtered.reduce<ContextMenuItem<T>[]>((result, a) => {
-            const { onClick, visibility, disabled } = options.actions?.[a.code] ?? {}
+            const { onClick, visibility, disabled } = options.rowActions?.[a.code] ?? {}
 
             result.push({
                 code: a.code,
@@ -103,7 +104,7 @@ export function useAuthComponents<T extends object>(options: Partial<AuthCompone
 
     return {
         viewComponents,
-        currentComponent,
+        actionComponent,
         contextMenus,
         hasRowAction,
         getActions,

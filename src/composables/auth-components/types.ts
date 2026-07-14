@@ -1,6 +1,6 @@
 export interface AuthComponentsOptions<T> {
     authCode: string;
-    actions: Record<string, {
+    rowActions: Record<string, {
         disabled?: (row: T, index: number) => boolean;
         visibility?: (row: T, index: number) => boolean;
         onClick?: (row: T, index: number) => void;

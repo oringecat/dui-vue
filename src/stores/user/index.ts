@@ -1,7 +1,7 @@
 import { reactive, toRefs, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { encryptAES, decryptAES } from '@/utils/crypto'
-import { login, logout, checkToken } from '@/services/api/user'
+import { createLogin, createLogout, createCheckToken } from '@/services/api/user'
 import { localData, sessionData } from '../storage'
 import serviceConfig from '@/services/config'
 import eventBus from '@/utils/bus'
@@ -28,9 +28,9 @@ export const useUserStore = defineStore('user', () => {
 
     const token = computed(() => state.userInfo.token)
 
-    const tokenRequest = checkToken()
-    const loginRequest = login()
-    const logoutRequest = logout()
+    const tokenRequest = createCheckToken()
+    const loginRequest = createLogin()
+    const logoutRequest = createLogout()
 
     // 加载初始数据
     const loadBaseData = async () => {

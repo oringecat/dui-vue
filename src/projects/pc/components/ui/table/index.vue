@@ -4,6 +4,8 @@
             <slot name="toolbar"></slot>
         </div>
         <el-table class="app-table__body" :data="data" :border="border" @row-contextmenu="onContextmenu">
+            <!-- 选择列 -->
+            <el-table-column type="selection" width="55" align="center" fixed v-if="selectionType" />
             <component :is="renderColumns" />
         </el-table>
         <div class="app-table__footer" v-if="slots.footer">
@@ -37,6 +39,7 @@ const props = withDefaults(defineProps<{
     border?: boolean
     columns: TableColumn<T>[]
     contextMenus?: ContextMenuItem<T>[]
+    selectionType?: 'single' | 'multiple'
 }>(), {
     border: true,
     contextMenus: () => []

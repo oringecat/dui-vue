@@ -1,5 +1,5 @@
 import { reactive, shallowReactive, shallowRef, computed, toRefs } from 'vue'
-import type { DataTableOptions, FilterOptions, FormOptions } from './types'
+import type { DataTableOptions, FilterOptions, FilterItem, FormOptions } from './types'
 
 // 自适应全量和接口分页数据
 export function useDataTable<T extends object>(options: DataTableOptions = {}) {
@@ -140,7 +140,7 @@ export function useDataTable<T extends object>(options: DataTableOptions = {}) {
 }
 
 // 多字段过滤，支持联动显示/隐藏
-export function useDataFilter<T extends object>({ filters, buttons }: FilterOptions<T>) {
+export function useDataFilter<T extends object>({ filters, buttons, onReset }: FilterOptions<T>) {
     const rawValues = filters.map((item) => item.value) // 保存原始值
     const queryParams = shallowRef<Partial<T>>({})
 
@@ -156,6 +156,7 @@ export function useDataFilter<T extends object>({ filters, buttons }: FilterOpti
             return {
                 ...rest,
                 buildQueryParams: async () => {
+                    if (item.reset) onReset?.()
                     const params = getQueryParams(item.reset)
                     queryParams.value = await (resolveParams?.(params) ?? params)
                 }
@@ -164,12 +165,29 @@ export function useDataFilter<T extends object>({ filters, buttons }: FilterOpti
     }
 
     // 重置过滤条件
-    const resetFilters = () => {
+    const resetFilters = (...fields: (keyof T)[]) => {
+        const changed: FilterItem<T>[] = []
+
         filterOptions.filters.forEach((item, index) => {
-            if (item && !item.required) {
-                item.value = rawValues[index]
+            const rawValue = rawValues[index]
+
+            if (item.value === rawValue) return
+
+            if (fields.length > 0) {
+                // 指定字段重置为原始值
+                const itemFields = Array.isArray(item.field) ? item.field : [item.field]
+                if (itemFields.some((field) => fields.includes(field))) {
+                    item.value = rawValue
+                    changed.push(item)
+                }
+            } else if (!item.required) {
+                item.value = rawValue
+                changed.push(item)
             }
         })
+
+        // 触发值变更回调
+        changed.forEach((item) => item.onChange?.(item.value))
     }
 
     // 获取查询参数，支持多字段模糊查询
@@ -207,6 +225,7 @@ export function useDataFilter<T extends object>({ filters, buttons }: FilterOpti
         filterOptions,
         getQueryParams,
         setFilterValue,
-        getFilterValue
+        getFilterValue,
+        resetFilters
     }
 }
