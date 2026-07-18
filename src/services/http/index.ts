@@ -1,6 +1,7 @@
 import { shallowRef } from 'vue'
-import axios, { type AxiosRequestConfig } from 'axios'
-import type { RequestOptions, BaseResponse, Method } from './types'
+import axios from 'axios'
+import type { AxiosRequestConfig, Method } from 'axios'
+import type { RequestOptions, BaseResponse } from './types'
 import { ResultCode } from './types'
 import { useTransitionStore } from '@/stores/transition'
 import { useUserStore } from '@/stores/user'
@@ -53,50 +54,65 @@ export default new (class {
 
     createRequest<Req extends object, Res>(method: Method, url: string, options: RequestOptions<{ req: Req, res: Res }> = {}) {
         const loading = shallowRef(false)
-        const config: AxiosRequestConfig = { method, url }
-
-        let controller: AbortController | null = null
+        const pendingRequests = new Map<string, { promise: Promise<Res>; controller: AbortController; }>()
 
         // 原始请求方法
-        const rawFetch = (data: Partial<Req> = {}) => new Promise<Res>((resolve, reject) => {
-            abort()
-            loading.value = true
-
+        const rawFetch = (data: Partial<Req> = {}) => {
             const mergedData = { ...options.data, ...data }
+            const requestKey = JSON.stringify(mergedData)
 
-            if (method.toLowerCase() === 'get') {
-                config.params = mergedData
-            } else {
-                config.data = mergedData
+            // 复用同一个请求
+            const pending = pendingRequests.get(requestKey)
+            if (pending) {
+                return pending.promise
             }
 
-            controller = new AbortController()
-            config.signal = controller.signal
-            config.headers = this.createHeader()
+            loading.value = true
 
-            this.request<Res>(config).then((res) => {
-                if (this.isBaseResponse(res)) {
-                    switch (res.code) {
-                        case ResultCode.Unauthorized:
-                            //退出登录
-                            //logout();
-                            reject('令牌无效')
-                            break
-                        case ResultCode.Success:
-                            resolve(res)
-                            break
-                        default:
-                            reject(res.message ?? '请求失败，请稍后再试')
-                    }
-                } else {
-                    resolve(res)
+            const controller = new AbortController()
+
+            const promise = new Promise<Res>((resolve, reject) => {
+                const requestConfig: AxiosRequestConfig = {
+                    method,
+                    url,
+                    signal: controller.signal,
+                    headers: this.createHeader()
                 }
-            }).catch((err) => {
-                reject(err)
-            }).finally(() => {
-                loading.value = false
+
+                if (method.toLowerCase() === 'get') {
+                    requestConfig.params = mergedData
+                } else {
+                    requestConfig.data = mergedData
+                }
+
+                this.request<Res>(requestConfig).then((res) => {
+                    if (this.isBaseResponse(res)) {
+                        switch (res.code) {
+                            case ResultCode.Unauthorized:
+                                //退出登录
+                                //logout();
+                                reject('令牌无效')
+                                break
+                            case ResultCode.Success:
+                                resolve(res)
+                                break
+                            default:
+                                reject(res.message ?? '请求失败，请稍后再试')
+                        }
+                    } else {
+                        resolve(res)
+                    }
+                }).catch((err) => {
+                    reject(err)
+                }).finally(() => {
+                    loading.value = false
+                    pendingRequests.delete(requestKey)
+                })
             })
-        })
+
+            pendingRequests.set(requestKey, { promise, controller })
+            return promise
+        }
 
         // 请求并自动处理回调
         const fetch = async (data: Partial<Req> = {}) => {
@@ -110,9 +126,10 @@ export default new (class {
             }
         }
 
-        // 取消当前请求
+        // 取消所有请求
         const abort = () => {
-            controller?.abort()
+            pendingRequests.forEach(({ controller }) => controller.abort())
+            pendingRequests.clear()
         }
 
         // 默认立即请求

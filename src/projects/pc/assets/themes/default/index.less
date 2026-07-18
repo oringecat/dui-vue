@@ -14,3 +14,33 @@
         display: none;
     }
 }
+
+.el-form {
+    &--filter {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+
+        .el-form-item {
+            margin: 0;
+        }
+
+        .el-select {
+            width: 180px;
+        }
+
+        .el-input {
+            width: 180px;
+        }
+
+        .el-input-number {
+            .el-input {
+                width: inherit;
+            }
+        }
+
+        .el-range-editor {
+            width: 300px;
+        }
+    }
+}

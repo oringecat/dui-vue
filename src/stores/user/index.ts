@@ -27,6 +27,7 @@ export const useUserStore = defineStore('user', () => {
     })
 
     const token = computed(() => state.userInfo.token)
+    const isAdmin = computed(() => state.userInfo.roleId === -1) // 是否超级管理员
 
     const tokenRequest = createCheckToken()
     const loginRequest = createLogin()
@@ -120,6 +121,7 @@ export const useUserStore = defineStore('user', () => {
 
     return {
         token,
+        isAdmin,
         getUserInfo,
         userLogin,
         autoLogin,

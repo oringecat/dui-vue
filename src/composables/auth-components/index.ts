@@ -33,10 +33,10 @@ export function useAuthComponents<T extends object>(options: Partial<AuthCompone
             actionComponent.value = h(asyncComponent, {
                 show: showComponent.value,
                 selectedRow: toRaw(row),
-                onClosed: () => {
+                onClosed: (refresh: boolean) => {
                     showComponent.value = false
                     actionComponent.value = undefined
-                    options.onClosed?.(code)
+                    if (refresh) options.onClosed?.(code)
                 }
             })
         } else {
@@ -44,14 +44,20 @@ export function useAuthComponents<T extends object>(options: Partial<AuthCompone
         }
     }
 
-    const getActions = (...codes: string[]) => {
+    const hasAction = (code: string) => {
+        return actions.some((action) => action.code === code)
+    }
+
+    const getActions = (codes: string | string[], row?: T) => {
+        const actionCodes = Array.isArray(codes) ? codes : [codes]
+
         return actions.reduce<ActionItem[]>((result, a) => {
-            if (codes.includes(a.code)) {
+            if (actionCodes.includes(a.code)) {
                 result.push({
                     code: a.code,
                     title: a.title,
                     icon: a.icon,
-                    onClick: () => openComponent(a)
+                    onClick: () => openComponent(a, row)
                 })
                 usedCodes.add(a.code)
             }
@@ -107,6 +113,7 @@ export function useAuthComponents<T extends object>(options: Partial<AuthCompone
         actionComponent,
         contextMenus,
         hasRowAction,
+        hasAction,
         getActions,
         getRowActions
     }

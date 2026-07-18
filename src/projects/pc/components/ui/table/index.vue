@@ -3,7 +3,7 @@
         <div class="app-table__toolbar" v-if="slots.toolbar">
             <slot name="toolbar"></slot>
         </div>
-        <el-table class="app-table__body" :data="data" :border="border" @row-contextmenu="onContextmenu">
+        <el-table class="app-table__body" @row-contextmenu="onContextmenu" v-bind="$attrs">
             <!-- 选择列 -->
             <el-table-column type="selection" width="55" align="center" fixed v-if="selectionType" />
             <component :is="renderColumns" />
@@ -34,9 +34,6 @@ defineSlots<{
 }>()
 
 const props = withDefaults(defineProps<{
-    data: T[]
-    rowKey?: string | number | symbol
-    border?: boolean
     columns: TableColumn<T>[]
     contextMenus?: ContextMenuItem<T>[]
     selectionType?: 'single' | 'multiple'

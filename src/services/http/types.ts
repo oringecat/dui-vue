@@ -1,6 +1,4 @@
-import type { AxiosRequestConfig } from 'axios'
-
-export type Method = 'OPTIONS' | 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'TRACE' | 'CONNECT'
+import type { AxiosRequestConfig, Method } from 'axios'
 
 export interface RequestConfig {
     url: string;

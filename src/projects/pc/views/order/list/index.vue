@@ -27,14 +27,14 @@ import AppAction from '@pc/components/ui/action/index.vue'
 
 const props = defineProps<{
     componentId: string
-    queryParams: Partial<Order.OrderParams>
+    queryParams: Partial<Order.OrderListParams>
 }>()
 
 const { actionComponent, contextMenus, hasRowAction, getRowActions } = useAuthComponents({
     authCode: props.componentId
 })
 
-const { dataList, pageIndex, pageSize, pageTotal, hasData, updateItems } = useDataTable<Order.OrderItem>()
+const { dataList, pageIndex, pageSize, pageTotal, hasData, updateItems } = useDataTable<Order.OrderListItem>()
 
 const { loading, fetch } = createOrderList({
     data: {
@@ -46,7 +46,7 @@ const { loading, fetch } = createOrderList({
     }
 })
 
-const { tableColumns } = useTableColumns<Order.OrderItem>([
+const { tableColumns } = useTableColumns<Order.OrderListItem>([
     { field: 'id', label: 'ID' },
     { field: 'orderNumber', label: '订单号' },
     { field: 'status', label: '状态' },

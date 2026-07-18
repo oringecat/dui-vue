@@ -21,7 +21,7 @@ const props = defineProps({
     refreshId: Number
 })
 
-const { appendList, pageIndex, pageSize, hasMore, failed, updateItems, nextPage } = useDataTable<Product.ProductItem>()
+const { appendList, pageIndex, pageSize, hasMore, failed, updateItems, nextPage } = useDataTable<Product.ListItem>()
 
 const { loading, fetch } = createProductList({
     data: {

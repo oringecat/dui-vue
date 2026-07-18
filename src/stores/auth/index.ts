@@ -2,10 +2,13 @@ import { shallowRef, computed } from 'vue'
 import { defineStore } from 'pinia'
 import type { Router, RouteRecordRaw } from 'vue-router'
 import { createUserAuths } from '@/services/api/user'
-import { authRoutes } from './routes'
+import { getAuthRoutes } from './routes'
 import { AuthType, type AuthRoute } from './types'
+import { useUserStore } from '@/stores/user'
 
 export const useAuthStore = defineStore('auth', () => {
+    const userStore = useUserStore()
+
     const { loading, rawFetch } = createUserAuths()
 
     // 用户权限
@@ -37,20 +40,14 @@ export const useAuthStore = defineStore('auth', () => {
 
     // 请求用户权限
     const fetchUserAuths = async (router: Router) => {
-        const res = await rawFetch()
-        userAuths.value = filterAuthRoutes(authRoutes, res.data)
+        if (userStore.isAdmin) {
+            userAuths.value = getAuthRoutes()
+        } else {
+            const res = await rawFetch()
+            userAuths.value = getAuthRoutes(res.data)
+        }
         userRoutes.value.forEach(router.addRoute)
     }
-
-    // 过滤权限路由
-    const filterAuthRoutes = (data: AuthRoute[], codes: string[]) => data.reduce<AuthRoute[]>((result, route) => {
-        const hasAuth = codes.some((code) => code === route.code)
-        if (hasAuth) {
-            const children = route.children ? filterAuthRoutes(route.children, codes) : []
-            result.push({ ...route, children })
-        }
-        return result
-    }, [])
 
     // 过滤权限菜单
     const filterAuthMenus = (data: AuthRoute[]) => data.reduce<AuthRoute[]>((pre, cur) => {
@@ -86,6 +83,13 @@ export const useAuthStore = defineStore('auth', () => {
         return result
     }
 
+    const resetAuth = (router: Router) => {
+        userRoutes.value.forEach(({ name }) => {
+            if (name) router.removeRoute(name)
+        })
+        userAuths.value = []
+    }
+
     return {
         loading,
         userAuths,
@@ -93,6 +97,7 @@ export const useAuthStore = defineStore('auth', () => {
         userMenus,
         hasAuth,
         defaultHomeUrl,
-        fetchUserAuths
+        fetchUserAuths,
+        resetAuth
     }
 })

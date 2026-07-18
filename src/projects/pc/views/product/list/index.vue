@@ -26,7 +26,7 @@ import AppFilter from '@pc/components/ui/form-filter/index.vue'
 import AppPagination from '@pc/components/ui/pagination/index.vue'
 import AppAction from '@pc/components/ui/action/index.vue'
 
-const { actionComponent, contextMenus, getActions, getRowActions } = useAuthComponents<Product.ProductItem>({
+const { actionComponent, contextMenus, getActions, getRowActions } = useAuthComponents<Product.ProductListItem>({
     rowActions: {
         'product-list-shelve': { visibility: (row) => row.status === 2 },
         'product-list-unshelve': { visibility: (row) => row.status === 1 },
@@ -34,7 +34,7 @@ const { actionComponent, contextMenus, getActions, getRowActions } = useAuthComp
     }
 })
 
-const { dataList, pageIndex, pageSize, pageTotal, hasData, updateItems } = useDataTable<Product.ProductItem>()
+const { dataList, pageIndex, pageSize, pageTotal, hasData, updateItems } = useDataTable<Product.ProductListItem>()
 
 const { loading, fetch } = createProductList({
     data: {
@@ -47,17 +47,21 @@ const { loading, fetch } = createProductList({
     immediate: true
 })
 
-const { rawColumns, tableColumns, hiddenKeys } = useTableColumns<Product.ProductItem>([
+const { rawColumns, tableColumns, hiddenKeys } = useTableColumns<Product.ProductListItem>([
     { field: 'id', label: 'ID' },
     { field: 'productName', label: '商品名称' },
     { field: 'action', label: '操作', fixed: 'right' }
 ])
 
-const { filterOptions, queryParams } = useDataFilter<Product.ProductParams>({
+const { filterOptions, queryParams } = useDataFilter<Product.ProductListParams>({
     filters: [
         {
+            field: 'productName',
+            label: '商品'
+        },
+        {
             field: 'categoryId',
-            label: '分类'
+            label: '类目'
         },
         {
             field: 'status',

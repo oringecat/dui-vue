@@ -1,5 +1,5 @@
 declare namespace Order {
-    interface OrderParams {
+    interface OrderListParams {
         pageIndex: number;
         pageSize: number;
         orderNumber?: string;
@@ -8,7 +8,7 @@ declare namespace Order {
         endTime?: string;
     }
 
-    interface OrderItem {
+    interface OrderListItem {
         id: number;
         userId: number;
         orderNumber: string;

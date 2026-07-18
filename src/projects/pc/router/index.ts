@@ -54,10 +54,7 @@ export default function createRouter() {
   })
 
   eventBus.on('logout', () => {
-    authStore.userRoutes.forEach(({ name }) => {
-      if (name) router.removeRoute(name)
-    })
-    authStore.$reset()
+    authStore.resetAuth(router)
   })
 
   return router

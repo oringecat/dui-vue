@@ -10,7 +10,7 @@ export default [
             message: 'ok',
             data: {
                 id: 1000,
-                roleId: 0,
+                roleId: -1,
                 userName: 'admin',
                 realName: '@cname', // 随机中文名
                 avatar: 'https://picsum.photos/200/200', // 随机头像
@@ -37,6 +37,7 @@ export default [
             message: 'ok',
             data: {
                 id: 1000,
+                roleId: -1,
                 userName: 'admin',
                 realName: '@cname',
                 avatar: 'https://picsum.photos/200/200',
