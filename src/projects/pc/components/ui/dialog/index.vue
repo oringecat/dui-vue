@@ -15,6 +15,10 @@ const props = defineProps({
     show: {
         type: Boolean,
         default: false
+    },
+    loading: {
+        type: Boolean,
+        default: false
     }
 })
 

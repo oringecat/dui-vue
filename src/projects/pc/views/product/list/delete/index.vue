@@ -8,6 +8,6 @@
 import AppDialog from '@pc/components/ui/dialog/index.vue'
 
 const props = defineProps<{
-    selectedRow?: Product.ListItem
+    selectedRow?: Product.ProductListItem
 }>()
 </script>

@@ -1,5 +1,5 @@
 <template>
-    <app-dialog v-loading="loading">
+    <app-dialog :loading="loading">
         <app-table :data="saleAttrList" :columns="tableColumns">
             <template #spec="{ row }">
                 {{ saleSpecMap.get(row.id) }}

@@ -42,7 +42,7 @@ import AppSpec from './spec/index.vue'
 import AppSku from './sku/index.vue'
 
 const props = defineProps<{
-    selectedRow?: Product.ListItem
+    selectedRow?: Product.ProductListItem
 }>()
 
 const categorys = reactive<Category[]>([])
