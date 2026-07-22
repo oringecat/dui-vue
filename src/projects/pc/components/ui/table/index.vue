@@ -23,6 +23,10 @@ import type { TableColumn } from '@pc/components/ui/column-setting'
 import type { ContextMenuState, ContextMenuItem } from '@pc/components/ui/context-menu/types'
 import AppContextMenu from '@pc/components/ui/context-menu/index.vue'
 
+defineOptions({
+    inheritAttrs: false
+})
+
 // 声明 slot 类型
 defineSlots<{
     [K in keyof T]: (props: { row: T; value: T[K]; index: number }) => VNode[]
@@ -67,7 +71,7 @@ const renderColumns = () => props.columns.map((item) =>
             key: item.field,
             prop: item.field,
             align: item.align ?? 'left',
-            width: item.width,
+            minWidth: item.width,
             label: getColumnLabel(item.label),
             sortable: item.sortable,
             fixed: item.fixed

@@ -76,40 +76,41 @@ export default [
         url: '/api/product/category/sale-spec',
         method: 'get',
         rawResponse: (req, res) => {
-            const { saleId } = parse(req.url!, true).query
+            const { categoryId } = parse(req.url!, true).query
 
-            const specDataMap: Record<number, { id: number; saleId: number; specName: string }[]> = {
-                100: [ // 颜色
-                    { id: 1001, saleId: 100, specName: '亮黑色' },
-                    { id: 1002, saleId: 100, specName: '珠光白' },
-                    { id: 1003, saleId: 100, specName: '极光蓝' },
-                    { id: 1004, saleId: 100, specName: '樱粉金' },
+            // 按 saleId 组织的规格数据
+            const specDataMap: Record<number, { id: number; categoryId: number; saleId: number; specName: string }[]> = {
+                100: [ // 颜色 → 智能手机(1110)
+                    { id: 1001, categoryId: 1110, saleId: 100, specName: '亮黑色' },
+                    { id: 1002, categoryId: 1110, saleId: 100, specName: '珠光白' },
+                    { id: 1003, categoryId: 1110, saleId: 100, specName: '极光蓝' },
+                    { id: 1004, categoryId: 1110, saleId: 100, specName: '樱粉金' },
                 ],
-                101: [ // 存储容量
-                    { id: 1011, saleId: 101, specName: '128GB' },
-                    { id: 1012, saleId: 101, specName: '256GB' },
-                    { id: 1013, saleId: 101, specName: '512GB' },
+                101: [ // 存储容量 → 智能手机(1110)
+                    { id: 1011, categoryId: 1110, saleId: 101, specName: '128GB' },
+                    { id: 1012, categoryId: 1110, saleId: 101, specName: '256GB' },
+                    { id: 1013, categoryId: 1110, saleId: 101, specName: '512GB' },
                 ],
-                102: [ // 网络制式
-                    { id: 1021, saleId: 102, specName: '全网通5G' },
-                    { id: 1022, saleId: 102, specName: '移动5G' },
-                    { id: 1023, saleId: 102, specName: '联通5G' },
+                102: [ // 网络制式 → 智能手机(1110)
+                    { id: 1021, categoryId: 1110, saleId: 102, specName: '全网通5G' },
+                    { id: 1022, categoryId: 1110, saleId: 102, specName: '移动5G' },
+                    { id: 1023, categoryId: 1110, saleId: 102, specName: '联通5G' },
                 ],
-                200: [ // 口味
-                    { id: 2001, saleId: 200, specName: '原味' },
-                    { id: 2002, saleId: 200, specName: '麻辣' },
-                    { id: 2003, saleId: 200, specName: '五香' },
-                    { id: 2004, saleId: 200, specName: '烧烤' },
+                200: [ // 口味 → 休闲零食(3100)
+                    { id: 2001, categoryId: 3100, saleId: 200, specName: '原味' },
+                    { id: 2002, categoryId: 3100, saleId: 200, specName: '麻辣' },
+                    { id: 2003, categoryId: 3100, saleId: 200, specName: '五香' },
+                    { id: 2004, categoryId: 3100, saleId: 200, specName: '烧烤' },
                 ],
-                201: [ // 包装规格
-                    { id: 2011, saleId: 201, specName: '100g' },
-                    { id: 2012, saleId: 201, specName: '200g' },
-                    { id: 2013, saleId: 201, specName: '500g' },
-                    { id: 2014, saleId: 201, specName: '1kg' },
+                201: [ // 包装规格 → 休闲零食(3100)
+                    { id: 2011, categoryId: 3100, saleId: 201, specName: '100g' },
+                    { id: 2012, categoryId: 3100, saleId: 201, specName: '200g' },
+                    { id: 2013, categoryId: 3100, saleId: 201, specName: '500g' },
+                    { id: 2014, categoryId: 3100, saleId: 201, specName: '1kg' },
                 ],
             }
 
-            const data = specDataMap[Number(saleId)] || []
+            const data = Object.values(specDataMap).flat().filter((item) => item.categoryId === Number(categoryId))
 
             mockResponse(res, {
                 code: 200,

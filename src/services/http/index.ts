@@ -9,9 +9,11 @@ import { useUserStore } from '@/stores/user'
 
 export default new (class {
     constructor() {
-        // serviceConfig.onReady(() => {
-        //     const baseUrl = serviceConfig.getServiceConfig('apiUrl')
-        //     this.axiosInstance.defaults.baseURL = baseUrl
+        // this.axiosInstance.interceptors.request.use((config) => {
+        //     if (!config.baseURL) {
+        //         config.baseURL = serviceConfig.getServiceConfig('apiUrl')
+        //     }
+        //     return config
         // })
     }
 

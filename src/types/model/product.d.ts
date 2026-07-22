@@ -45,11 +45,13 @@ declare namespace Product {
 
     /** 销售规格列表 */
     interface CategorySaleSpecListParams {
-        saleId: number;
+        categoryId: number;
+        saleId?: number;
     }
 
     interface CategorySaleSpecItem {
         id: number;
+        categoryId: number;
         saleId: number;
         specName: string;
     }
