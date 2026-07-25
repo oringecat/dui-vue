@@ -1,10 +1,10 @@
 import type { MockMethod } from 'vite-plugin-mock'
 import { parse } from 'url'
-import { mockResponse } from './mock-utils'
+import { mockResponse, serviceConfig } from './mock-utils'
 
 export default [
     {
-        url: '/api/product/list',
+        url: serviceConfig.apiUrl + '/product/list',
         method: 'get',
         rawResponse: (req, res) => {
             mockResponse(res, {
@@ -20,32 +20,32 @@ export default [
         }
     },
     {
-        url: '/api/product/category',
+        url: serviceConfig.apiUrl + '/product/category',
         method: 'get',
         rawResponse: (req, res) => {
             mockResponse(res, {
                 code: 200,
                 message: 'ok',
                 data: [
-                    { id: 1000, parentId: 0, categoryName: '数码', status: 1, icon: '', sort: 1 },
-                    { id: 1100, parentId: 1000, categoryName: '手机通讯', status: 1, icon: '', sort: 1 },
-                    { id: 1110, parentId: 1100, categoryName: '智能手机', status: 1, icon: '', sort: 1 },
-                    { id: 1200, parentId: 1000, categoryName: '电脑办公', status: 1, icon: '', sort: 2 },
+                    { id: 1000, parentId: 0, code: 'digital', categoryName: '数码', status: 1, icon: '', sort: 1 },
+                    { id: 1100, parentId: 1000, code: 'phone', categoryName: '手机通讯', status: 1, icon: '', sort: 1 },
+                    { id: 1110, parentId: 1100, code: 'smartphone', categoryName: '智能手机', status: 1, icon: '', sort: 1 },
+                    { id: 1200, parentId: 1000, code: 'computer', categoryName: '电脑办公', status: 1, icon: '', sort: 2 },
 
-                    { id: 2000, parentId: 0, categoryName: '服装鞋帽', status: 1, icon: '', sort: 2 },
-                    { id: 2100, parentId: 2000, categoryName: '男装', status: 1, icon: '', sort: 1 },
-                    { id: 2200, parentId: 2000, categoryName: '女装', status: 1, icon: '', sort: 2 },
+                    { id: 2000, parentId: 0, code: 'clothing', categoryName: '服装鞋帽', status: 1, icon: '', sort: 2 },
+                    { id: 2100, parentId: 2000, code: 'menswear', categoryName: '男装', status: 1, icon: '', sort: 1 },
+                    { id: 2200, parentId: 2000, code: 'womenswear', categoryName: '女装', status: 1, icon: '', sort: 2 },
 
-                    { id: 3000, parentId: 0, categoryName: '食品饮料', status: 1, icon: '', sort: 3 },
-                    { id: 3100, parentId: 3000, categoryName: '休闲零食', status: 1, icon: '', sort: 1 },
-                    { id: 3200, parentId: 3000, categoryName: '生鲜水果', status: 1, icon: '', sort: 2 }
+                    { id: 3000, parentId: 0, code: 'food', categoryName: '食品饮料', status: 1, icon: '', sort: 3 },
+                    { id: 3100, parentId: 3000, code: 'snacks', categoryName: '休闲零食', status: 1, icon: '', sort: 1 },
+                    { id: 3200, parentId: 3000, code: 'fruit', categoryName: '生鲜水果', status: 1, icon: '', sort: 2 }
                 ],
                 total: 30
             })
         }
     },
     {
-        url: '/api/product/category/sale-attribute',
+        url: serviceConfig.apiUrl + '/product/category/sale-attribute',
         method: 'get',
         rawResponse: (req, res) => {
             const { categoryId } = parse(req.url!, true).query
@@ -73,7 +73,7 @@ export default [
         }
     },
     {
-        url: '/api/product/category/sale-spec',
+        url: serviceConfig.apiUrl + '/product/category/sale-spec',
         method: 'get',
         rawResponse: (req, res) => {
             const { categoryId } = parse(req.url!, true).query

@@ -1,9 +1,13 @@
 import http from '@/services/http'
-import type { RequestOptions, BaseResponse } from '@/services/http/types'
+import type { ApiOptions } from '@/services/http/types'
 
 /**
  * 获取订单列表
  */
-export function createOrderList(options?: RequestOptions<{ req: Order.OrderListParams; res: BaseResponse<Order.OrderListItem[]>; }>) {
-  return http.createRequest('GET', '/api/order/list', options)
+export function createOrderList(options?: ApiOptions<{ req: Order.OrderListParams; res: Order.OrderListItem[]; }>) {
+  return http.createRequest({
+    method: 'GET',
+    url: '/order/list',
+    options
+  })
 }

@@ -1,5 +1,5 @@
 <template>
-    <van-list class="app-list" v-model:error="errorState" :finished-text="finishedText"
+    <van-list class="app-list" v-model:error="errorState" :finished-text="finishedText" :error-text="finishedText"
         :immediate-check="immediateCheck" @load="onLoad">
         <slot></slot>
     </van-list>

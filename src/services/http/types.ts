@@ -1,20 +1,28 @@
-import type { AxiosRequestConfig, Method } from 'axios'
+import type { Method, AxiosRequestConfig } from 'axios'
 
-export interface RequestConfig {
+export type RequestShape = { req?: object, res?: unknown }
+
+export interface RequestConfig<T extends RequestShape = RequestShape> {
+    method: Method;
     url: string;
-    method?: Method;
-    headers?: AxiosRequestConfig['headers'];
-    data?: object; // 请求参数
+    options?: RequestOptions<T>;
+    retryCount?: number; // 重试次数，0 = 无限次
+    defaultData?: () => Partial<T['req']>;
 }
 
-export interface RequestOptions<T extends { req?: object, res?: unknown } = Record<string, unknown>> {
+export interface RequestOptions<T extends RequestShape = RequestShape> {
     immediate?: boolean; // 是否立即执行
-    data?: T extends { req: infer R } ? R : unknown; // 请求参数
-    retryCount?: number; // 重试次数，0 = 无限次
+    headers?: AxiosRequestConfig['headers'];
+    data?: T['req']; // 请求参数
     onSuccess?: (res: T['res']) => void;
     onError?: (err: string) => void;
     onFinally?: () => void;
 }
+
+export type ApiOptions<T extends RequestShape = RequestShape> = RequestOptions<{
+    req?: T extends { req: infer R } ? R : object;
+    res: BaseResponse<T['res']>
+}>
 
 /**
  * 统一响应结构

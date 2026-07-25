@@ -37,17 +37,19 @@ export default new (class {
     private initPromise: Promise<void> | null = null
 
     private appConfig: AppConfig = {
-        AppId: 'com.app.release',
-        AppName: 'Vue Project',
+        AppId: 'com.dui.vue',
+        AppName: 'Dui Vue',
         version: '1.0.0',
         versionCode: '100000',
-        baseUrl: 'http://localhost',
+        serviceConfigUrl: 'http://localhost',
         tokenStorage: 'session',
     }
 
     private serviceConfig: ServiceConfig = {
+        uuid: '',
         apiUrl: '',
-        fileUrl: ''
+        fileUrl: '',
+        socketUrl: ''
     }
 
     /** 加载本地配置 */
@@ -88,7 +90,7 @@ export default new (class {
             }
             this.initPromise = new Promise<void>((resolve, reject) => {
                 this.appConfigAsync.then((data) => {
-                    this.loadServiceConfig(data.baseUrl).then(resolve).catch(reject)
+                    this.loadServiceConfig(data.serviceConfigUrl).then(resolve).catch(reject)
                 }).catch(() => {
                     this.initPromise = null
                     reject('配置文件加载失败，请稍后再试')

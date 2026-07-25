@@ -1,9 +1,9 @@
 import type { MockMethod } from 'vite-plugin-mock'
-import { mockResponse } from './mock-utils'
+import { mockResponse, serviceConfig } from './mock-utils'
 
 export default [
     {
-        url: '/api/order/list',
+        url: serviceConfig.apiUrl + '/order/list',
         method: 'get',
         rawResponse: (req, res) => {
             mockResponse(res, {

@@ -1,6 +1,15 @@
+import { v4 } from 'uuid'
 import type { ServerResponse, IncomingMessage } from 'http'
+import type { ServiceConfig } from '@/services/config/types'
 import type { BaseResponse } from '@/services/http/types'
 import Mock from 'mockjs'
+
+export const serviceConfig: ServiceConfig = {
+    uuid: v4(),
+    apiUrl: '/mock/api',
+    fileUrl: '/mock/file',
+    socketUrl: 'wss://'
+}
 
 // 生成指定范围的随机整数
 export function randomInt(min = 1, max = 1) {

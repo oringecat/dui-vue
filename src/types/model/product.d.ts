@@ -24,6 +24,7 @@ declare namespace Product {
     interface CategoryItem {
         id: number;
         parentId: number;
+        code: string;
         categoryName: string;
         status: number;
         icon: string;

@@ -48,8 +48,8 @@ const { loading, fetch } = createCategoryList({
 })
 
 const { tableColumns } = useTableColumns<Product.CategoryItem>([
-    { field: 'id', label: 'ID' },
     { field: 'categoryName', label: '分类名称' },
+    { field: 'code', label: '编码' },
     { field: 'attribute', label: '基础属性', visibility: () => hasAction('product-category-attr') },
     { field: 'sale', label: '销售属性', visibility: () => hasAction('product-category-sale') },
     { field: 'status', label: '状态' },

@@ -6,7 +6,6 @@ export function useDataTable<T extends object>(options: DataTableOptions = {}) {
     const state = reactive({
         pageSize: options.pageSize ?? 20, // 每页条数
         pageIndex: options.pageIndex ?? 1, // 当前页码
-        failed: false // 是否失败
     })
 
     const rawData = shallowReactive(new Map<number, T[]>()) // 缓存原始数据
@@ -42,10 +41,7 @@ export function useDataTable<T extends object>(options: DataTableOptions = {}) {
     const pageCount = computed(() => pageTotal.value > 0 ? Math.ceil(pageTotal.value / state.pageSize) : 1)
 
     // 是否有更多
-    const hasMore = computed(() => {
-        if (state.failed) return false
-        return pageTotal.value < 0 || (!isRefreshing.value && state.pageIndex < pageCount.value)
-    })
+    const hasMore = computed(() => pageTotal.value < 0 || (!isRefreshing.value && state.pageIndex < pageCount.value))
 
     const getPageItems = (pageIndex: number): T[] => {
         if (fullData.value.length) {
@@ -90,7 +86,6 @@ export function useDataTable<T extends object>(options: DataTableOptions = {}) {
             rawData.clear()
         }
 
-        state.failed = false
         isRefreshing.value = false
         rawTotal.value = total || data.length
         rawData.set(state.pageIndex, data)
@@ -110,7 +105,6 @@ export function useDataTable<T extends object>(options: DataTableOptions = {}) {
         isRefreshing.value = refreshing
 
         if (refreshing) {
-            state.failed = false
             state.pageIndex = 1
             return true
         }

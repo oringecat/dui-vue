@@ -5,6 +5,9 @@
                 <el-tree-select v-model="formData.parentId" :data="categoryList" :props="{ label: 'categoryName' }"
                     node-key="id" :expand-on-click-node="false" check-strictly default-expand-all />
             </el-form-item>
+            <el-form-item label="分类编码">
+                <el-input v-model="formData.code" />
+            </el-form-item>
             <el-form-item label="分类名称">
                 <el-input v-model="formData.categoryName" />
             </el-form-item>
@@ -26,7 +29,8 @@ const categoryList = shallowRef<Product.CategoryItem[]>([])
 
 const formData = reactive({
     parentId: props.selectedRow?.parentId ?? 0,
-    categoryName: ''
+    code: props.selectedRow?.code ?? '',
+    categoryName: props.selectedRow?.categoryName ?? ''
 })
 
 createCategoryList({

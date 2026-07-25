@@ -1,9 +1,13 @@
 import http from '@/services/http'
-import type { RequestOptions, BaseResponse } from '@/services/http/types'
+import type { ApiOptions } from '@/services/http/types'
 
 /**
  * 获取服务器时间
  */
-export function createServerTime(options?: RequestOptions<{ res: BaseResponse<number>; }>) {
-    return http.createRequest('GET', '/api/server/time', options)
+export function createServerTime(options?: ApiOptions<{ res: number; }>) {
+    return http.createRequest({
+        method: 'GET',
+        url: '/server/time',
+        options
+    })
 }

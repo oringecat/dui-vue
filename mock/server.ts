@@ -1,22 +1,19 @@
 import type { MockMethod } from 'vite-plugin-mock'
-import { mockResponse } from './mock-utils'
+import { mockResponse, serviceConfig } from './mock-utils'
 
 export default [
     {
-        url: '/api/server/config',
+        url: '/dui/server/config',
         method: 'get',
         rawResponse: (req, res) => mockResponse(res, {
             code: 200,
             message: 'ok',
-            data: {
-                apiUrl: 'http://127.0.0.1/api',
-                fileUrl: 'http://127.0.0.1/file'
-            },
+            data: serviceConfig,
             total: 0
         })
     },
     {
-        url: '/api/server/time',
+        url: serviceConfig.apiUrl + '/server/time',
         method: 'get',
         rawResponse: (req, res) => mockResponse(res, {
             code: 200,

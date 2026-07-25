@@ -31,18 +31,15 @@ const components: Record<string, Component> = {
 
 const { showComponent, componentId, openComponent, closeComponent } = useComponent()
 
-const { appendList, pageIndex, pageSize, hasMore,  failed, updateItems, nextPage } = useDataTable<Product.ProductListItem>()
+const { appendList, pageIndex, pageSize, hasMore, updateItems, nextPage } = useDataTable<Product.ProductListItem>()
 
-const { loading, fetch } = createProductList({
+const { loading, failed, fetch } = createProductList({
     data: {
         pageSize: pageSize.value,
         pageIndex: pageIndex.value
     },
     onSuccess: (res) => {
         updateItems(res.data, res.total)
-    },
-    onError: () => {
-        failed.value = true
     },
     onFinally: () => {
         refreshFinish()

@@ -1,39 +1,31 @@
 import { shallowRef } from 'vue'
 import axios from 'axios'
-import type { AxiosRequestConfig, Method } from 'axios'
-import type { RequestOptions, BaseResponse } from './types'
+import type { AxiosRequestConfig } from 'axios'
+import type { RequestConfig, RequestShape, BaseResponse } from './types'
 import { ResultCode } from './types'
 import { useTransitionStore } from '@/stores/transition'
 import { useUserStore } from '@/stores/user'
-//import serviceConfig from '@/services/config'
+import serviceConfig from '@/services/config'
+
+export type { ApiOptions } from './types'
 
 export default new (class {
     constructor() {
-        // this.axiosInstance.interceptors.request.use((config) => {
-        //     if (!config.baseURL) {
-        //         config.baseURL = serviceConfig.getServiceConfig('apiUrl')
-        //     }
-        //     return config
-        // })
+        this.axiosInstance.interceptors.request.use((config) => {
+            if (!config.baseURL) {
+                config.baseURL = serviceConfig.getServiceConfig('apiUrl')
+            }
+            return config
+        })
     }
 
     private readonly axiosInstance = axios.create({
         timeout: 30000,
     })
 
-    private createHeader() {
-        const userStore = useUserStore()
-        const timestamp = Date.now()
-
-        return {
-            timestamp,
-            authorization: userStore.token
-        }
-    }
-
     private isBaseResponse(obj: unknown): obj is BaseResponse {
         if (obj instanceof Object) {
-            return 'code' in obj && 'data' in obj
+            return 'code' in obj && 'message' in obj
         }
         return false
     }
@@ -54,13 +46,27 @@ export default new (class {
         })
     }
 
-    createRequest<Req extends object, Res>(method: Method, url: string, options: RequestOptions<{ req: Req, res: Res }> = {}) {
+    // 获取公共请求头
+    getPublicHeaders() {
+        const userStore = useUserStore()
+        const timestamp = Date.now()
+
+        return {
+            timestamp,
+            authorization: userStore.token
+        }
+    }
+
+    createRequest<T extends RequestShape>(config: RequestConfig<T>) {
+        const { method, url, options = {}, defaultData } = config
+
         const loading = shallowRef(false)
-        const pendingRequests = new Map<string, { promise: Promise<Res>; controller: AbortController; }>()
+        const failed = shallowRef(false) // 失败状态
+        const pendingRequests = new Map<string, { promise: Promise<T['res']>; controller: AbortController; }>()
 
         // 原始请求方法
-        const rawFetch = (data: Partial<Req> = {}) => {
-            const mergedData = { ...options.data, ...data }
+        const rawFetch = (data: Partial<T['req']> = {}) => {
+            const mergedData = { ...defaultData?.(), ...options.data, ...data }
             const requestKey = JSON.stringify(mergedData)
 
             // 复用同一个请求
@@ -70,15 +76,16 @@ export default new (class {
             }
 
             loading.value = true
+            failed.value = false
 
             const controller = new AbortController()
 
-            const promise = new Promise<Res>((resolve, reject) => {
+            const promise = new Promise<T['res']>((resolve, reject) => {
                 const requestConfig: AxiosRequestConfig = {
                     method,
                     url,
                     signal: controller.signal,
-                    headers: this.createHeader()
+                    headers: options.headers ?? this.getPublicHeaders()
                 }
 
                 if (method.toLowerCase() === 'get') {
@@ -87,24 +94,25 @@ export default new (class {
                     requestConfig.data = mergedData
                 }
 
-                this.request<Res>(requestConfig).then((res) => {
+                this.request<T['res']>(requestConfig).then((res) => {
                     if (this.isBaseResponse(res)) {
                         switch (res.code) {
                             case ResultCode.Unauthorized:
-                                //退出登录
-                                //logout();
+                                failed.value = true
                                 reject('令牌无效')
                                 break
                             case ResultCode.Success:
                                 resolve(res)
                                 break
                             default:
+                                failed.value = true
                                 reject(res.message ?? '请求失败，请稍后再试')
                         }
                     } else {
                         resolve(res)
                     }
                 }).catch((err) => {
+                    failed.value = true
                     reject(err)
                 }).finally(() => {
                     loading.value = false
@@ -117,7 +125,7 @@ export default new (class {
         }
 
         // 请求并自动处理回调
-        const fetch = async (data: Partial<Req> = {}) => {
+        const fetch = async (data: Partial<T['req']> = {}) => {
             try {
                 const res = await rawFetch(data)
                 options.onSuccess?.(res)
@@ -141,6 +149,7 @@ export default new (class {
 
         return {
             loading,
+            failed,
             rawFetch,
             fetch,
             abort

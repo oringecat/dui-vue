@@ -86,10 +86,10 @@ const createObservers = () => {
     // 激活状态（初始化不触发，因为初始化占位元素处于视窗内）
     const activeState = { top: false, bottom: false }
 
-    const options: IntersectionObserverInit = {
+    const options = {
         root: null, // 默认使用浏览器视窗
         scrollMargin: '100px'
-    }
+    } as IntersectionObserverInit
 
     // 监听触顶
     const topObserver = new IntersectionObserver((entries) => {

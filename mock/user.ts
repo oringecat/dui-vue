@@ -1,9 +1,9 @@
 import type { MockMethod } from 'vite-plugin-mock'
-import { mockResponse } from './mock-utils'
+import { mockResponse, serviceConfig } from './mock-utils'
 
 export default [
     {
-        url: '/api/user/login',
+        url: serviceConfig.apiUrl + '/user/login',
         method: 'post',
         rawResponse: (req, res) => mockResponse(res, {
             code: 200,
@@ -20,7 +20,7 @@ export default [
         }, 1000)
     },
     {
-        url: '/api/user/logout',
+        url: serviceConfig.apiUrl + '/user/logout',
         method: 'post',
         rawResponse: (req, res) => mockResponse(res, {
             code: 200,
@@ -30,7 +30,7 @@ export default [
         })
     },
     {
-        url: '/api/user/checktoken',
+        url: serviceConfig.apiUrl + '/user/checktoken',
         method: 'get',
         rawResponse: (req, res) => mockResponse(res, {
             code: 200,
@@ -47,7 +47,7 @@ export default [
         })
     },
     {
-        url: '/api/user/auths',
+        url: serviceConfig.apiUrl + '/user/auths',
         method: 'get',
         rawResponse: (req, res) => {
             const data = ['product', 'product-list', 'product-list-add', 'product-list-shelve', 'product-list-unshelve', 'product-list-modify', 'product-list-delete', 'order', 'order-list', 'order-list-tb', 'order-list-tb-ship', 'order-list-tb-details', 'order-list-jd']

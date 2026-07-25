@@ -1,30 +1,46 @@
 import http from '@/services/http'
-import type { RequestOptions, BaseResponse } from '@/services/http/types'
+import type { ApiOptions } from '@/services/http/types'
 
 /**
  * 用户登录
  */
-export function createLogin(options?: RequestOptions<{ req: User.LoginParams; res: BaseResponse<User.UserInfo>; }>) {
-  return http.createRequest('POST', '/api/user/login', options)
+export function createLogin(options?: ApiOptions<{ req: User.LoginParams; res: User.UserInfo; }>) {
+  return http.createRequest({
+    method: 'POST',
+    url: '/user/login',
+    options
+  })
 }
 
 /**
  * 用户登出
  */
-export function createLogout(options?: RequestOptions) {
-  return http.createRequest('POST', '/api/user/logout', options)
+export function createLogout(options?: ApiOptions) {
+  return http.createRequest({
+    method: 'POST',
+    url: '/user/logout',
+    options
+  })
 }
 
 /**
  * 令牌校验
  */
-export function createCheckToken(options?: RequestOptions<{ res: BaseResponse<User.UserInfo>; }>) {
-  return http.createRequest('GET', '/api/user/checktoken', options)
+export function createCheckToken(options?: ApiOptions<{ res: User.UserInfo; }>) {
+  return http.createRequest({
+    method: 'GET',
+    url: '/user/checktoken',
+    options
+  })
 }
 
 /**
  * 获取用户权限
  */
-export function createUserAuths(options?: RequestOptions<{ res: BaseResponse<string[]>; }>) {
-  return http.createRequest('GET', '/api/user/auths', options)
+export function createUserAuths(options?: ApiOptions<{ res: string[]; }>) {
+  return http.createRequest({
+    method: 'GET',
+    url: '/user/auths',
+    options
+  })
 }
