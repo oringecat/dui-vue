@@ -17,6 +17,7 @@ declare namespace Product {
 
     /** 分类列表 */
     interface CategoryListParams {
+        code?: string;
         categoryName?: string;
         status?: number;
     }
