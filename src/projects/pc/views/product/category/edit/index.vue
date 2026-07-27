@@ -36,7 +36,6 @@ const formData = reactive({
 createCategoryList({
     onSuccess: (res) => {
         categoryList.value = buildTree(res.data, 'id', 'parentId', (node) => node.parentId === 0)
-    },
-    immediate: true
+    }
 })
 </script>

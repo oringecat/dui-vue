@@ -12,8 +12,10 @@ export default [
                 message: 'ok',
                 data: Array.from({ length: 20 }, (_, i) => ({
                     id: 1000 + i,
-                    productName: '@ctitle(10,20)', // 随机中文标题（10-20字）
-                    status: '@integer(1, 2)'
+                    categoryId: '@integer(1, 100)',
+                    title: '@ctitle(10,20)', // 随机中文标题（10-20字）
+                    status: '@integer(1, 2)',
+                    createTime: Date.now()
                 })),
                 total: 200
             })

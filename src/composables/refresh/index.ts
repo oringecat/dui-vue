@@ -6,7 +6,7 @@ import eventBus from '@/utils/bus'
 export function useRefresh(callback: () => void, options: Partial<RefreshOptions> = {}) {
     const route = useRoute()
 
-    const { immediate = true, refreshId = route.path } = options
+    const { immediate, refreshId = route.path } = options
 
     const refreshing = shallowRef(false)
     const isEventTriggered = shallowRef(false) // 是否由事件触发

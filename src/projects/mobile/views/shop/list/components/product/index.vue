@@ -3,7 +3,7 @@
         <app-waterfall :data-list="appendList">
             <template #default="{ item }">
                 <div class="product-list__item">
-                    {{ item.productName }}
+                    {{ item.title }}
                 </div>
             </template>
         </app-waterfall>

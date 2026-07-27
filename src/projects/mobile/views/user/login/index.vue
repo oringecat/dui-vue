@@ -27,7 +27,7 @@ const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
 
-const formData = reactive<User.LoginParams>({
+const formData = reactive<User.LoginRequest>({
     account: '',
     password: '',
     client: 'web',

@@ -11,7 +11,7 @@ export interface RequestConfig<T extends RequestShape = RequestShape> {
 }
 
 export interface RequestOptions<T extends RequestShape = RequestShape> {
-    immediate?: boolean; // 是否立即执行
+    manual?: boolean; // 是否手动执行
     headers?: AxiosRequestConfig['headers'];
     data?: T['req']; // 请求参数
     onSuccess?: (res: T['res']) => void;

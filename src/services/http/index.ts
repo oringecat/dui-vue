@@ -143,7 +143,7 @@ export default new (class {
         }
 
         // 默认立即请求
-        if (options.immediate) {
+        if (!options.manual) {
             fetch()
         }
 

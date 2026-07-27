@@ -43,7 +43,7 @@ const filterRules: FormRules = {
     }]
 }
 
-const { filterOptions, queryParams } = useDataFilter<Order.OrderListParams>({
+const { filterOptions, queryParams } = useDataFilter<Order.OrderListRequest>({
     filters: [
         {
             field: 'orderNumber',
@@ -71,7 +71,7 @@ const { filterOptions, queryParams } = useDataFilter<Order.OrderListParams>({
     ]
 })
 
-const buildQueryParams = (qs: Partial<Order.OrderListParams>) => {
+const buildQueryParams = (qs: Partial<Order.OrderListRequest>) => {
     if (qs.status === 4) {
         const [startTime, endTime] = dateValue.value || []
         qs.startTime = startTime

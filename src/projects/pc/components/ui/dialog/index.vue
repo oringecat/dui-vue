@@ -3,7 +3,7 @@
         <slot></slot>
         <template #footer>
             <el-button @click="visible = false">取消</el-button>
-            <el-button type="primary">提交</el-button>
+            <slot name="footer"></slot>
         </template>
     </el-dialog>
 </template>

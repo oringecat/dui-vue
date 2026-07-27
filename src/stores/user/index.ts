@@ -29,9 +29,9 @@ export const useUserStore = defineStore('user', () => {
     const token = computed(() => state.userInfo.token)
     const isAdmin = computed(() => state.userInfo.roleId === -1) // 是否超级管理员
 
-    const tokenRequest = createCheckToken()
-    const loginRequest = createLogin()
-    const logoutRequest = createLogout()
+    const tokenRequest = createCheckToken({ manual: true })
+    const loginRequest = createLogin({ manual: true })
+    const logoutRequest = createLogout({ manual: true })
 
     // 加载初始数据
     const loadBaseData = async () => {
@@ -54,7 +54,7 @@ export const useUserStore = defineStore('user', () => {
     }
 
     // 用户登录
-    const userLogin = async (params: User.LoginParams, rememberMe = false) => {
+    const userLogin = async (params: User.LoginRequest, rememberMe = false) => {
         try {
             state.loading = true
             cleanup()

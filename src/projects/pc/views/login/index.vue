@@ -28,7 +28,7 @@ const authStore = useAuthStore()
 
 const loading = shallowRef(false)
 
-const formData = reactive<User.LoginParams>({
+const formData = reactive<User.LoginRequest>({
     account: '',
     password: '',
     client: 'web',

@@ -1,106 +1,104 @@
 <template>
-    <app-dialog title="编辑" width="900">
+    <app-dialog title="编辑" width="900" :show="show">
         <el-splitter v-loading="loading">
             <el-splitter-panel size="240px" v-if="!selectedRow">
                 <el-tree :data="categoryList" :props="{ label: 'categoryName', }" node-key="id"
                     @node-click="onCategoryClick" highlight-current />
             </el-splitter-panel>
             <el-splitter-panel>
-                <div class="block">
-                    <div>
-                        <app-category @submit="(item) => categorys.push(item)" />
-                    </div>
-                    <div>
-                        <pre>{{ categorys }}</pre>
-                    </div>
-                </div>
-                <div class="block" v-if="categorys.length">
-                    <div>
-                        <app-sales v-bind="{ categorys }" @submit="(item) => sales.push(item)" />
-                    </div>
-                    <div>
-                        <pre>{{ sales }}</pre>
-                    </div>
-                </div>
-                <div class="block" v-if="sales.length">
-                    <div>
-                        <app-spec v-bind="{ categorys, sales }" @submit="(item) => specs.push(item)" />
-                    </div>
-                    <div>
-                        <pre>{{ specs }}</pre>
-                    </div>
-                </div>
-                <div class="block" v-if="specs.length">
-                    <div>
-                        <app-sku v-bind="{ categorys, sales, specs }" @submit="(item) => skus.push(item)" />
-                    </div>
-                </div>
+                <el-form :model="formData" label-width="auto">
+                    <el-form-item label="标题">
+                        <el-input v-model="formData.title" />
+                    </el-form-item>
+                    <el-form-item label="品牌">
+                        <el-select v-model="formData.brandId" placeholder="请选择">
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="定制">
+                        <el-switch v-model="formData.isCustom" />
+                    </el-form-item>
+                    <el-form-item label="描述">
+                        <el-input type="textarea" v-model="formData.description" :rows="3" />
+                    </el-form-item>
+                    <el-form-item label="规格">
+                        <app-sku :category-id="formData.categoryId" @submit="(item) => skus.push(item)"
+                            v-if="formData.categoryId" />
+                        <el-text type="info" v-else>请先选择分类</el-text>
+                    </el-form-item>
+                </el-form>
             </el-splitter-panel>
         </el-splitter>
+        <template #footer>
+            <el-button type="primary" :loading="submitLoading" @click="onSubmit">提交</el-button>
+        </template>
     </app-dialog>
 </template>
 
 <script lang="ts" setup>
-import { reactive, shallowRef, computed } from 'vue'
+import { reactive, ref, shallowRef, computed, onMounted } from 'vue'
 import type Node from 'element-plus/es/components/tree/src/model/node'
 import { buildTree } from '@/helpers/filters'
-import type { ProductSku, Category, SaleAttribute, SaleSpec } from '@/types/product'
-import { createCategoryList, createCategorySaleAttrList, createCategorySaleSpecList } from '@/services/api/product'
+import type { ProductSku } from '@/types/product'
+import { createCategoryList, createProductDetail, createProductUpdate } from '@/services/api/product'
 import AppDialog from '@pc/components/ui/dialog/index.vue'
-import AppCategory from './category/index.vue'
-import AppSales from './sales/index.vue'
-import AppSpec from './spec/index.vue'
 import AppSku from './sku/index.vue'
 
 const props = defineProps<{
+    show?: boolean
     selectedRow?: Product.ProductListItem
 }>()
 
-const categorys = reactive<Category[]>([])
-const sales = reactive<SaleAttribute[]>([])
-const specs = reactive<SaleSpec[]>([])
-const skus = reactive<ProductSku[]>([])
+const emit = defineEmits<{
+    closed: [boolean]
+}>()
 
 const categoryList = shallowRef<Product.CategoryItem[]>([])
-const saleAttrList = shallowRef<Product.CategorySaleAttrItem[]>([])
-const saleSpecList = shallowRef<Product.CategorySaleSpecItem[]>([])
+const skus = reactive<ProductSku[]>([])
 
-const loading = computed(() => categoryLoading.value || saleAttrLoading.value || saleSpecLoading.value)
+const formData = ref<Partial<Product.ProductDetail>>({
+    id: 0,
+    isCustom: false,
+    ...props.selectedRow
+})
+
+const loading = computed(() => categoryLoading.value || detailLoading.value)
 
 const { loading: categoryLoading } = createCategoryList({
+    manual: !!props.selectedRow,
     onSuccess: (res) => {
         categoryList.value = buildTree(res.data, 'id', 'parentId', (node) => node.parentId === 0)
-    },
-    immediate: !props.selectedRow
-})
-
-const { loading: saleAttrLoading, fetch: getSaleAttrList } = createCategorySaleAttrList({
-    onSuccess: (res) => {
-        saleAttrList.value = res.data
     }
 })
 
-const { loading: saleSpecLoading, fetch: getSaleSpecList } = createCategorySaleSpecList({
+const { loading: detailLoading, fetch: getProductDetail } = createProductDetail({
+    manual: true,
     onSuccess: (res) => {
-        saleSpecList.value = res.data
+        formData.value = res.data
     }
+})
+
+const { loading: submitLoading, rawFetch: updateProduct } = createProductUpdate({
+    manual: true
 })
 
 const onCategoryClick = (item: Product.CategoryItem, node: Node) => {
     if (node.isLeaf) {
-        getSaleAttrList({ categoryId: item.id })
-        getSaleSpecList({ categoryId: item.id })
+        formData.value.categoryId = item.id
     }
 }
+
+const onSubmit = async () => {
+    try {
+        //await updateProduct(formData.value)
+        emit('closed', true)
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+onMounted(() => {
+    if (props.selectedRow) {
+        getProductDetail({ id: props.selectedRow.id })
+    }
+})
 </script>
-
-<style lang="less">
-.block {
-    display: flex;
-    border-bottom: 1px solid #f2f2f2;
-
-    .el-select {
-        min-width: 160px;
-    }
-}
-</style>

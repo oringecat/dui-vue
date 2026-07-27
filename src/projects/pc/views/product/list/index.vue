@@ -43,21 +43,20 @@ const { loading, fetch } = createProductList({
     },
     onSuccess: (res) => {
         updateItems(res.data, res.total)
-    },
-    immediate: true
+    }
 })
 
 const { rawColumns, tableColumns, hiddenKeys } = useTableColumns<Product.ProductListItem>([
     { field: 'id', label: 'ID' },
-    { field: 'productName', label: '商品名称' },
+    { field: 'title', label: '标题' },
     { field: 'action', label: '操作', fixed: 'right' }
 ])
 
-const { filterOptions, queryParams } = useDataFilter<Product.ProductListParams>({
+const { filterOptions, queryParams } = useDataFilter<Product.ProductListRequest>({
     filters: [
         {
-            field: 'productName',
-            label: '商品'
+            field: 'title',
+            label: '标题'
         },
         {
             field: 'categoryId',

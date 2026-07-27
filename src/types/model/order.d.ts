@@ -1,5 +1,5 @@
 declare namespace Order {
-    interface OrderListParams {
+    interface OrderListRequest {
         pageIndex: number;
         pageSize: number;
         orderNumber?: string;

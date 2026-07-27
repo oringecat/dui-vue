@@ -18,7 +18,7 @@
 
 <script lang="ts" generic="T extends object" setup>
 import { shallowRef, computed, useSlots, h, Fragment, type VNode } from 'vue'
-import type { Column, RowEventHandlers } from 'element-plus'
+import { type Column, type RowEventHandlers, TableV2FixedDir } from 'element-plus'
 import { getNestedValue } from '@/helpers/filters'
 import type { TableColumn } from '@pc/components/ui/column-setting'
 import type { ContextMenuState, ContextMenuItem } from '@pc/components/ui/context-menu/types'
@@ -73,6 +73,12 @@ const fixedWidth = computed(() => props.columns.reduce((pre, cur) => {
     return pre
 }, { length: 0, width: 0 }))
 
+// 转换固定列位置
+const fixedMap: Record<`${TableV2FixedDir}`, TableV2FixedDir> = {
+    left: TableV2FixedDir.LEFT,
+    right: TableV2FixedDir.RIGHT
+}
+
 const generateColumns = (width: number): Column<T>[] => {
     // 最小宽度
     const minWidth = 120
@@ -86,7 +92,7 @@ const generateColumns = (width: number): Column<T>[] => {
         width: defaultWidth < minWidth ? minWidth : defaultWidth,
         align: prop.align ?? 'left',
         sortable: prop.sortable,
-        fixed: prop.fixed,
+        fixed: prop.fixed ? fixedMap[prop.fixed] : undefined,
         cellRenderer: ({ rowData, rowIndex }: { rowData: T; rowIndex: number }) => {
             const renderSlot = slots[prop.field]
             const value = getNestedValue(rowData, prop.field)

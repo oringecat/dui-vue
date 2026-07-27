@@ -7,7 +7,7 @@
             <app-list class="order-list" v-model:loading="loading" :finished="!hasMore" :error="failed"
                 @load="loadData">
                 <div v-for="(item, index) in appendList" :key="index">
-                    {{ item.productName }}
+                    {{ item.title }}
                     <van-button type="primary" @click="openComponent('detail')">详情</van-button>
                 </div>
             </app-list>

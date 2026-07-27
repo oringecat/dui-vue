@@ -27,7 +27,7 @@ import AppAction from '@pc/components/ui/action/index.vue'
 
 const props = defineProps<{
     componentId: string
-    queryParams: Partial<Order.OrderListParams>
+    queryParams: Partial<Order.OrderListRequest>
 }>()
 
 const { actionComponent, contextMenus, hasRowAction, getRowActions } = useAuthComponents({
@@ -37,6 +37,7 @@ const { actionComponent, contextMenus, hasRowAction, getRowActions } = useAuthCo
 const { dataList, pageIndex, pageSize, pageTotal, hasData, updateItems } = useDataTable<Order.OrderListItem>()
 
 const { loading, fetch } = createOrderList({
+    manual: true,
     data: {
         pageSize: pageSize.value,
         pageIndex: pageIndex.value

@@ -1,13 +1,6 @@
 <template>
-    <el-form>
-        <el-form-item>
-            <el-select v-model="categoryId" :empty-values="[0]" :value-on-clear="0" clearable>
-                <template v-for="item in categorys" :key="item.id">
-                    <el-option :label="item.categoryName" :value="item.id" />
-                </template>
-            </el-select>
-        </el-form-item>
-        <table cellspacing="0" cellpadding="0" v-if="saleAttributes.length">
+    <div v-loading="loading" style="width: 100%;">
+        <table cellspacing="0" cellpadding="0" v-if="attrs.length">
             <thead>
                 <tr>
                     <th>属性</th>
@@ -15,7 +8,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(item, index) in saleAttributes" :key="index">
+                <tr v-for="(item, index) in attrs" :key="index">
                     <td>{{ item.sale.saleName }}</td>
                     <td>
                         <el-checkbox-group v-model="item.checked" @change="(value) => onChecked(item.sale.id, value)">
@@ -23,17 +16,17 @@
                                 <el-checkbox :label="spec.specName" :value="spec.id" />
                             </template>
                         </el-checkbox-group>
-                        <table cellspacing="0" cellpadding="0" v-if="item.options.length">
+                        <table cellspacing="0" cellpadding="0" v-if="item.sale.isCustom && item.options.length">
                             <thead>
                                 <tr>
                                     <th>已选</th>
-                                    <th v-if="item.sale.isCustom">自定义</th>
+                                    <th>自定义</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr v-for="(option, index) in item.options" :key="index">
                                     <td>{{ option.specName }}</td>
-                                    <td v-if="item.sale.isCustom">
+                                    <td>
                                         <el-input v-model="option.customName" />
                                     </td>
                                 </tr>
@@ -43,7 +36,7 @@
                 </tr>
             </tbody>
         </table>
-        <table cellspacing="0" cellpadding="0" v-if="selected.length">
+        <table cellspacing="0" cellpadding="0" style="margin-top: 18px;" v-if="selected.length">
             <thead>
                 <tr>
                     <td v-for="({ sale }, index) in selected" :key="index">{{ sale.saleName }}</td>
@@ -65,44 +58,32 @@
                 </tr>
             </tbody>
         </table>
-    </el-form>
+    </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, computed, watch, type PropType } from 'vue'
+import { ref, computed, watch } from 'vue'
 import type { CheckboxValueType } from 'element-plus'
-import type { Category, SaleAttribute, SaleSpec, ProductSku } from '@/types/product'
+import type { SaleAttribute, SaleSpec } from '@/types/product'
+import { createCategorySaleAttrList, createCategorySaleSpecList } from '@/services/api/product'
 
-const props = defineProps({
-    categorys: {
-        type: Array as PropType<Category[]>,
-        required: true
-    },
-    sales: {
-        type: Array as PropType<SaleAttribute[]>,
-        required: true
-    },
-    specs: {
-        type: Array as PropType<SaleSpec[]>,
-        required: true
-    }
-})
+const props = defineProps<{
+    categoryId: number
+}>()
 
 const emit = defineEmits(['submit'])
 
-const categoryId = ref(0)
-
-const saleAttributes = ref<{ sale: SaleAttribute; specs: SaleSpec[]; checked: number[]; options: (SaleSpec & { customName: string; })[] }[]>([])
+const attrs = ref<{ sale: SaleAttribute; specs: SaleSpec[]; checked: number[]; options: (SaleSpec & { customName: string; })[] }[]>([])
 
 const skus = ref<{
     attrs: { sale: SaleAttribute; spec: SaleSpec & { customName: string; } }[];
     sku: { price: number; stock: number };
 }[]>([])
 
-const selected = computed(() => saleAttributes.value.filter(({ checked }) => checked.length))
+const selected = computed(() => attrs.value.filter(({ checked }) => checked.length))
 
 const onChecked = (saleId: number, checkedValue: CheckboxValueType[]) => {
-    const target = saleAttributes.value.find(({ sale }) => sale.id === saleId)
+    const target = attrs.value.find(({ sale }) => sale.id === saleId)
 
     if (target) {
         const filtered = target.specs.filter((spec) => checkedValue.includes(spec.id))
@@ -131,16 +112,34 @@ const cartesianProduct = (options: { sale: SaleAttribute; spec: SaleSpec & { cus
     }))), [{ attrs: [], sku: { price: 0, stock: 0 } }])
 }
 
-watch(categoryId, (id) => {
-    const filtered = props.sales.filter((item) => item.categoryId === id)
+const loading = computed(() => saleAttrLoading.value || saleSpecLoading.value)
 
-    saleAttributes.value = filtered.map((sale) => ({
-        sale,
-        specs: props.specs.filter((spec) => spec.saleId === sale.id),
-        checked: [],
-        options: []
-    }))
+const { loading: saleAttrLoading, rawFetch: getSaleAttrList } = createCategorySaleAttrList({
+    manual: true
 })
+
+const { loading: saleSpecLoading, rawFetch: getSaleSpecList } = createCategorySaleSpecList({
+    manual: true
+})
+
+watch(() => props.categoryId, (id) => {
+    attrs.value = []
+    skus.value = []
+
+    Promise.all([
+        getSaleAttrList({ categoryId: id }),
+        getSaleSpecList({ categoryId: id })
+    ]).then(([attrRes, specRes]) => {
+        const filtered = attrRes.data.filter((item) => item.categoryId === id)
+
+        attrs.value = filtered.map((sale) => ({
+            sale,
+            specs: specRes.data.filter((spec) => spec.saleId === sale.id),
+            checked: [],
+            options: []
+        }))
+    })
+}, { immediate: true })
 </script>
 
 <style lang="less" scoped>
@@ -148,9 +147,11 @@ table,
 th,
 td {
     border: 1px solid #f2f2f2;
+    padding: 5px;
 }
 
 table {
+    width: 100%;
     border-collapse: collapse;
 }
 </style>

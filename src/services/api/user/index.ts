@@ -4,7 +4,7 @@ import type { ApiOptions } from '@/services/http/types'
 /**
  * 用户登录
  */
-export function createLogin(options?: ApiOptions<{ req: User.LoginParams; res: User.UserInfo; }>) {
+export function createLogin(options?: ApiOptions<{ req: User.LoginRequest; res: User.UserInfo; }>) {
   return http.createRequest({
     method: 'POST',
     url: '/user/login',

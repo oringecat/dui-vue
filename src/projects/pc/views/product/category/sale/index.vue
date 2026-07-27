@@ -48,8 +48,7 @@ const { loading: specLoading } = createCategorySaleSpecList({
             map.set(item.saleId, list)
             return map
         }, new Map())
-    },
-    immediate: true
+    }
 })
 
 const { loading: saleLoading } = createCategorySaleAttrList({
@@ -58,8 +57,7 @@ const { loading: saleLoading } = createCategorySaleAttrList({
     },
     onSuccess: (res) => {
         saleAttrList.value = res.data
-    },
-    immediate: true
+    }
 })
 
 const { tableColumns } = useTableColumns<Product.CategorySaleAttrItem>([

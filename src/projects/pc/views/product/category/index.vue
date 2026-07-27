@@ -43,8 +43,7 @@ const { actionComponent, hasAction, getActions, getRowActions } = useAuthCompone
 const { loading, fetch } = createCategoryList({
     onSuccess: (res) => {
         categoryList.value = buildTree(res.data, 'id', 'parentId', (node) => node.parentId === 0)
-    },
-    immediate: true
+    }
 })
 
 const { tableColumns } = useTableColumns<Product.CategoryItem>([
@@ -56,7 +55,7 @@ const { tableColumns } = useTableColumns<Product.CategoryItem>([
     { field: 'action', label: '操作', fixed: 'right' }
 ])
 
-const { filterOptions, queryParams } = useDataFilter<Product.CategoryListParams>({
+const { filterOptions, queryParams } = useDataFilter<Product.CategoryListRequest>({
     filters: [
         {
             field: 'categoryName',
