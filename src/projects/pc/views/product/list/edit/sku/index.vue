@@ -1,67 +1,73 @@
 <template>
     <div class="product-sku" v-loading="loading">
-        <table cellspacing="0" cellpadding="0" v-if="saleGroups.length">
-            <thead>
-                <tr>
-                    <th>名称</th>
-                    <th>规格</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(item, index) in saleGroups" :key="index">
-                    <td>{{ item.sale.saleName }}</td>
-                    <td>
-                        <el-checkbox-group v-model="item.checked" @change="(value) => onChecked(item.sale.id, value)">
-                            <template v-for="spec in item.specs" :key="spec.id">
-                                <el-checkbox :label="spec.specName" :value="spec.id" />
-                            </template>
-                        </el-checkbox-group>
-                        <table cellspacing="0" cellpadding="0" v-if="item.sale.isCustom && item.attrs.length">
-                            <thead>
-                                <tr>
-                                    <th>已选</th>
-                                    <th>自定义</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="(attr, index) in item.attrs" :key="index">
-                                    <td>{{ getSpecName(attr.specId) }}</td>
-                                    <td>
-                                        <el-input v-model="attr.customName" placeholder="选填" @change="rebuildSkus" />
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <table cellspacing="0" cellpadding="0" v-if="selected.length">
-            <thead>
-                <tr>
-                    <td v-for="({ sale }, index) in selected" :key="index">{{ sale.saleName }}</td>
-                    <td>价格</td>
-                    <td>库存</td>
-                    <td>编码</td>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(sku, index) in saleSkus" :key="index">
-                    <td v-for="attr in sku.attrs" :key="`${attr.saleId}-${attr.specId}`">
-                        {{ attr.customName || getSpecName(attr.specId) }}
-                    </td>
-                    <td>
-                        <el-input-number v-model="sku.price" :min="0" />
-                    </td>
-                    <td>
-                        <el-input-number v-model="sku.stock" :min="0" />
-                    </td>
-                    <td>
-                        <el-input v-model="sku.code" placeholder="选填" />
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <el-form-item label="商品规格" v-if="saleGroups.length">
+            <table cellspacing="0" cellpadding="0">
+                <thead>
+                    <tr>
+                        <th>名称</th>
+                        <th>规格</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(item, index) in saleGroups" :key="index">
+                        <td>{{ item.sale.saleName }}</td>
+                        <td>
+                            <el-checkbox-group v-model="item.checked"
+                                @change="(value) => onChecked(item.sale.id, value)">
+                                <template v-for="spec in item.specs" :key="spec.id">
+                                    <el-checkbox :label="spec.specName" :value="spec.id" />
+                                </template>
+                            </el-checkbox-group>
+                            <table cellspacing="0" cellpadding="0" v-if="item.sale.isCustom && item.attrs.length">
+                                <thead>
+                                    <tr>
+                                        <th>已选</th>
+                                        <th>自定义</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(attr, index) in item.attrs" :key="index">
+                                        <td>{{ getSpecName(attr.specId) }}</td>
+                                        <td>
+                                            <el-input v-model="attr.customName" placeholder="选填"
+                                                @change="rebuildSkus" />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </el-form-item>
+        <el-form-item label="库存单位" v-if="selected.length">
+            <table cellspacing="0" cellpadding="0">
+                <thead>
+                    <tr>
+                        <td v-for="({ sale }, index) in selected" :key="index">{{ sale.saleName }}</td>
+                        <td>价格</td>
+                        <td>库存</td>
+                        <td>编码</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(sku, index) in saleSkus" :key="index">
+                        <td v-for="attr in sku.attrs" :key="`${attr.saleId}-${attr.specId}`">
+                            {{ attr.customName || getSpecName(attr.specId) }}
+                        </td>
+                        <td>
+                            <el-input-number v-model="sku.price" :min="0" />
+                        </td>
+                        <td>
+                            <el-input-number v-model="sku.stock" :min="0" />
+                        </td>
+                        <td>
+                            <el-input v-model="sku.code" placeholder="选填" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </el-form-item>
     </div>
 </template>
 
@@ -128,7 +134,7 @@ const attrsKey = (attrs: Product.ProductSkuAttr[]) =>
 // 计算笛卡尔积
 const cartesianSku = (attrs: Product.ProductSkuAttr[][]) => {
     if (!attrs.length) return []
-    
+
     // 缓存旧数据，避免重新填写
     const prevMap = new Map(saleSkus.value.map((sku) => [attrsKey(sku.attrs), sku]))
 
@@ -213,7 +219,3 @@ watch(() => props.categoryId, (id) => {
     })
 }, { immediate: true })
 </script>
-
-<style lang="less" scoped>
-@import './index.less';
-</style>

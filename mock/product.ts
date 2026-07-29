@@ -86,12 +86,12 @@ export default [
             const saleDataMap: Record<number, { id: number; categoryId: number; saleName: string; isCustom: boolean }[]> = {
                 1110: [ // 智能手机
                     { id: 100, categoryId: 1110, saleName: '颜色', isCustom: true },
-                    { id: 101, categoryId: 1110, saleName: '存储容量', isCustom: false },
-                    { id: 102, categoryId: 1110, saleName: '网络制式', isCustom: false },
+                    { id: 101, categoryId: 1110, saleName: '容量', isCustom: false },
+                    { id: 102, categoryId: 1110, saleName: '网络', isCustom: false },
                 ],
                 3100: [ // 休闲零食
                     { id: 200, categoryId: 3100, saleName: '口味', isCustom: true },
-                    { id: 201, categoryId: 3100, saleName: '包装规格', isCustom: false },
+                    { id: 201, categoryId: 3100, saleName: '包装', isCustom: false },
                 ],
             }
 

@@ -1,34 +1,40 @@
 <template>
-    <app-dialog class="product-edit" title="编辑" width="900" :show="show">
+    <app-dialog class="product-edit" title="编辑" width="1200" :show="show">
         <el-splitter v-loading="loading">
             <el-splitter-panel size="200px">
-                <el-tree ref="treeRef" :class="{ 'readonly': !!props.record }" :data="categoryList"
-                    :props="{ label: 'categoryName', }" node-key="id" @node-click="onCategoryClick" highlight-current />
+                <el-scrollbar>
+                    <el-tree ref="treeRef" :class="{ 'readonly': !!props.record }" :data="categoryList"
+                        :props="{ label: 'categoryName', }" node-key="id" @node-click="onCategoryClick"
+                        highlight-current />
+                </el-scrollbar>
             </el-splitter-panel>
             <el-splitter-panel>
-                <el-form :model="formData" label-width="auto">
-                    <el-form-item label="标题">
-                        <el-input v-model="formData.title" placeholder="请输入" />
-                    </el-form-item>
-                    <el-form-item label="品牌">
-                        <el-select v-model="formData.brandId" placeholder="请选择">
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="定制">
-                        <el-switch v-model="formData.isCustom" />
-                    </el-form-item>
-                    <el-form-item label="详情">
-                        <el-input type="textarea" v-model="formData.description" :rows="3" placeholder="请输入" />
-                    </el-form-item>
-                    <template v-if="formData.categoryId">
-                        <el-form-item label="基础属性" v-if="formData.attrs">
-                            <app-attr v-model="formData.attrs" :category-id="formData.categoryId" />
+                <el-scrollbar>
+                    <el-form :model="formData" label-width="auto">
+                        <el-form-item label="标题">
+                            <el-input v-model="formData.title" placeholder="请输入" />
                         </el-form-item>
-                        <el-form-item label="销售属性" v-if="formData.skus">
-                            <app-sku v-model="formData.skus" :category-id="formData.categoryId" />
+                        <el-form-item label="关键字">
+                            <el-input v-model="formData.keywords" placeholder="请输入" />
                         </el-form-item>
-                    </template>
-                </el-form>
+                        <el-form-item label="品牌">
+                            <el-select v-model="formData.brandId" placeholder="请选择">
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="定制">
+                            <el-switch v-model="formData.isCustom" />
+                        </el-form-item>
+                        <el-form-item label="详情">
+                            <el-input type="textarea" v-model="formData.description" :rows="3" placeholder="请输入" />
+                        </el-form-item>
+                        <template v-if="formData.categoryId">
+                            <app-attr class="product-edit__table" v-model="formData.attrs"
+                                :category-id="formData.categoryId" v-if="formData.attrs" />
+                            <app-sku class="product-edit__table" v-model="formData.skus"
+                                :category-id="formData.categoryId" v-if="formData.skus" />
+                        </template>
+                    </el-form>
+                </el-scrollbar>
             </el-splitter-panel>
         </el-splitter>
         <template #footer>

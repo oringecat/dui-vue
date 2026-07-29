@@ -1,5 +1,5 @@
 <template>
-    <el-dialog class="app-dialog" v-model="visible" @closed="onClosed">
+    <el-dialog class="app-dialog" v-model="visible" align-center @closed="onClosed">
         <slot></slot>
         <template #footer>
             <el-button @click="visible = false">取消</el-button>

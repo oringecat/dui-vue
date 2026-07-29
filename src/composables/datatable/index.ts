@@ -59,7 +59,10 @@ export function useDataTable<T extends object>(options: DataTableOptions = {}) {
 
     // 追加列表
     const appendList = computed(() => {
-        if (fullData.value.length) return fullData.value
+        if (fullData.value.length) {
+            // 只返回第 1 页到当前页的累计数据，随 pageIndex 递增逐步追加
+            return fullData.value.slice(0, state.pageIndex * state.pageSize)
+        }
         return [...rawData.values()].flat()
     })
 

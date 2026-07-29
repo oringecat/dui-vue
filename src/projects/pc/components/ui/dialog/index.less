@@ -1,1 +1,23 @@
-.app-dialog {}
+.app-dialog {
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
+    overflow: hidden;
+    padding: 0;
+
+    .el-dialog__header {
+        flex-shrink: 0;
+        border: 1px solid #f2f2f2;
+        padding: var(--el-dialog-padding-primary);
+    }
+
+    .el-dialog__body {
+        flex: 1;
+        overflow-y: auto;
+    }
+
+    .el-dialog__footer {
+        flex-shrink: 0;
+        padding: var(--el-dialog-padding-primary);
+    }
+}

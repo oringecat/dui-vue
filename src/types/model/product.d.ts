@@ -28,6 +28,7 @@ declare namespace Product {
         title: string;
         brandId: number;
         brandName: string;
+        keywords: string;
         description: string;
         isCustom: boolean; // 是否定制商品
         attrs: ProductAttrItem[];

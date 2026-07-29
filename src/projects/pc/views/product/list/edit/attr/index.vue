@@ -1,23 +1,25 @@
 <template>
-    <div class="product-attr" v-loading="loading">
-        <table cellspacing="0" cellpadding="0" v-if="categoryAttrs.length">
-            <thead>
-                <tr>
-                    <th>名称</th>
-                    <th>描述</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(item, index) in categoryAttrs" :key="index">
-                    <td>{{ item.attributeName }}</td>
-                    <td>
-                        <el-input :model-value="productAttrs[item.id]"
-                            @update:model-value="(val) => onChange(item.id, val)" placeholder="选填" />
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+    <el-form-item label="商品属性">
+        <div class="product-attr" v-loading="loading">
+            <table cellspacing="0" cellpadding="0" v-if="categoryAttrs.length">
+                <thead>
+                    <tr>
+                        <th>名称</th>
+                        <th>描述</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(item, index) in categoryAttrs" :key="index">
+                        <td>{{ item.attributeName }}</td>
+                        <td>
+                            <el-input :model-value="productAttrs[item.id]"
+                                @update:model-value="(val) => onChange(item.id, val)" placeholder="选填" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </el-form-item>
 </template>
 
 <script lang="ts" setup>
@@ -59,7 +61,7 @@ const onChange = (id: number, value: string) => {
 
 watch(() => props.categoryId, (id) => {
     categoryAttrs.value = []
-    
+
     rawFetch({ categoryId: id }).then((res) => {
         categoryAttrs.value = res.data
     })
