@@ -45,7 +45,18 @@ export function createCategoryList(options?: ApiOptions<{ req: Product.CategoryL
 }
 
 /**
- * 获取销售属性列表
+ * 获取分类基础属性列表
+ */
+export function createCategoryAttrList(options?: ApiOptions<{ req: Product.CategoryAttrListRequest; res: Product.CategoryAttrItem[]; }>) {
+  return http.createRequest({
+    method: 'GET',
+    url: '/product/category/attribute',
+    options
+  })
+}
+
+/**
+ * 获取分类销售属性列表
  */
 export function createCategorySaleAttrList(options?: ApiOptions<{ req: Product.CategorySaleAttrListRequest; res: Product.CategorySaleAttrItem[]; }>) {
   return http.createRequest({
@@ -56,7 +67,7 @@ export function createCategorySaleAttrList(options?: ApiOptions<{ req: Product.C
 }
 
 /**
- * 获取销售规格列表
+ * 获取分类销售规格列表
  */
 export function createCategorySaleSpecList(options?: ApiOptions<{ req: Product.CategorySaleSpecListRequest; res: Product.CategorySaleSpecItem[]; }>) {
   return http.createRequest({

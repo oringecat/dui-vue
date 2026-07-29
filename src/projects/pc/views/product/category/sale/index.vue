@@ -1,5 +1,5 @@
 <template>
-    <app-dialog class="product-category-sale" :loading="loading">
+    <app-dialog class="product-category-sale" :show="show" :loading="loading">
         <app-table :data="saleAttrList" :columns="tableColumns">
             <template #toolbar>
                 <el-button type="primary">新增属性</el-button>
@@ -29,9 +29,10 @@ import AppDialog from '@pc/components/ui/dialog/index.vue'
 import AppTable from '@pc/components/ui/table/index.vue'
 
 const props = defineProps<{
-    selectedRow: Product.CategoryItem
+    record: Product.CategoryItem
 }>()
 
+const show = shallowRef(true)
 const saleAttrList = shallowRef<Product.CategorySaleAttrItem[]>([])
 const saleSpecMap = shallowRef(new Map<number, Product.CategorySaleSpecItem[]>())
 
@@ -39,7 +40,7 @@ const loading = computed(() => specLoading.value || saleLoading.value)
 
 const { loading: specLoading } = createCategorySaleSpecList({
     data: {
-        categoryId: props.selectedRow.id
+        categoryId: props.record.id
     },
     onSuccess: (res) => {
         saleSpecMap.value = res.data.reduce((map, item) => {
@@ -53,7 +54,7 @@ const { loading: specLoading } = createCategorySaleSpecList({
 
 const { loading: saleLoading } = createCategorySaleAttrList({
     data: {
-        categoryId: props.selectedRow.id
+        categoryId: props.record.id
     },
     onSuccess: (res) => {
         saleAttrList.value = res.data

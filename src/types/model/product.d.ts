@@ -30,6 +30,8 @@ declare namespace Product {
         brandName: string;
         description: string;
         isCustom: boolean; // 是否定制商品
+        attrs: ProductAttrItem[];
+        skus: ProductSkuItem[];
         images: ProductImage[];
         status: number;
         createTime: number;
@@ -38,10 +40,34 @@ declare namespace Product {
 
     interface ProductImage {
         id: number;
-        productId: number;
         url: string;
         size: 'thumbnail' | 'small' | 'medium' | 'large' | 'original';
         isMain: boolean;
+    }
+
+    /** 商品基础属性 */
+    interface ProductAttrItem {
+        id: number;
+        attributeId: number;
+        attributeValue: string;
+    }
+
+    /** 商品库存单位 */
+    interface ProductSkuItem {
+        id: number;
+        code: string;
+        attrs: ProductSkuAttr[];
+        price: number;
+        stock: number;
+    }
+
+    /** 商品库存属性 */
+    interface ProductSkuAttr {
+        saleId: number;
+        specId: number;
+        customName: string;
+        image: string;
+        thumbnail: string;
     }
 
     /** 分类列表 */
@@ -60,6 +86,19 @@ declare namespace Product {
         icon: string;
         sort: number;
         createTime: number;
+    }
+
+    /** 基础属性列表 */
+    interface CategoryAttrListRequest {
+        categoryId: number;
+    }
+
+    export interface CategoryAttrItem {
+        id: number;
+        categoryId: number;
+        attributeName: string;
+        type: number;
+        required: boolean;
     }
 
     /** 销售属性列表 */

@@ -12,7 +12,7 @@ export default [
                 message: 'ok',
                 data: Array.from({ length: 20 }, (_, i) => ({
                     id: 1000 + i,
-                    categoryId: '@integer(1, 100)',
+                    categoryId: 1110,
                     title: '@ctitle(10,20)', // 随机中文标题（10-20字）
                     status: '@integer(1, 2)',
                     createTime: Date.now()
@@ -47,6 +47,37 @@ export default [
         }
     },
     {
+        url: serviceConfig.apiUrl + '/product/category/attribute',
+        method: 'get',
+        rawResponse: (req, res) => {
+            const { categoryId } = parse(req.url!, true).query
+
+            const attrDataMap: Record<number, { id: number; categoryId: number; attributeName: string; type: number; required: boolean }[]> = {
+                1110: [ // 智能手机
+                    { id: 100, categoryId: 1110, attributeName: '品牌', type: 2, required: true },
+                    { id: 101, categoryId: 1110, attributeName: '型号', type: 1, required: true },
+                    { id: 102, categoryId: 1110, attributeName: '屏幕尺寸', type: 2, required: false },
+                    { id: 103, categoryId: 1110, attributeName: '操作系统', type: 2, required: false },
+                    { id: 104, categoryId: 1110, attributeName: '电池容量(mAh)', type: 4, required: false },
+                ],
+                3100: [ // 休闲零食
+                    { id: 200, categoryId: 3100, attributeName: '品牌', type: 2, required: true },
+                    { id: 201, categoryId: 3100, attributeName: '产地', type: 1, required: false },
+                    { id: 202, categoryId: 3100, attributeName: '保质期(天)', type: 4, required: true },
+                ],
+            }
+
+            const data = attrDataMap[Number(categoryId)] || []
+
+            mockResponse(res, {
+                code: 200,
+                message: 'ok',
+                data,
+                total: data.length
+            })
+        }
+    },
+    {
         url: serviceConfig.apiUrl + '/product/category/sale-attribute',
         method: 'get',
         rawResponse: (req, res) => {
@@ -73,6 +104,77 @@ export default [
                 total: data.length
             })
         }
+    },
+    {
+        url: serviceConfig.apiUrl + '/product/detail',
+        method: 'get',
+        rawResponse: (req, res) => {
+            mockResponse(res, {
+                code: 200,
+                message: 'ok',
+                data: {
+                    id: 1000,
+                    categoryId: 1110,
+                    code: 'SP0001',
+                    title: 'iPhone 15 Pro Max 智能手机',
+                    brandId: 2,
+                    brandName: 'Apple',
+                    description: 'A17 Pro 芯片，钛金属设计，4800 万像素主摄，支持 USB-C，动作按钮，灵动岛交互',
+                    isCustom: false,
+                    attrs: [
+                        { id: 1000, attributeId: 100, attributeValue: 'Apple' },
+                        { id: 1001, attributeId: 101, attributeValue: 'iPhone 15 Pro Max' },
+                        { id: 1002, attributeId: 102, attributeValue: '6.7英寸' },
+                        { id: 1003, attributeId: 103, attributeValue: 'iOS 17' },
+                        { id: 1004, attributeId: 104, attributeValue: '4422' },
+                    ],
+                    skus: [
+                        {
+                            id: 1000,
+                            code: 'SP0001-001',
+                            attrs: [
+                                { saleId: 100, specId: 1003, customName: '原色钛金属', image: '', thumbnail: '' },
+                                { saleId: 101, specId: 1012, customName: '256GB', image: '', thumbnail: '' },
+                                { saleId: 102, specId: 1021, customName: '全网通5G', image: '', thumbnail: '' },
+                            ],
+                            price: 6999,
+                            stock: 50,
+                        },
+                        {
+                            id: 1001,
+                            code: 'SP0001-002',
+                            attrs: [
+                                { saleId: 100, specId: 1003, customName: '极光蓝', image: '', thumbnail: '' },
+                                { saleId: 101, specId: 1013, customName: '512GB', image: '', thumbnail: '' },
+                                { saleId: 102, specId: 1021, customName: '全网通5G', image: '', thumbnail: '' },
+                            ],
+                            price: 7998,
+                            stock: 0,
+                        },
+                        {
+                            id: 1002,
+                            code: 'SP0001-003',
+                            attrs: [
+                                { saleId: 100, specId: 1004, customName: '樱粉金', image: '', thumbnail: '' },
+                                { saleId: 101, specId: 1013, customName: '512GB', image: '', thumbnail: '' },
+                                { saleId: 102, specId: 1021, customName: '全网通5G', image: '', thumbnail: '' },
+                            ],
+                            price: 11999,
+                            stock: 25,
+                        },
+                    ],
+                    images: [
+                        { id: 1000, url: 'https://picsum.photos/seed/iphone1/800/800', size: 'large', isMain: true },
+                        { id: 1001, url: 'https://picsum.photos/seed/iphone2/800/800', size: 'large', isMain: false },
+                        { id: 1002, url: 'https://picsum.photos/seed/iphone3/800/800', size: 'large', isMain: false },
+                    ],
+                    status: 1,
+                    createTime: Date.now(),
+                    updateTime: Date.now(),
+                },
+                total: 1,
+            })
+        },
     },
     {
         url: serviceConfig.apiUrl + '/product/category/sale-spec',

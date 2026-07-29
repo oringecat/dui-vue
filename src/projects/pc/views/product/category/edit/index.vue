@@ -1,5 +1,5 @@
 <template>
-    <app-dialog>
+    <app-dialog :show="show">
         <el-form :model="formData">
             <el-form-item label="所属分类">
                 <el-tree-select v-model="formData.parentId" :data="categoryList" :props="{ label: 'categoryName' }"
@@ -22,15 +22,16 @@ import { createCategoryList } from '@/services/api/product'
 import AppDialog from '@pc/components/ui/dialog/index.vue'
 
 const props = defineProps<{
-    selectedRow?: Product.CategoryItem
+    record?: Product.CategoryItem
 }>()
 
+const show = shallowRef(true)
 const categoryList = shallowRef<Product.CategoryItem[]>([])
 
 const formData = reactive({
-    parentId: props.selectedRow?.parentId ?? 0,
-    code: props.selectedRow?.code ?? '',
-    categoryName: props.selectedRow?.categoryName ?? ''
+    parentId: props.record?.parentId ?? 0,
+    code: props.record?.code ?? '',
+    categoryName: props.record?.categoryName ?? ''
 })
 
 createCategoryList({

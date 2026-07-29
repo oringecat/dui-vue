@@ -20,21 +20,18 @@ export function useAuthComponents<T extends object>(options: Partial<AuthCompone
 
     const usedCodes = shallowReactive(new Set<string>()) // 缓存已被占用的 actions
 
-    const showComponent = shallowRef(false)
     const actionComponent = shallowRef<Component>()
 
     // 打开组件
     const openComponent = ({ code, component }: AuthRoute, row?: T) => {
         if (component) {
             const asyncComponent = defineAsyncComponent(component)
-            showComponent.value = true
 
             // 创建组件
             actionComponent.value = h(asyncComponent, {
-                show: showComponent.value,
-                selectedRow: toRaw(row),
+                authCode: code,
+                record: toRaw(row),
                 onClosed: (refresh: boolean) => {
-                    showComponent.value = false
                     actionComponent.value = undefined
                     if (refresh) options.onClosed?.(code)
                 }
