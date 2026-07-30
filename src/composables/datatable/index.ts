@@ -18,7 +18,7 @@ export function useDataTable<T extends object>(options: DataTableOptions = {}) {
         return entries.every(([key, value]) => {
             if (value) {
                 const rowValue = Reflect.get(row, key)
-                // 模糊匹配（暂不考虑 value 和 rowValue 为数组的问题）
+                // 模糊匹配（暂不考虑 value 和 rowValue 为数组的情况）
                 return String(rowValue).toLowerCase().includes(String(value).toLowerCase())
             }
             return true

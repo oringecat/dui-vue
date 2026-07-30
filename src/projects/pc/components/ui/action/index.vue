@@ -11,7 +11,7 @@
             </template>
         </template>
         <el-dropdown @command="onAction" v-else-if="actions.length">
-            <el-button :icon="MoreFilled" v-bind="buttonProps" circle />
+            <el-button :icon="MoreFilled" v-bind="{ size: 'small', ...buttonProps }" circle />
             <template #dropdown>
                 <el-dropdown-menu>
                     <template v-for="action in actions" :key="action.code">

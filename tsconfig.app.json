@@ -9,7 +9,8 @@
       "@public/*": ["./public/*"],
       "@/*": ["./src/*"],
       "@pc/*": ["./src/projects/pc/*"],
-      "@mobile/*": ["./src/projects/mobile/*"]
+      "@mobile/*": ["./src/projects/mobile/*"],
+      "@wangeditor/editor-for-vue": ["./node_modules/@wangeditor/editor-for-vue/dist/src/index.d.ts"]
     },
 
     "types": ["element-plus/global"],

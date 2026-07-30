@@ -1,6 +1,6 @@
 <template>
-    <el-form-item label="商品属性">
-        <div class="product-attr" v-loading="loading">
+    <div class="product-attr" v-loading="loading">
+        <el-form-item label="商品属性">
             <table cellspacing="0" cellpadding="0" v-if="categoryAttrs.length">
                 <thead>
                     <tr>
@@ -18,8 +18,8 @@
                     </tr>
                 </tbody>
             </table>
-        </div>
-    </el-form-item>
+        </el-form-item>
+    </div>
 </template>
 
 <script lang="ts" setup>

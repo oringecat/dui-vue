@@ -7,8 +7,13 @@
         }
     }
 
-    .el-scrollbar {
-        height: 100%;
+    .el-splitter {
+        flex: 1;
+        overflow-y: auto;
+    }
+
+    .el-form {
+        padding: 20px;
     }
 
     &__table {
@@ -17,7 +22,7 @@
         th,
         td {
             white-space: nowrap;
-            border: 1px solid #eee;
+            border: 1px solid var(--el-border-color);
             padding: 8px 16px;
         }
 
@@ -26,7 +31,7 @@
             border-collapse: collapse;
 
             thead {
-                background-color: #f7f7f7;
+                background-color: var(--el-fill-color-light);
             }
         }
     }

@@ -1,40 +1,39 @@
 <template>
-    <app-dialog class="product-edit" title="编辑" width="1200" :show="show">
-        <el-splitter v-loading="loading">
+    <app-dialog class="product-edit" title="编辑" width="1200" :loading="loading" :show="show">
+        <el-splitter>
             <el-splitter-panel size="200px">
-                <el-scrollbar>
-                    <el-tree ref="treeRef" :class="{ 'readonly': !!props.record }" :data="categoryList"
-                        :props="{ label: 'categoryName', }" node-key="id" @node-click="onCategoryClick"
-                        highlight-current />
-                </el-scrollbar>
+                <el-tree ref="treeRef" :class="{ 'readonly': !!props.record }" :data="categoryList"
+                    :props="{ label: 'categoryName', }" node-key="id" @node-click="onCategoryClick" highlight-current />
             </el-splitter-panel>
             <el-splitter-panel>
-                <el-scrollbar>
-                    <el-form :model="formData" label-width="auto">
-                        <el-form-item label="标题">
-                            <el-input v-model="formData.title" placeholder="请输入" />
-                        </el-form-item>
-                        <el-form-item label="关键字">
-                            <el-input v-model="formData.keywords" placeholder="请输入" />
-                        </el-form-item>
-                        <el-form-item label="品牌">
-                            <el-select v-model="formData.brandId" placeholder="请选择">
-                            </el-select>
-                        </el-form-item>
-                        <el-form-item label="定制">
-                            <el-switch v-model="formData.isCustom" />
-                        </el-form-item>
-                        <el-form-item label="详情">
-                            <el-input type="textarea" v-model="formData.description" :rows="3" placeholder="请输入" />
-                        </el-form-item>
-                        <template v-if="formData.categoryId">
-                            <app-attr class="product-edit__table" v-model="formData.attrs"
-                                :category-id="formData.categoryId" v-if="formData.attrs" />
-                            <app-sku class="product-edit__table" v-model="formData.skus"
-                                :category-id="formData.categoryId" v-if="formData.skus" />
-                        </template>
-                    </el-form>
-                </el-scrollbar>
+                <el-form :model="formData" label-width="auto">
+                    <el-form-item label="标题">
+                        <el-input v-model="formData.title" placeholder="请输入" />
+                    </el-form-item>
+                    <el-form-item label="关键字">
+                        <el-input v-model="formData.keywords" placeholder="请输入" />
+                    </el-form-item>
+                    <el-form-item label="品牌">
+                        <el-select v-model="formData.brandId" placeholder="请选择">
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="定制">
+                        <el-switch v-model="formData.isCustom" />
+                    </el-form-item>
+                    <template v-if="formData.categoryId">
+                        <app-attr class="product-edit__table" v-model="formData.attrs"
+                            :category-id="formData.categoryId" v-if="formData.attrs" />
+                        <app-sku class="product-edit__table" v-model="formData.skus" :category-id="formData.categoryId"
+                            v-if="formData.skus" />
+                    </template>
+                    <el-form-item label="详情">
+                        <div class="g-wangeditor">
+                            <Toolbar class="g-wangeditor__toolbar" :editor="editorRef" />
+                            <Editor class="g-wangeditor__editor" v-model="formData.description"
+                                @onCreated="handleCreated" />
+                        </div>
+                    </el-form-item>
+                </el-form>
             </el-splitter-panel>
         </el-splitter>
         <template #footer>
@@ -44,11 +43,13 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, shallowRef, computed, onMounted, nextTick } from 'vue'
+import { ref, shallowRef, computed, onMounted, nextTick, onBeforeUnmount } from 'vue'
 import { ElMessage, type TreeInstance } from 'element-plus'
 import type Node from 'element-plus/es/components/tree/src/model/node'
 import { buildTree } from '@/helpers/filters'
 import { createCategoryList, createProductDetail, createProductUpdate } from '@/services/api/product'
+import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
+import '@wangeditor/editor/dist/css/style.css'
 import AppDialog from '@pc/components/ui/dialog/index.vue'
 import AppAttr from './attr/index.vue'
 import AppSku from './sku/index.vue'
@@ -68,6 +69,7 @@ const formData = ref<Partial<Product.ProductDetail>>({
     skus: []
 })
 
+const editorRef = shallowRef()
 const loading = computed(() => categoryLoading.value || detailLoading.value)
 
 const { loading: categoryLoading } = createCategoryList({
@@ -90,6 +92,10 @@ const { loading: detailLoading, rawFetch: getProductDetail, failed } = createPro
 const { loading: submitLoading, rawFetch: updateProduct } = createProductUpdate({
     manual: true
 })
+
+const handleCreated = (editor: unknown) => {
+    editorRef.value = editor
+}
 
 const onCategoryClick = (item: Product.CategoryItem, node: Node) => {
     if (node.isLeaf) {
@@ -116,6 +122,10 @@ onMounted(() => {
             ElMessage.error(err)
         })
     }
+})
+
+onBeforeUnmount(() => {
+    editorRef.value?.destroy()
 })
 </script>
 
