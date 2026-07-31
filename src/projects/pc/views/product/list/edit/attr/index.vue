@@ -1,24 +1,22 @@
 <template>
     <div class="product-attr" v-loading="loading">
-        <el-form-item label="商品属性">
-            <table cellspacing="0" cellpadding="0" v-if="categoryAttrs.length">
-                <thead>
-                    <tr>
-                        <th>名称</th>
-                        <th>描述</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="(item, index) in categoryAttrs" :key="index">
-                        <td>{{ item.attributeName }}</td>
-                        <td>
-                            <el-input :model-value="productAttrs[item.id]"
-                                @update:model-value="(val) => onChange(item.id, val)" placeholder="选填" />
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </el-form-item>
+        <table cellspacing="0" cellpadding="0" v-if="categoryAttrs.length">
+            <thead>
+                <tr>
+                    <th>名称</th>
+                    <th>描述</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(item, index) in categoryAttrs" :key="index">
+                    <td>{{ item.attributeName }}</td>
+                    <td>
+                        <el-input :model-value="productAttrs[item.id]"
+                            @update:model-value="(val) => onChange(item.id, val)" placeholder="选填" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </template>
 
@@ -26,10 +24,12 @@
 import { shallowRef, computed, watch } from 'vue'
 import { createCategoryAttrList } from '@/services/api/product'
 
-const props = defineProps<{
-    modelValue: Product.ProductAttrItem[]
+const props = withDefaults(defineProps<{
+    modelValue?: Product.ProductAttrItem[]
     categoryId: number
-}>()
+}>(), {
+    modelValue: () => ([])
+})
 
 const emit = defineEmits<{
     'update:modelValue': [value: Product.ProductAttrItem[]]

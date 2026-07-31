@@ -7,7 +7,7 @@
             </el-splitter-panel>
             <el-splitter-panel>
                 <el-form :model="formData" label-width="auto">
-                    <el-form-item label="标题">
+                    <el-form-item label="商品标题">
                         <el-input v-model="formData.title" placeholder="请输入" />
                     </el-form-item>
                     <el-form-item label="关键字">
@@ -17,15 +17,10 @@
                         <el-select v-model="formData.brandId" placeholder="请选择">
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="定制">
-                        <el-switch v-model="formData.isCustom" />
-                    </el-form-item>
-                    <template v-if="formData.categoryId">
+                    <el-form-item label="商品属性" v-if="formData.categoryId">
                         <app-attr class="product-edit__table" v-model="formData.attrs"
-                            :category-id="formData.categoryId" v-if="formData.attrs" />
-                        <app-sku class="product-edit__table" v-model="formData.skus" :category-id="formData.categoryId"
-                            v-if="formData.skus" />
-                    </template>
+                            :category-id="formData.categoryId" />
+                    </el-form-item>
                     <el-form-item label="详情">
                         <div class="g-wangeditor">
                             <Toolbar class="g-wangeditor__toolbar" :editor="editorRef" />
@@ -34,6 +29,8 @@
                         </div>
                     </el-form-item>
                 </el-form>
+                <app-spu class="product-edit__table" :product-id="formData.id" :category-id="formData.categoryId"
+                    v-if="formData.categoryId" />
             </el-splitter-panel>
         </el-splitter>
         <template #footer>
@@ -52,7 +49,7 @@ import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 import '@wangeditor/editor/dist/css/style.css'
 import AppDialog from '@pc/components/ui/dialog/index.vue'
 import AppAttr from './attr/index.vue'
-import AppSku from './sku/index.vue'
+import AppSpu from './spu/index.vue'
 
 const props = defineProps<{
     record?: Product.ProductListItem
@@ -64,9 +61,8 @@ const categoryList = shallowRef<Product.CategoryItem[]>([])
 
 const formData = ref<Partial<Product.ProductDetail>>({
     id: props.record?.id,
-    isCustom: false,
-    attrs: [],
-    skus: []
+    userId: 0,
+    attrs: []
 })
 
 const editorRef = shallowRef()
@@ -101,7 +97,6 @@ const onCategoryClick = (item: Product.CategoryItem, node: Node) => {
     if (node.isLeaf) {
         formData.value.categoryId = item.id
         formData.value.attrs = []
-        formData.value.skus = []
     }
 }
 

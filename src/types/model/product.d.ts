@@ -19,21 +19,21 @@ declare namespace Product {
     /** 商品详情 */
     interface ProductDetailRequest {
         id: number;
+        userId?: number;
     }
 
     interface ProductDetail {
-        id: number;
+        id: number; // 商品ID
+        userId: number; // userId = 0 自营商品
         categoryId: number;
-        code: string;
+        shopCategoryId: number;
         title: string;
         brandId: number;
         brandName: string;
         keywords: string;
-        description: string;
-        isCustom: boolean; // 是否定制商品
         attrs: ProductAttrItem[];
-        skus: ProductSkuItem[];
         images: ProductImage[];
+        description: string;
         status: number;
         createTime: number;
         updateTime: number;
@@ -44,6 +44,21 @@ declare namespace Product {
         url: string;
         size: 'thumbnail' | 'small' | 'medium' | 'large' | 'original';
         isMain: boolean;
+    }
+
+    /** 标准商品化单元列表 */
+    interface ProductSpuListRequest {
+        productId: number;
+    }
+
+    interface ProductSpuItem {
+        id: number;
+        productId: number;
+        code: string;
+        spuName: string;
+        spuContent: string;
+        isCustom: boolean; // 是否可定制化
+        skus: ProductSkuItem[];
     }
 
     /** 商品基础属性 */
