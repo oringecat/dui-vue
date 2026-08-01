@@ -1,5 +1,5 @@
 <template>
-    <div class="product-attr" v-loading="loading">
+    <div class="g-table" v-loading="loading">
         <table cellspacing="0" cellpadding="0" v-if="categoryAttrs.length">
             <thead>
                 <tr>
@@ -17,6 +17,7 @@
                 </tr>
             </tbody>
         </table>
+        <el-button type="primary" size="small" v-else-if="!loading">新增</el-button>
     </div>
 </template>
 

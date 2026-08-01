@@ -67,44 +67,6 @@ export function getAuthRoutes(authCodes?: string[]) {
             icon: 'default',
             children: [
                 {
-                    code: 'product-category',
-                    title: '商品类目',
-                    authType: AuthType.Route,
-                    url: '/product/category',
-                    component: () => import('@pc/views/product/category/index.vue'),
-                    icon: 'default',
-                    children: [
-                        {
-                            code: 'product-category-add',
-                            title: '新增',
-                            authType: AuthType.Action,
-                            component: () => import('@pc/views/product/category/edit/index.vue'),
-                            icon: 'Plus'
-                        },
-                        {
-                            code: 'product-category-modify',
-                            title: '修改',
-                            authType: AuthType.Action,
-                            component: () => import('@pc/views/product/category/edit/index.vue'),
-                            icon: 'Edit'
-                        },
-                        {
-                            code: 'product-category-attr',
-                            title: '基础属性',
-                            authType: AuthType.Action,
-                            component: () => import('@pc/views/product/category/attribute/index.vue'),
-                            icon: 'SetUp'
-                        },
-                        {
-                            code: 'product-category-sale',
-                            title: '销售属性',
-                            authType: AuthType.Action,
-                            component: () => import('@pc/views/product/category/sale/index.vue'),
-                            icon: 'SetUp'
-                        }
-                    ]
-                },
-                {
                     code: 'product-list',
                     title: '商品列表',
                     authType: AuthType.Route,
@@ -148,6 +110,62 @@ export function getAuthRoutes(authCodes?: string[]) {
                             icon: 'Delete'
                         }
                     ]
+                },
+                {
+                    code: 'product-category',
+                    title: '商品分类',
+                    authType: AuthType.Route,
+                    url: '/product/category',
+                    component: () => import('@pc/views/product/category/index.vue'),
+                    icon: 'default',
+                    children: [
+                        {
+                            code: 'product-category-add',
+                            title: '新增',
+                            authType: AuthType.Action,
+                            component: () => import('@pc/views/product/category/edit/index.vue'),
+                            icon: 'Plus'
+                        },
+                        {
+                            code: 'product-category-modify',
+                            title: '修改',
+                            authType: AuthType.Action,
+                            component: () => import('@pc/views/product/category/edit/index.vue'),
+                            icon: 'Edit'
+                        },
+                        {
+                            code: 'product-category-attr',
+                            title: '基础属性',
+                            authType: AuthType.Action,
+                            component: () => import('@pc/views/product/category/attribute/index.vue'),
+                            icon: 'SetUp'
+                        },
+                        {
+                            code: 'product-category-sale',
+                            title: '销售属性',
+                            authType: AuthType.Action,
+                            component: () => import('@pc/views/product/category/sale/index.vue'),
+                            icon: 'SetUp'
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            code: 'game',
+            title: '橘猫游戏',
+            authType: AuthType.Route,
+            url: '/game',
+            component: Page,
+            icon: 'default',
+            children: [
+                {
+                    code: 'game-list',
+                    title: '游戏列表',
+                    authType: AuthType.Route,
+                    url: '/game/list',
+                    component: () => import('@pc/views/game/list/index.vue'),
+                    icon: 'default'
                 }
             ]
         },

@@ -120,7 +120,7 @@ export default [
                     title: 'iPhone 15 Pro Max 智能手机',
                     brandId: 2,
                     brandName: 'Apple',
-                    keywords: 'iPhone,Apple,5G,智能手机',
+                    tags: 'iPhone,Apple,5G,智能手机',
                     attrs: [
                         { id: 1000, attributeId: 100, attributeValue: 'Apple' },
                         { id: 1001, attributeId: 101, attributeValue: 'iPhone 15 Pro Max' },
@@ -146,16 +146,15 @@ export default [
         url: serviceConfig.apiUrl + '/product/spu/list',
         method: 'get',
         rawResponse: (req, res) => {
-            const { productId } = parse(req.url!, true).query
-
-            const spuDataMap: Record<number, Product.ProductSpuItem[]> = {
-                1000: [
+            mockResponse(res, {
+                code: 200,
+                message: 'ok',
+                data: [
                     {
                         id: 10001,
-                        productId: 1000,
                         code: 'SP0001',
                         spuName: 'iPhone 15 Pro',
-                        spuContent: '<h3>iPhone 15 Pro</h3><p>6.1 英寸超视网膜 XDR 显示屏，<strong>A17 Pro 芯片</strong>加持，钛金属边框搭配亚光质感玻璃背板。</p><table><tr><th>屏幕</th><td>6.1 英寸 OLED</td></tr><tr><th>芯片</th><td>A17 Pro</td></tr><tr><th>摄像头</th><td>4800 万像素主摄 + 1200 万超广角 + 1200 万长焦</td></tr><tr><th>接口</th><td>USB-C</td></tr><tr><th>重量</th><td>约 187 克</td></tr></table>',
+                        spuContent: 'A17 Pro 芯片，钛金属设计，4800 万像素主摄，支持 USB-C，动作按钮，灵动岛交互',
                         isCustom: false,
                         skus: [
                             {
@@ -194,15 +193,7 @@ export default [
                         ],
                     },
                 ],
-            }
-
-            const data = spuDataMap[Number(productId)] || []
-
-            mockResponse(res, {
-                code: 200,
-                message: 'ok',
-                data,
-                total: data.length,
+                total: 1,
             })
         },
     },

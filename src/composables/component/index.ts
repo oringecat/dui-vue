@@ -1,4 +1,4 @@
-import { shallowRef } from 'vue'
+import { shallowReactive, toRefs } from 'vue'
 import { onBeforeRouteLeave } from 'vue-router'
 import { showConfirmDialog } from 'vant'
 import type { ComponentManagerOptions } from './types'
@@ -11,20 +11,25 @@ function createComponentManager() {
         const { destroyOnClose = true, confirmMessage } = options
 
         const key = Symbol()
-        const componentId = shallowRef('')
-        const showComponent = shallowRef(false) // 当前组件实例
+
+        const state = shallowReactive({
+            componentId: '', // 当前组件实例
+            componentProps: {},
+            showComponent: false
+        })
 
         const handleClose = () => {
             if (closeActions.has(key)) {
-                showComponent.value = false
+                state.showComponent = false
                 closeActions.delete(key)
             }
         }
 
-        const openComponent = (componentName: string) => {
+        const openComponent = <T extends object>(componentName: string, props?: T) => {
             //console.log('打开组件', componentName)
-            componentId.value = componentName
-            showComponent.value = true
+            state.componentId = componentName
+            state.componentProps = props ?? {}
+            state.showComponent = true
 
             // 注册当前组件关闭回调
             closeActions.set(key, async () => {
@@ -42,14 +47,15 @@ function createComponentManager() {
         const closeComponent = () => {
             //console.log('关闭组件', componentId.value)
             if (destroyOnClose) {
-                componentId.value = ''
+                state.componentId = ''
+                state.componentProps = {}
             }
             handleClose()
         }
 
         // 只会在页面回退时生效
         onBeforeRouteLeave(() => {
-            if (showComponent.value) {
+            if (state.showComponent) {
                 const lastAction = [...closeActions.values()].at(-1)
                 lastAction?.()
                 return false
@@ -60,10 +66,9 @@ function createComponentManager() {
         })
 
         return {
-            componentId,
-            showComponent,
             openComponent,
-            closeComponent
+            closeComponent,
+            ...toRefs(state)
         }
     }
 }

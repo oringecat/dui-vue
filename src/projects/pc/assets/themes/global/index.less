@@ -1,3 +1,28 @@
+.g-table {
+
+    table,
+    th,
+    td {
+        white-space: nowrap;
+        border: 1px solid var(--el-border-color);
+        padding: 8px 16px;
+    }
+
+    table {
+        min-width: 50%;
+        line-height: normal;
+        border-collapse: collapse;
+
+        &:not(:first-child) {
+            margin-top: 10px;
+        }
+
+        th {
+            background-color: var(--el-fill-color-light);
+        }
+    }
+}
+
 .g-wangeditor {
     z-index: 2;
     border: 1px solid var(--el-border-color);

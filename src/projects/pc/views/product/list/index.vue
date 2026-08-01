@@ -60,7 +60,7 @@ const { filterOptions, queryParams } = useDataFilter<Product.ProductListRequest>
         },
         {
             field: 'categoryId',
-            label: '类目'
+            label: '分类'
         },
         {
             field: 'status',

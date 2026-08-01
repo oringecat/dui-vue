@@ -19,7 +19,7 @@
             </el-checkbox-group>
             <el-divider class="app-column-setting__divider" />
             <div class="app-column-setting__footer">
-                <el-button type="primary" size="small" @click="confirm">确定</el-button>
+                <el-button type="primary" size="small" @click="confirm">保存</el-button>
             </div>
         </div>
     </el-popover>

@@ -30,7 +30,7 @@ declare namespace Product {
         title: string;
         brandId: number;
         brandName: string;
-        keywords: string;
+        tags: string;
         attrs: ProductAttrItem[];
         images: ProductImage[];
         description: string;
@@ -46,26 +46,25 @@ declare namespace Product {
         isMain: boolean;
     }
 
-    /** 标准商品化单元列表 */
+    /** 商品基础属性 */
+    interface ProductAttrItem {
+        id: number;
+        attributeId: number;
+        attributeValue: string;
+    }
+
+    /** 标准化商品单元列表 */
     interface ProductSpuListRequest {
         productId: number;
     }
 
     interface ProductSpuItem {
         id: number;
-        productId: number;
         code: string;
         spuName: string;
         spuContent: string;
         isCustom: boolean; // 是否可定制化
         skus: ProductSkuItem[];
-    }
-
-    /** 商品基础属性 */
-    interface ProductAttrItem {
-        id: number;
-        attributeId: number;
-        attributeValue: string;
     }
 
     /** 商品库存单位 */
