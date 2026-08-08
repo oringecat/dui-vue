@@ -58,7 +58,7 @@ export default new (class {
     }
 
     createRequest<T extends RequestShape>(config: RequestConfig<T>) {
-        const { method, url, options = {}, defaultData } = config
+        const { method = 'GET', url, options = {}, defaultData } = config
 
         const loading = shallowRef(false)
         const failed = shallowRef(false) // 失败状态

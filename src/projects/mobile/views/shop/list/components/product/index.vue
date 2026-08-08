@@ -3,6 +3,7 @@
         <app-waterfall :data-list="appendList">
             <template #default="{ item }">
                 <div class="product-list__item">
+                    <img :src="item.image.url" :style="{ aspectRatio: item.image.width + '/' + item.image.height }" />
                     {{ item.title }}
                 </div>
             </template>

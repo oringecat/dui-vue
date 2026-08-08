@@ -145,12 +145,11 @@ const onCategoryClick = (item: Product.CategoryItem, node: Node) => {
     if (!props.record && node.isLeaf) {
         formData.value.categoryId = item.id
         formData.value.attrs = []
-        console.log(item)
     }
 }
 
 const onSpuDelete = (index: number) => {
-    ElMessageBox.confirm('删除后无法恢复，确认要删除吗？', '警告', {
+    ElMessageBox.confirm('该操作无法撤销，确认要删除吗？', '注意', {
         type: 'warning'
     }).then(() => {
         spuList.value.splice(index, 1)

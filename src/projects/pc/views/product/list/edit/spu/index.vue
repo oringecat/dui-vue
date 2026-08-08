@@ -166,8 +166,11 @@ const onChecked = (target: SaleTemplate, checkedValue: CheckboxValueType[]) => {
             saleId: a.saleId,
             specId: a.id,
             customName: '',
-            image: '',
-            thumbnail: ''
+            image: {
+                url: '',
+                width: 0,
+                height: 0
+            }
         }
     })
 

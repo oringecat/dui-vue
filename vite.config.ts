@@ -6,6 +6,7 @@ import { viteMockServe } from 'vite-plugin-mock'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 //import vueDevTools from 'vite-plugin-vue-devtools'
+import dayjs from 'dayjs'
 
 import { VantResolver } from '@vant/auto-import-resolver'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
@@ -16,6 +17,7 @@ const resolvePath = (path: string) => fileURLToPath(new URL(path, import.meta.ur
 
 const uuid = v4()
 const root = process.env.VUE_APP_ROOT // 启动和编译目录
+const revised = dayjs().format('YYYYMMDDHHmmss') // 版本号
 
 // https://vite.dev/config/
 export default defineConfig(({ command }) => ({
@@ -26,7 +28,8 @@ export default defineConfig(({ command }) => ({
     outDir: resolvePath('./dist'), // 打包输出目录
   },
   define: {
-    'import.meta.env.PROJECT_ID': JSON.stringify(uuid) // 项目唯一标识
+    'import.meta.env.PROJECT_ID': JSON.stringify(uuid), // 项目唯一标识
+    'import.meta.env.REVISED': JSON.stringify(revised), // 打包版本号
   },
   server: {
     open: true  // 自动跳转浏览器

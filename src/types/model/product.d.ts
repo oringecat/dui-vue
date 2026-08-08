@@ -12,6 +12,12 @@ declare namespace Product {
         id: number;
         categoryId: number;
         title: string;
+        price: number;
+        image: {
+            url: string;
+            width: number;
+            height: number;
+        };
         status: number;
         createTime: number;
     }
@@ -42,7 +48,8 @@ declare namespace Product {
     interface ProductImage {
         id: number;
         url: string;
-        size: 'thumbnail' | 'small' | 'medium' | 'large' | 'original';
+        width: number; // 原始宽度
+        height: number; // 原始高度
         isMain: boolean;
     }
 
@@ -81,8 +88,11 @@ declare namespace Product {
         saleId: number;
         specId: number;
         customName: string;
-        image: string;
-        thumbnail: string;
+        image: {
+            url: string;
+            width: number;
+            height: number;
+        };
     }
 
     /** 分类列表 */

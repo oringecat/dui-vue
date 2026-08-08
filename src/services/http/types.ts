@@ -3,8 +3,8 @@ import type { Method, AxiosRequestConfig } from 'axios'
 export type RequestShape = { req?: object, res?: unknown }
 
 export interface RequestConfig<T extends RequestShape = RequestShape> {
-    method: Method;
     url: string;
+    method?: Method;
     options?: RequestOptions<T>;
     retryCount?: number; // 重试次数，0 = 无限次
     defaultData?: () => Partial<T['req']>;

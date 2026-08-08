@@ -14,6 +14,12 @@ export default [
                     id: 1000 + i,
                     categoryId: 1110,
                     title: '@ctitle(10,20)', // 随机中文标题（10-20字）
+                    price: '@float(100, 9999, 2, 2)', // 随机价格（100-9999，两位小数）
+                    image: {
+                        url: `https://picsum.photos/seed/product${1000 + i}`,
+                        width: 300,
+                        height: 300
+                    },
                     status: '@integer(1, 2)',
                     createTime: Date.now()
                 })),
@@ -129,9 +135,9 @@ export default [
                         { id: 1004, attributeId: 104, attributeValue: '4422' },
                     ],
                     images: [
-                        { id: 1000, url: 'https://picsum.photos/seed/iphone1/800/800', size: 'large', isMain: true },
-                        { id: 1001, url: 'https://picsum.photos/seed/iphone2/800/800', size: 'large', isMain: false },
-                        { id: 1002, url: 'https://picsum.photos/seed/iphone3/800/800', size: 'large', isMain: false },
+                        { id: 1000, url: 'https://picsum.photos/seed/iphone1', width: 800, height: 800, isMain: true },
+                        { id: 1001, url: 'https://picsum.photos/seed/iphone2', width: 600, height: 800, isMain: false },
+                        { id: 1002, url: 'https://picsum.photos/seed/iphone3', width: 800, height: 600, isMain: false },
                     ],
                     description: '<h3>产品详情</h3><p>iPhone 15 Pro Max 搭载 <strong>A17 Pro 芯片</strong>，性能空前强大。采用航空航天级钛金属设计，坚固轻盈。4800 万像素主摄带来专业级摄影体验，支持新一代人像模式。USB-C 接口统一充电生态，动作按钮让你一键直达常用功能。</p><h4>包装清单</h4><ul><li>iPhone 15 Pro Max ×1</li><li>USB-C 充电线 ×1</li><li>卡针 ×1</li><li>说明书 ×1</li></ul><h4>售后保障</h4><p>Apple 官方一年有限保修，享受 AppleCare+ 延长保修服务（需单独购买）。</p>',
                     status: 1,
@@ -161,9 +167,9 @@ export default [
                                 id: 1000,
                                 code: 'SP0001-001',
                                 attrs: [
-                                    { saleId: 100, specId: 1003, customName: '原色钛金属', image: '', thumbnail: '' },
-                                    { saleId: 101, specId: 1012, customName: '256GB', image: '', thumbnail: '' },
-                                    { saleId: 102, specId: 1021, customName: '全网通5G', image: '', thumbnail: '' },
+                                    { saleId: 100, specId: 1003, customName: '原色钛金属', image: { url: 'https://picsum.photos/seed/titanium', width: 200, height: 200 } },
+                                    { saleId: 101, specId: 1012, customName: '256GB', image: { url: '', width: 0, height: 0 } },
+                                    { saleId: 102, specId: 1021, customName: '全网通5G', image: { url: '', width: 0, height: 0 } },
                                 ],
                                 price: 6999,
                                 stock: 50,
@@ -172,9 +178,9 @@ export default [
                                 id: 1001,
                                 code: 'SP0001-002',
                                 attrs: [
-                                    { saleId: 100, specId: 1003, customName: '极光蓝', image: '', thumbnail: '' },
-                                    { saleId: 101, specId: 1013, customName: '512GB', image: '', thumbnail: '' },
-                                    { saleId: 102, specId: 1021, customName: '全网通5G', image: '', thumbnail: '' },
+                                    { saleId: 100, specId: 1003, customName: '极光蓝', image: { url: 'https://picsum.photos/seed/aurora-blue', width: 200, height: 200 } },
+                                    { saleId: 101, specId: 1013, customName: '512GB', image: { url: '', width: 0, height: 0 } },
+                                    { saleId: 102, specId: 1021, customName: '全网通5G', image: { url: '', width: 0, height: 0 } },
                                 ],
                                 price: 7998,
                                 stock: 0,
@@ -183,9 +189,9 @@ export default [
                                 id: 1002,
                                 code: 'SP0001-003',
                                 attrs: [
-                                    { saleId: 100, specId: 1004, customName: '樱粉金', image: '', thumbnail: '' },
-                                    { saleId: 101, specId: 1013, customName: '512GB', image: '', thumbnail: '' },
-                                    { saleId: 102, specId: 1021, customName: '全网通5G', image: '', thumbnail: '' },
+                                    { saleId: 100, specId: 1004, customName: '樱粉金', image: { url: 'https://picsum.photos/seed/sakura-gold', width: 200, height: 200 } },
+                                    { saleId: 101, specId: 1013, customName: '512GB', image: { url: '', width: 0, height: 0 } },
+                                    { saleId: 102, specId: 1021, customName: '全网通5G', image: { url: '', width: 0, height: 0 } },
                                 ],
                                 price: 11999,
                                 stock: 25,
