@@ -2,9 +2,14 @@
     <app-list class="product-list" v-model:loading="loading" :finished="!hasMore" :error="failed" @load="loadData">
         <app-waterfall :data-list="appendList">
             <template #default="{ item }">
-                <div class="product-list__item">
-                    <img :src="item.image.url" :style="{ aspectRatio: item.image.width + '/' + item.image.height }" />
-                    {{ item.title }}
+                <div class="product-list__item" @click="navigateTo(item.id)">
+                    <div class="product-list__item-image"
+                        :style="{ aspectRatio: item.image.width + '/' + item.image.height }">
+                        <van-image :src="getImageUrl(item.image)" width="100%" height="100%" />
+                    </div>
+                    <div class="product-list__item-title">
+                        <span>{{ item.title }}</span>
+                    </div>
                 </div>
             </template>
         </app-waterfall>
@@ -12,6 +17,7 @@
 </template>
 
 <script lang="ts" setup>
+import { useRouter } from 'vue-router'
 import { useDataTable } from '@/composables/datatable'
 import { useRefresh } from '@/composables/refresh'
 import { createProductList } from '@/services/api/product'
@@ -21,6 +27,8 @@ import AppWaterfall from '@/components/waterfall/index.vue'
 const props = defineProps({
     refreshId: Number
 })
+
+const router = useRouter()
 
 const { appendList, pageIndex, pageSize, hasMore, updateItems, nextPage } = useDataTable<Product.ProductListItem>()
 
@@ -48,6 +56,19 @@ const loadData = () => {
 const { refreshing, refreshFinish } = useRefresh(loadData, {
     refreshId: props.refreshId
 })
+
+// 根据原图比例输出等比缩放的图片
+const getImageUrl = (image: Product.ProductListItem['image']) => {
+    const maxWidth = 160
+    return `${image.url}/${maxWidth}/${Math.round(maxWidth * image.height / image.width)}`
+}
+
+const navigateTo = (id: number) => {
+    router.push({
+        name: 'store-detail',
+        query: { id }
+    })
+}
 </script>
 
 <style lang="less">

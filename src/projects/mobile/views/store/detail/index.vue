@@ -1,0 +1,97 @@
+<template>
+    <app-page-view class="store-detail">
+        <template #header>
+            <app-nav-bar fixed />
+        </template>
+        <div v-if="detail">
+            <van-swipe>
+                <van-swipe-item v-for="(image, index) in detail.images" :key="index">
+                    <van-image :src="`${image.url}/750/750`" width="100%" height="100%" />
+                </van-swipe-item>
+            </van-swipe>
+            <div class="store-detail-info">
+                <h4>{{ detail.title }}</h4>
+            </div>
+            <ul class="store-detail-attr">
+                <li v-for="([label, value], index) in attributes" :key="index">
+                    <span>{{ label }}</span>
+                    <span>{{ value }}</span>
+                </li>
+            </ul>
+            <ul class="store-detail-spu">
+                <template v-for="(spu, index) in spus" :key="index">
+                    <li :class="{ active: index === spuIndex }">
+                        <span @click="spuIndex = index">{{ spu.spuName }}</span>
+                    </li>
+                </template>
+            </ul>
+            <sku-view v-bind="{ categoryId: detail.categoryId, skus: spuItem.skus }" v-if="spuItem" />
+            <div class="store-detail-desc">
+                <div v-html="detail.description"></div>
+                <div v-html="spuItem.spuContent" v-if="spuItem"></div>
+            </div>
+        </div>
+        <van-empty v-else-if="!loading" />
+    </app-page-view>
+</template>
+
+<script lang="ts" setup>
+import { shallowRef, computed, defineAsyncComponent } from 'vue'
+import { useNavigation } from '@/composables/navigation'
+import { createProductDetail, createCategoryAttrList, createProductSpuList } from '@/services/api/product'
+
+const skuView = defineAsyncComponent(() => import('./sku/index.vue'))
+
+const { getQueryStringToNumber } = useNavigation()
+
+const productId = getQueryStringToNumber('id')
+
+const detail = shallowRef<Product.ProductDetail>()
+const attributes = shallowRef<[string, string][]>([])
+const spus = shallowRef<Product.ProductSpuItem[]>([])
+const spuIndex = shallowRef(0)
+
+const spuItem = computed(() => spus.value[spuIndex.value])
+
+const loading = computed(() => detailLoading.value || spuLoading.value)
+
+const { rawFetch } = createCategoryAttrList({
+    manual: true
+})
+
+const { loading: detailLoading } = createProductDetail({
+    data: {
+        id: productId
+    },
+    onSuccess: (res) => {
+        const attrMap = new Map(res.data.attrs.map((a) => [a.attributeId, a.attributeValue]))
+
+        if (attrMap.size) {
+            rawFetch({
+                categoryId: res.data.categoryId
+            }).then((res) => {
+                attributes.value = res.data.reduce<[string, string][]>((attrs, cur) => {
+                    const value = attrMap.get(cur.id)
+                    if (value) attrs.push([cur.attributeName, value])
+                    return attrs
+                }, [])
+            })
+        }
+
+        detail.value = res.data
+    }
+})
+
+const { loading: spuLoading } = createProductSpuList({
+    data: {
+        productId
+    },
+    onSuccess: (res) => {
+        spus.value = res.data
+    }
+})
+</script>
+
+<style lang="less">
+@import './index.less';
+</style>

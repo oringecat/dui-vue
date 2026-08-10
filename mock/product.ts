@@ -17,8 +17,8 @@ export default [
                     price: '@float(100, 9999, 2, 2)', // 随机价格（100-9999，两位小数）
                     image: {
                         url: `https://picsum.photos/seed/product${1000 + i}`,
-                        width: 300,
-                        height: 300
+                        width: Math.floor(Math.random() * 51) + 250,
+                        height: Math.floor(Math.random() * 51) + 250
                     },
                     status: '@integer(1, 2)',
                     createTime: Date.now()

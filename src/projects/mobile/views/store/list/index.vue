@@ -1,5 +1,5 @@
 <template>
-    <app-page-view class="shop">
+    <app-page-view class="store">
         <template #header>
             <app-nav-bar>
                 <template #left>
@@ -30,7 +30,7 @@
 import { shallowRef, defineAsyncComponent } from 'vue'
 import AppPullRefresh from '@mobile/components/ui/pull-refresh/index.vue'
 
-const ProductList = defineAsyncComponent(() => import('./components/product/index.vue'))
+const ProductList = defineAsyncComponent(() => import('./product/index.vue'))
 
 const activeTab = shallowRef(0)
 const keyword = shallowRef('')

@@ -18,7 +18,7 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item label="商品属性" v-if="formData.categoryId">
-                        <app-attr v-model="formData.attrs" :category-id="formData.categoryId" />
+                        <app-attribute v-model="formData.attrs" :category-id="formData.categoryId" />
                     </el-form-item>
                     <el-form-item label="销售规格">
                         <div class="g-table">
@@ -77,7 +77,7 @@ import { createCategoryList, createProductDetail, createProductUpdate, createPro
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 import '@wangeditor/editor/dist/css/style.css'
 import AppDialog from '@pc/components/ui/dialog/index.vue'
-import AppAttr from './attr/index.vue'
+import AppAttribute from './attribute/index.vue'
 
 const props = defineProps<{
     record?: Product.ProductListItem

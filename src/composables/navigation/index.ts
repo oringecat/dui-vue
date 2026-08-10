@@ -14,13 +14,27 @@ export function useNavigation() {
         // 获取当前路由导出的组件
         const routeComponent = matched.components?.default
 
-        console.log(routeComponent,currentType)
+        console.log(routeComponent, currentType)
         // 判断路由是否组件本身
         return routeComponent === currentType
     })
 
+    // 获取查询字符串
+    const getQueryString = (name: string) => {
+        const qs = route.query[name]
+        return qs?.toString()
+    }
+
+    const getQueryStringToNumber = (name: string) => {
+        const reg = /^[0-9]+.?[0-9]*/
+        const value = getQueryString(name) ?? ''
+        return reg.test(value) ? Number(value) : 0
+    }
+
     return {
         route,
-        isRoute
+        isRoute,
+        getQueryString,
+        getQueryStringToNumber
     }
 }

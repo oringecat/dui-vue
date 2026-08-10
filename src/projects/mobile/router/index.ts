@@ -27,9 +27,9 @@ export default function createRouter() {
               component: () => import('../views/home/index.vue')
             },
             {
-              path: 'shop',
-              name: 'shop',
-              component: () => import('../views/shop/list/index.vue')
+              path: 'store',
+              name: 'store',
+              component: () => import('../views/store/list/index.vue')
             },
             {
               path: 'cart',
@@ -64,6 +64,17 @@ export default function createRouter() {
           meta: {
             ignoreAuth: true
           }
+        }
+      ]
+    },
+    {
+      path: '/store',
+      component: MainLayout,
+      children: [
+        {
+          path: 'detail',
+          name: 'store-detail',
+          component: () => import('../views/store/detail/index.vue')
         }
       ]
     },
