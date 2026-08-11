@@ -81,6 +81,11 @@ declare namespace Product {
         attrs: ProductSkuAttr[];
         price: number;
         stock: number;
+        image: {
+            url: string;
+            width: number;
+            height: number;
+        };
     }
 
     /** 商品库存属性 */
@@ -88,11 +93,6 @@ declare namespace Product {
         saleId: number;
         specId: number;
         customName: string;
-        image: {
-            url: string;
-            width: number;
-            height: number;
-        };
     }
 
     /** 分类列表 */

@@ -165,12 +165,7 @@ const onChecked = (target: SaleTemplate, checkedValue: CheckboxValueType[]) => {
         return prev ?? {
             saleId: a.saleId,
             specId: a.id,
-            customName: '',
-            image: {
-                url: '',
-                width: 0,
-                height: 0
-            }
+            customName: ''
         }
     })
 
@@ -187,7 +182,12 @@ const createEmptySku = (): Product.ProductSkuItem => ({
     code: '',
     attrs: [],
     price: 0,
-    stock: 0
+    stock: 0,
+    image: {
+        url: '',
+        width: 0,
+        height: 0
+    }
 })
 
 // 计算笛卡尔积

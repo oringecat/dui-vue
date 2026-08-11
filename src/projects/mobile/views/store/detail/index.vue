@@ -4,7 +4,7 @@
             <app-nav-bar fixed />
         </template>
         <div v-if="detail">
-            <van-swipe>
+            <van-swipe class="store-detail-image">
                 <van-swipe-item v-for="(image, index) in detail.images" :key="index">
                     <van-image :src="`${image.url}/750/750`" width="100%" height="100%" />
                 </van-swipe-item>
