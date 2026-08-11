@@ -114,7 +114,7 @@ const saleTemplates = ref<SaleTemplate[]>([])
 const formData = reactive<Product.ProductSpuItem>({
     id: 0,
     code: '',
-    spuName: '默认',
+    spuName: '',
     spuContent: '',
     isCustom: false,
     skus: [],
