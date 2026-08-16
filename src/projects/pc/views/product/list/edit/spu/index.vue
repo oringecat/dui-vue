@@ -21,16 +21,18 @@
                         </thead>
                         <tbody>
                             <tr v-for="(item, index) in saleTemplates" :key="index">
-                                <td>{{ item.sale.saleName }}</td>
+                                <td>{{ item.attribute.name }}</td>
                                 <td>
                                     <el-checkbox-group v-model="item.checked"
                                         @change="(value) => onChecked(item, value)">
-                                        <template v-for="spec in item.specs" :key="spec.id">
-                                            <el-checkbox :label="spec.specName" :value="spec.id" />
+                                        <template v-for="spec in item.attribute.values" :key="spec.id">
+                                            <el-checkbox :label="spec.value" :value="spec.id" />
                                         </template>
                                     </el-checkbox-group>
+                                    <el-button size="small" icon="plus" :disabled="isCustomDisabled(item)"
+                                        @click="addCustomSpec(item)" v-if="item.sale.isCustom">自定义</el-button>
                                     <table cellspacing="0" cellpadding="0"
-                                        v-if="item.sale.isCustom && item.attrs.length">
+                                        v-if="item.sale.isCustom && item.specs.length">
                                         <thead>
                                             <tr>
                                                 <th>已选</th>
@@ -38,10 +40,16 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-for="(attr, index) in item.attrs" :key="index">
-                                                <td>{{ getSpecName(attr.specId) }}</td>
+                                            <tr v-for="(spec, index) in item.specs" :key="index">
                                                 <td>
-                                                    <el-input v-model="attr.customName" placeholder="选填"
+                                                    <el-tag :type="spec.valueId ? 'primary' : 'warning'"
+                                                        @close="removeSpec(item, index)" closable>
+                                                        {{ getSpecName(spec.valueId) }}
+                                                    </el-tag>
+                                                </td>
+                                                <td>
+                                                    <el-input v-model="spec.specName"
+                                                        :placeholder="spec.valueId ? '选填' : '必填'"
                                                         @change="rebuildSkus" />
                                                 </td>
                                             </tr>
@@ -58,7 +66,8 @@
                     <table cellspacing="0" cellpadding="0">
                         <thead>
                             <tr>
-                                <th v-for="({ sale }, index) in checkedSales" :key="index">{{ sale.saleName }}</th>
+                                <th v-for="({ attribute }, index) in checkedSales" :key="index">{{ attribute.name }}
+                                </th>
                                 <th>价格</th>
                                 <th>库存</th>
                                 <th>编码</th>
@@ -66,8 +75,8 @@
                         </thead>
                         <tbody>
                             <tr v-for="(sku, index) in formData.skus" :key="index">
-                                <td v-for="attr in sku.attrs" :key="`${attr.saleId}-${attr.specId}`">
-                                    {{ attr.customName || getSpecName(attr.specId) }}
+                                <td v-for="spec in sku.specs" :key="`${spec.attributeId}-${spec.valueId}`">
+                                    {{ spec.specName || getSpecName(spec.valueId) }}
                                 </td>
                                 <td>
                                     <el-input-number v-model="sku.price" :min="0" />
@@ -83,7 +92,7 @@
                     </table>
                 </div>
             </el-form-item>
-            <el-form-item label="规格说明">
+            <el-form-item label="规格描述">
                 <div class="g-wangeditor simple">
                     <Toolbar class="g-wangeditor__toolbar" mode="simple" :editor="editorRef" />
                     <Editor class="g-wangeditor__editor" v-model="formData.spuContent" @onCreated="handleCreated" />
@@ -99,7 +108,8 @@
 <script lang="ts" setup>
 import { ref, shallowRef, reactive, computed, onMounted, onBeforeUnmount } from 'vue'
 import type { CheckboxValueType } from 'element-plus'
-import { createCategorySaleAttrList, createCategorySaleSpecList } from '@/services/api/product'
+import { createCategoryList } from '@/services/api/product'
+import { createAttributeList } from '@/services/api/common'
 import type { SaleTemplate } from './types'
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 import AppDialog from '@pc/components/ui/dialog/index.vue'
@@ -127,60 +137,86 @@ const handleCreated = (editor: unknown) => {
     editorRef.value = editor
 }
 
-const { loading: saleAttrLoading, rawFetch: getSaleAttrList } = createCategorySaleAttrList({
+const { loading: categoryLoading, rawFetch: getCategoryList } = createCategoryList({
     manual: true
 })
 
-const { loading: saleSpecLoading, rawFetch: getSaleSpecList } = createCategorySaleSpecList({
+const { loading: attrLoading, rawFetch: getAttributeList } = createAttributeList({
     manual: true
 })
 
-const loading = computed(() => saleAttrLoading.value || saleSpecLoading.value)
+const loading = computed(() => categoryLoading.value || attrLoading.value)
 
 // 已勾选的销售属性
-const checkedSales = computed(() => saleTemplates.value.filter(({ checked }) => checked.length))
+const checkedSales = computed(() => saleTemplates.value.filter(({ specs }) => specs.length))
 
 const specNameMap = computed(() => {
     const map = new Map<number, string>()
-    saleTemplates.value.forEach(({ specs }) => {
-        specs.forEach((spec) => map.set(spec.id, spec.specName))
+    saleTemplates.value.forEach(({ attribute }) => {
+        attribute.values.forEach((spec) => map.set(spec.id, spec.value))
     })
     return map
 })
 
-const getSpecName = (specId: number) => specNameMap.value.get(specId) || '无效'
+const getSpecName = (valueId: number) => specNameMap.value.get(valueId) || '自定义'
+
+// 新增自定义规格
+const addCustomSpec = (item: SaleTemplate) => {
+    item.specs.push({
+        attributeId: item.sale.attributeId,
+        valueId: 0,
+        specName: ''
+    })
+    rebuildSkus()
+}
+
+// 删除自定义规格
+const removeSpec = (item: SaleTemplate, index: number) => {
+    const [spec] = item.specs.splice(index, 1)
+    if (spec) {
+        item.checked = item.checked.filter((id) => id !== spec.valueId)
+    }
+    rebuildSkus()
+}
+
+const isCustomDisabled = (item: SaleTemplate) => {
+    return item.specs.filter(({ valueId }) => valueId === 0).length > 2
+}
 
 // 重建 SKU 列表
 const rebuildSkus = () => {
-    formData.skus = cartesianSku(checkedSales.value.map(({ attrs }) => attrs))
+    formData.skus = cartesianSku(checkedSales.value.map(({ specs }) => specs))
 }
 
 const onChecked = (target: SaleTemplate, checkedValue: CheckboxValueType[]) => {
     // 缓存旧数据，避免重新填写
-    const prevMap = new Map(target.attrs.map((a) => [`${a.saleId}-${a.specId}`, a]))
-    const filtered = target.specs.filter((s) => checkedValue.includes(s.id))
+    const prevMap = new Map(target.specs.map((a) => [`${a.attributeId}-${a.valueId}`, a]))
 
-    target.attrs = filtered.map((a) => {
-        const prev = prevMap.get(`${a.saleId}-${a.id}`)
+    const checkedValues = target.attribute.values.filter((s) => checkedValue.includes(s.id))
+    const customs = target.specs.filter((s) => !s.valueId)
+
+    const specs = checkedValues.map((v) => {
+        const prev = prevMap.get(`${target.sale.attributeId}-${v.id}`)
         return prev ?? {
-            saleId: a.saleId,
-            specId: a.id,
-            customName: ''
+            attributeId: target.sale.attributeId,
+            valueId: v.id,
+            specName: ''
         }
     })
 
+    target.specs = [...specs, ...customs]
     rebuildSkus()
 }
 
 // 组合的唯一 key
-const attrsKey = (attrs: Product.ProductSkuAttr[]) => {
-    return attrs.map((a) => `${a.saleId}-${a.specId}`).sort().join('|')
+const specsKey = (specs: Product.ProductSpec[]) => {
+    return specs.map((a) => `${a.attributeId}-${a.valueId}`).sort().join('|')
 }
 
 const createEmptySku = (): Product.ProductSkuItem => ({
     id: 0,
     code: '',
-    attrs: [],
+    specs: [],
     price: 0,
     stock: 0,
     image: {
@@ -191,23 +227,23 @@ const createEmptySku = (): Product.ProductSkuItem => ({
 })
 
 // 计算笛卡尔积
-const cartesianSku = (attrs: Product.ProductSkuAttr[][]) => {
-    if (!attrs.length) return []
+const cartesianSku = (specs: Product.ProductSpec[][]) => {
+    if (!specs.length) return []
 
     // 缓存旧数据，避免重新填写
-    const prevMap = new Map(formData.skus.map((sku) => [attrsKey(sku.attrs), sku]))
+    const prevMap = new Map(formData.skus.map((sku) => [specsKey(sku.specs), sku]))
 
-    return attrs.reduce<Product.ProductSkuItem[]>((res, cur) => res.flatMap((sku) => cur.map((item) => {
-        const attrs = [...sku.attrs, {
+    return specs.reduce<Product.ProductSkuItem[]>((res, cur) => res.flatMap((sku) => cur.map((item) => {
+        const specs = [...sku.specs, {
             ...item,
-            customName: item.customName || getSpecName(item.specId) // 空则回退为规格名称（不受后续规格改名影响）
+            specName: item.specName || getSpecName(item.valueId) // 空则回退为规格名称（不受后续规格改名影响）
         }]
 
-        const prevSku = prevMap.get(attrsKey(attrs))
+        const prevSku = prevMap.get(specsKey(specs))
 
         return {
             ...(prevSku ?? createEmptySku()),
-            attrs
+            specs
         }
     })), [createEmptySku()])
 }
@@ -216,44 +252,36 @@ onMounted(() => {
     const categoryId = props.categoryId
 
     Promise.all([
-        getSaleAttrList({ categoryId }),
-        getSaleSpecList({ categoryId })
-    ]).then(([attrRes, specRes]) => {
-        const filtered = attrRes.data.filter((item) => item.categoryId === categoryId)
+        getCategoryList({ categoryId }),
+        getAttributeList()
+    ]).then(([categoryRes, attrRes]) => {
+        const sales = categoryRes.data[0]?.sales ?? []
+        const attributeMap = new Map(attrRes.data.map((item) => [item.id, item]))
 
-        saleTemplates.value = filtered.map((sale) => {
-            const specs = specRes.data.filter((spec) => spec.saleId === sale.id)
+        saleTemplates.value = sales.flatMap((sale) => {
+            const attribute = attributeMap.get(sale.attributeId)
+            if (!attribute) return []
 
-            // 从已有 SKU 中收集该销售属性已勾选的规格（按 specId 去重）
-            const attrMap = new Map<number, Product.ProductSkuAttr>()
+            // 从已有 SKU 中收集该销售属性已勾选的规格（按 valueId 去重）
+            const specMap = new Map<number, Product.ProductSpec>()
 
             formData.skus.forEach((sku) => {
-                sku.attrs.forEach((attr) => {
-                    if (attr.saleId === sale.id && !attrMap.has(attr.specId)) {
-                        attrMap.set(attr.specId, { ...attr })
+                sku.specs.forEach((attr) => {
+                    if (attr.attributeId === sale.attributeId && !specMap.has(attr.valueId)) {
+                        specMap.set(attr.valueId, { ...attr })
                     }
                 })
             })
 
-            const attrs = [...attrMap.values()]
+            const specs = [...specMap.values()]
 
-            return {
+            return [{
                 sale,
-                specs,
-                checked: attrs.map((attr) => attr.specId),
-                attrs
-            }
+                attribute,
+                checked: specs.map((attr) => attr.valueId),
+                specs
+            }]
         })
-
-        // 待定：（过滤掉无效的销售属性）或（显示无效的销售属性，但是不可编辑）
-        // const validSaleSpecMap = new Map<number, Set<number>>()
-        // saleTemplates.value.forEach(({ sale, specs }) => {
-        //     validSaleSpecMap.set(sale.id, new Set(specs.map((s) => s.id)))
-        // })
-
-        // formData.skus = formData.skus.filter((sku) =>
-        //     sku.attrs.every((attr) => validSaleSpecMap.get(attr.saleId)?.has(attr.specId))
-        // )
 
         rebuildSkus()
     })

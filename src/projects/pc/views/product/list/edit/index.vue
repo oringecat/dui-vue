@@ -103,7 +103,7 @@ const handleCreated = (editor: unknown) => {
 const formData = ref<Partial<Product.ProductDetail>>({
     id: props.record?.id,
     categoryId: 0,
-    userId: 0,
+    shopId: 0,
     attrs: []
 })
 

@@ -5,6 +5,40 @@ const Page = () => import('@pc/components/layouts/page/index.vue')
 export function getAuthRoutes(authCodes?: string[]) {
     const authRoutes: AuthRoute[] = [
         {
+            code: 'config',
+            title: '基础配置',
+            authType: AuthType.Route,
+            url: '/config',
+            component: Page,
+            icon: 'default',
+            children: [
+                {
+                    code: 'attribute-list',
+                    title: '属性模板',
+                    authType: AuthType.Route,
+                    url: '/attribute/list',
+                    component: () => import('@pc/views/attribute/list/index.vue'),
+                    icon: 'default',
+                    children: [
+                        {
+                            code: 'attribute-list-add',
+                            title: '新增',
+                            authType: AuthType.Action,
+                            component: () => import('@pc/views/attribute/list/edit/index.vue'),
+                            icon: 'Plus'
+                        },
+                        {
+                            code: 'attribute-list-modify',
+                            title: '修改',
+                            authType: AuthType.Action,
+                            component: () => import('@pc/views/attribute/list/edit/index.vue'),
+                            icon: 'Edit'
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             code: 'order',
             title: '订单管理',
             authType: AuthType.Route,

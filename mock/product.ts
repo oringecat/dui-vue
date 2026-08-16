@@ -31,77 +31,48 @@ export default [
         url: serviceConfig.apiUrl + '/product/category',
         method: 'get',
         rawResponse: (req, res) => {
-            mockResponse(res, {
-                code: 200,
-                message: 'ok',
-                data: [
-                    { id: 1000, parentId: 0, code: 'digital', categoryName: '数码', status: 1, icon: '', sort: 1 },
-                    { id: 1100, parentId: 1000, code: 'phone', categoryName: '手机通讯', status: 1, icon: '', sort: 1 },
-                    { id: 1110, parentId: 1100, code: 'smartphone', categoryName: '智能手机', status: 1, icon: '', sort: 1 },
-                    { id: 1200, parentId: 1000, code: 'computer', categoryName: '电脑办公', status: 1, icon: '', sort: 2 },
-
-                    { id: 2000, parentId: 0, code: 'clothing', categoryName: '服装鞋帽', status: 1, icon: '', sort: 2 },
-                    { id: 2100, parentId: 2000, code: 'menswear', categoryName: '男装', status: 1, icon: '', sort: 1 },
-                    { id: 2200, parentId: 2000, code: 'womenswear', categoryName: '女装', status: 1, icon: '', sort: 2 },
-
-                    { id: 3000, parentId: 0, code: 'food', categoryName: '食品饮料', status: 1, icon: '', sort: 3 },
-                    { id: 3100, parentId: 3000, code: 'snacks', categoryName: '休闲零食', status: 1, icon: '', sort: 1 },
-                    { id: 3200, parentId: 3000, code: 'fruit', categoryName: '生鲜水果', status: 1, icon: '', sort: 2 }
-                ],
-                total: 30
-            })
-        }
-    },
-    {
-        url: serviceConfig.apiUrl + '/product/category/attribute',
-        method: 'get',
-        rawResponse: (req, res) => {
             const { categoryId } = parse(req.url!, true).query
+            const categories = [
+                { id: 1000, parentId: 0, code: 'digital', categoryName: '数码', status: 1, icon: '', sort: 1, attrs: [], sales: [] },
+                { id: 1100, parentId: 1000, code: 'phone', categoryName: '手机通讯', status: 1, icon: '', sort: 1, attrs: [], sales: [] },
+                {
+                    id: 1110, parentId: 1100, code: 'smartphone', categoryName: '智能手机', status: 1, icon: '', sort: 1,
+                    attrs: [
+                        { id: 100, attributeId: 100, valueType: 2, required: true },
+                        { id: 101, attributeId: 101, valueType: 1, required: true },
+                        { id: 102, attributeId: 102, valueType: 2, required: false },
+                        { id: 103, attributeId: 103, valueType: 2, required: false },
+                        { id: 104, attributeId: 104, valueType: 3, required: false },
+                    ],
+                    sales: [
+                        { id: 100, attributeId: 100, isCustom: true },
+                        { id: 101, attributeId: 101, isCustom: false },
+                        { id: 102, attributeId: 102, isCustom: false },
+                    ],
+                },
+                { id: 1200, parentId: 1000, code: 'computer', categoryName: '电脑办公', status: 1, icon: '', sort: 2, attrs: [], sales: [] },
 
-            const attrDataMap: Record<number, { id: number; categoryId: number; attributeName: string; type: number; required: boolean }[]> = {
-                1110: [ // 智能手机
-                    { id: 100, categoryId: 1110, attributeName: '品牌', type: 2, required: true },
-                    { id: 101, categoryId: 1110, attributeName: '型号', type: 1, required: true },
-                    { id: 102, categoryId: 1110, attributeName: '屏幕尺寸', type: 2, required: false },
-                    { id: 103, categoryId: 1110, attributeName: '操作系统', type: 2, required: false },
-                    { id: 104, categoryId: 1110, attributeName: '电池容量(mAh)', type: 4, required: false },
-                ],
-                3100: [ // 休闲零食
-                    { id: 200, categoryId: 3100, attributeName: '品牌', type: 2, required: true },
-                    { id: 201, categoryId: 3100, attributeName: '产地', type: 1, required: false },
-                    { id: 202, categoryId: 3100, attributeName: '保质期(天)', type: 4, required: true },
-                ],
-            }
+                { id: 2000, parentId: 0, code: 'clothing', categoryName: '服装鞋帽', status: 1, icon: '', sort: 2, attrs: [], sales: [] },
+                { id: 2100, parentId: 2000, code: 'menswear', categoryName: '男装', status: 1, icon: '', sort: 1, attrs: [], sales: [] },
+                { id: 2200, parentId: 2000, code: 'womenswear', categoryName: '女装', status: 1, icon: '', sort: 2, attrs: [], sales: [] },
 
-            const data = attrDataMap[Number(categoryId)] || []
+                { id: 3000, parentId: 0, code: 'food', categoryName: '食品饮料', status: 1, icon: '', sort: 3, attrs: [], sales: [] },
+                {
+                    id: 3100, parentId: 3000, code: 'snacks', categoryName: '休闲零食', status: 1, icon: '', sort: 1,
+                    attrs: [
+                        { id: 200, attributeId: 200, valueType: 2, required: true },
+                        { id: 201, attributeId: 201, valueType: 1, required: false },
+                        { id: 202, attributeId: 202, valueType: 3, required: true },
+                    ],
+                    sales: [
+                        { id: 200, attributeId: 200, isCustom: true },
+                        { id: 201, attributeId: 201, isCustom: false },
+                    ],
+                },
+                { id: 3200, parentId: 3000, code: 'fruit', categoryName: '生鲜水果', status: 1, icon: '', sort: 2, attrs: [], sales: [] }
+            ]
 
-            mockResponse(res, {
-                code: 200,
-                message: 'ok',
-                data,
-                total: data.length
-            })
-        }
-    },
-    {
-        url: serviceConfig.apiUrl + '/product/category/sale-attribute',
-        method: 'get',
-        rawResponse: (req, res) => {
-            const { categoryId } = parse(req.url!, true).query
-
-            const saleDataMap: Record<number, { id: number; categoryId: number; saleName: string; isCustom: boolean }[]> = {
-                1110: [ // 智能手机
-                    { id: 100, categoryId: 1110, saleName: '颜色', isCustom: true },
-                    { id: 101, categoryId: 1110, saleName: '容量', isCustom: false },
-                    { id: 102, categoryId: 1110, saleName: '网络', isCustom: false },
-                ],
-                3100: [ // 休闲零食
-                    { id: 200, categoryId: 3100, saleName: '口味', isCustom: true },
-                    { id: 201, categoryId: 3100, saleName: '包装', isCustom: false },
-                ],
-            }
-
-            const data = saleDataMap[Number(categoryId)] || []
+            const data = categoryId ? categories.filter((item) => item.id === Number(categoryId)) : categories
 
             mockResponse(res, {
                 code: 200,
@@ -120,7 +91,7 @@ export default [
                 message: 'ok',
                 data: {
                     id: 1000,
-                    userId: 0,
+                    shopId: 0,
                     categoryId: 1110,
                     shopCategoryId: 1110,
                     title: 'iPhone 15 Pro Max 智能手机',
@@ -166,10 +137,10 @@ export default [
                             {
                                 id: 1000,
                                 code: 'SP0001-001',
-                                attrs: [
-                                    { saleId: 100, specId: 1003, customName: '原色钛金属' },
-                                    { saleId: 101, specId: 1012, customName: '256GB' },
-                                    { saleId: 102, specId: 1021, customName: '全网通5G' },
+                                specs: [
+                                    { attributeId: 100, valueId: 1003, specName: '原色钛金属' },
+                                    { attributeId: 101, valueId: 1012, specName: '256GB' },
+                                    { attributeId: 102, valueId: 1021, specName: '全网通5G' },
                                 ],
                                 price: 6999,
                                 stock: 50,
@@ -178,10 +149,10 @@ export default [
                             {
                                 id: 1001,
                                 code: 'SP0001-002',
-                                attrs: [
-                                    { saleId: 100, specId: 1003, customName: '极光蓝' },
-                                    { saleId: 101, specId: 1013, customName: '512GB' },
-                                    { saleId: 102, specId: 1021, customName: '全网通5G' },
+                                specs: [
+                                    { attributeId: 100, valueId: 1003, specName: '极光蓝' },
+                                    { attributeId: 101, valueId: 1013, specName: '512GB' },
+                                    { attributeId: 102, valueId: 1021, specName: '全网通5G' },
                                 ],
                                 price: 7998,
                                 stock: 0,
@@ -190,10 +161,10 @@ export default [
                             {
                                 id: 1002,
                                 code: 'SP0001-003',
-                                attrs: [
-                                    { saleId: 100, specId: 1004, customName: '樱粉金' },
-                                    { saleId: 101, specId: 1013, customName: '512GB' },
-                                    { saleId: 102, specId: 1021, customName: '全网通5G' },
+                                specs: [
+                                    { attributeId: 100, valueId: 1004, specName: '樱粉金' },
+                                    { attributeId: 101, valueId: 1013, specName: '512GB' },
+                                    { attributeId: 102, valueId: 1021, specName: '全网通5G' },
                                 ],
                                 price: 11999,
                                 stock: 25,
@@ -207,51 +178,13 @@ export default [
         },
     },
     {
-        url: serviceConfig.apiUrl + '/product/category/sale-spec',
-        method: 'get',
-        rawResponse: (req, res) => {
-            const { categoryId } = parse(req.url!, true).query
-
-            // 按 saleId 组织的规格数据
-            const specDataMap: Record<number, { id: number; categoryId: number; saleId: number; specName: string }[]> = {
-                100: [ // 颜色 → 智能手机(1110)
-                    { id: 1001, categoryId: 1110, saleId: 100, specName: '亮黑色' },
-                    { id: 1002, categoryId: 1110, saleId: 100, specName: '珠光白' },
-                    { id: 1003, categoryId: 1110, saleId: 100, specName: '极光蓝' },
-                    { id: 1004, categoryId: 1110, saleId: 100, specName: '樱粉金' },
-                ],
-                101: [ // 存储容量 → 智能手机(1110)
-                    { id: 1011, categoryId: 1110, saleId: 101, specName: '128GB' },
-                    { id: 1012, categoryId: 1110, saleId: 101, specName: '256GB' },
-                    { id: 1013, categoryId: 1110, saleId: 101, specName: '512GB' },
-                ],
-                102: [ // 网络制式 → 智能手机(1110)
-                    { id: 1021, categoryId: 1110, saleId: 102, specName: '全网通5G' },
-                    { id: 1022, categoryId: 1110, saleId: 102, specName: '移动5G' },
-                    { id: 1023, categoryId: 1110, saleId: 102, specName: '联通5G' },
-                ],
-                200: [ // 口味 → 休闲零食(3100)
-                    { id: 2001, categoryId: 3100, saleId: 200, specName: '原味' },
-                    { id: 2002, categoryId: 3100, saleId: 200, specName: '麻辣' },
-                    { id: 2003, categoryId: 3100, saleId: 200, specName: '五香' },
-                    { id: 2004, categoryId: 3100, saleId: 200, specName: '烧烤' },
-                ],
-                201: [ // 包装规格 → 休闲零食(3100)
-                    { id: 2011, categoryId: 3100, saleId: 201, specName: '100g' },
-                    { id: 2012, categoryId: 3100, saleId: 201, specName: '200g' },
-                    { id: 2013, categoryId: 3100, saleId: 201, specName: '500g' },
-                    { id: 2014, categoryId: 3100, saleId: 201, specName: '1kg' },
-                ],
-            }
-
-            const data = Object.values(specDataMap).flat().filter((item) => item.categoryId === Number(categoryId))
-
-            mockResponse(res, {
-                code: 200,
-                message: 'ok',
-                data,
-                total: data.length
-            })
-        }
+        url: serviceConfig.apiUrl + '/product/category/sale/update',
+        method: 'post',
+        rawResponse: (req, res) => mockResponse(res, {
+            code: 200,
+            message: 'ok',
+            data: {},
+            total: 0
+        })
     }
 ] as MockMethod[]

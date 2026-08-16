@@ -2,9 +2,6 @@
     <pc-view>
         <app-table :data="dataList" :columns="tableColumns" :context-menus="contextMenus" v-loading="loading"
             style="height: 400px; overflow: hidden;">
-            <template #orderTime="{ value }">
-                {{ dayjs(value).format('YYYY-MM-DD HH:mm:ss') }}
-            </template>
             <template #action="{ row, index }">
                 <app-action :actions="getRowActions(row, index)" :button-props="{ type: 'primary', size: 'small' }" />
             </template>
@@ -51,7 +48,7 @@ const { tableColumns } = useTableColumns<Order.OrderListItem>([
     { field: 'id', label: 'ID' },
     { field: 'orderNumber', label: '订单号' },
     { field: 'status', label: '状态' },
-    { field: 'orderTime', label: '订单日期', formatValue: (row) => row.orderTime },
+    { field: 'orderTime', label: '订单日期', formatValue: (row) => dayjs(row.orderTime).format('YYYY-MM-DD HH:mm:ss') },
     { field: 'action', label: '操作', fixed: 'right', visibility: () => hasRowAction.value }
 ])
 

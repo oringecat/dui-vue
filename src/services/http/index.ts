@@ -7,7 +7,7 @@ import { useTransitionStore } from '@/stores/transition'
 import { useUserStore } from '@/stores/user'
 import serviceConfig from '@/services/config'
 
-export type { ApiOptions } from './types'
+export type { ApiOptions, RequestOptions } from './types'
 
 export default new (class {
     constructor() {

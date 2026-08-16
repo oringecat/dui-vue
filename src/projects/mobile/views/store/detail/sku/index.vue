@@ -6,11 +6,11 @@
             </div>
             <van-stepper v-model="quantity" :min="1" :max="selectedSku?.stock ?? 1" :disabled="!selectedSku" />
         </div>
-        <div v-for="{ attr, specs } in saleGroups" :key="attr.id">
-            <h4>{{ attr.saleName }}</h4>
-            <van-radio-group v-model="selectedOptions[attr.id]">
+        <div v-for="{ sale, attribute, specs } in saleGroups" :key="sale.attributeId">
+            <h4>{{ attribute.name }}</h4>
+            <van-radio-group v-model="selectedOptions[sale.attributeId]">
                 <template v-for="spec in specs" :key="spec.id">
-                    <van-radio :name="spec.id" :disabled="spec.disabled">{{ spec.specName }}</van-radio>
+                    <van-radio :name="spec.id" :disabled="spec.disabled">{{ spec.value }}</van-radio>
                 </template>
             </van-radio-group>
         </div>
@@ -19,15 +19,16 @@
 
 <script lang="ts" setup>
 import { shallowRef, reactive, onMounted, computed } from 'vue'
-import { createCategorySaleAttrList, createCategorySaleSpecList } from '@/services/api/product'
+import { createCategoryList } from '@/services/api/product'
+import { createAttributeList } from '@/services/api/common'
 
 const props = defineProps<{
     skus: Product.ProductSkuItem[]
     categoryId: number
 }>()
 
-const attrs = shallowRef<Product.CategorySaleAttrItem[]>([])
-const specs = shallowRef<Product.CategorySaleSpecItem[]>([])
+const sales = shallowRef<Product.CategorySale[]>([])
+const attributeMap = shallowRef(new Map<number, Attribute.AttributeItem>())
 const quantity = shallowRef(1)
 
 const selectedOptions = reactive<Record<number, number>>({})
@@ -36,50 +37,46 @@ const selectedSku = computed(() => {
     const entries = Object.entries(selectedOptions)
     if (entries.length < saleGroups.value.length) return undefined
     return props.skus.find((sku) =>
-        entries.every(([saleId, specId]) =>
-            sku.attrs.some((a) => a.saleId === Number(saleId) && a.specId === specId)
+        entries.every(([attributeId, valueId]) =>
+            sku.specs.some((a) => a.attributeId === Number(attributeId) && a.valueId === valueId)
         )
     )
 })
 
 // 销售选项组
-const saleGroups = computed(() => attrs.value.map((attr) => {
-    const saleSpecs = specs.value.filter(({ saleId }) => saleId === attr.id)
+const saleGroups = computed(() => sales.value.flatMap((sale) => {
+    const attribute = attributeMap.value.get(sale.attributeId)
+    if (!attribute) return []
 
-    const options = saleSpecs.map((spec) => ({
-        ...spec,
+    const specs = attribute.values.map((attr) => ({
+        ...attr,
         disabled: !props.skus.some((sku) =>
-            sku.stock > 0 && sku.attrs.some((a) => a.saleId === attr.id && a.specId === spec.id)
+            sku.stock > 0 && sku.specs.some((a) => a.attributeId === sale.attributeId && a.valueId === attr.id)
         )
     }))
 
-    return {
-        attr,
-        specs: options
-    }
+    return [{
+        sale,
+        attribute,
+        specs
+    }]
 }).filter(({ specs }) => specs.length > 0))
 
-const { rawFetch: getSaleAttrList } = createCategorySaleAttrList({
-    manual: true,
-    data: {
-        categoryId: props.categoryId
-    }
+const { rawFetch: getCategoryList } = createCategoryList({
+    manual: true
 })
 
-const { rawFetch: getSaleSpecList } = createCategorySaleSpecList({
-    manual: true,
-    data: {
-        categoryId: props.categoryId
-    }
+const { rawFetch: getAttributeList } = createAttributeList({
+    manual: true
 })
 
 onMounted(() => {
     Promise.all([
-        getSaleAttrList(),
-        getSaleSpecList()
-    ]).then(([attrRes, specRes]) => {
-        attrs.value = attrRes.data
-        specs.value = specRes.data
+        getCategoryList({ categoryId: props.categoryId }),
+        getAttributeList()
+    ]).then(([categoryRes, attrRes]) => {
+        sales.value = categoryRes.data[0]?.sales ?? []
+        attributeMap.value = new Map(attrRes.data.map((a) => [a.id, a]))
     })
 })
 </script>

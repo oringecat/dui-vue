@@ -38,7 +38,8 @@
 <script lang="ts" setup>
 import { shallowRef, computed, defineAsyncComponent } from 'vue'
 import { useNavigation } from '@/composables/navigation'
-import { createProductDetail, createCategoryAttrList, createProductSpuList } from '@/services/api/product'
+import { createProductDetail, createCategoryList, createProductSpuList } from '@/services/api/product'
+import { createAttributeList } from '@/services/api/common'
 
 const skuView = defineAsyncComponent(() => import('./sku/index.vue'))
 
@@ -55,7 +56,11 @@ const spuItem = computed(() => spus.value[spuIndex.value])
 
 const loading = computed(() => detailLoading.value || spuLoading.value)
 
-const { rawFetch } = createCategoryAttrList({
+const { rawFetch: getCategoryList } = createCategoryList({
+    manual: true
+})
+
+const { rawFetch: getAttributeList } = createAttributeList({
     manual: true
 })
 
@@ -67,13 +72,18 @@ const { loading: detailLoading } = createProductDetail({
         const attrMap = new Map(res.data.attrs.map((a) => [a.attributeId, a.attributeValue]))
 
         if (attrMap.size) {
-            rawFetch({
-                categoryId: res.data.categoryId
-            }).then((res) => {
-                attributes.value = res.data.reduce<[string, string][]>((attrs, cur) => {
-                    const value = attrMap.get(cur.id)
-                    if (value) attrs.push([cur.attributeName, value])
-                    return attrs
+            Promise.all([
+                getCategoryList({ categoryId: res.data.categoryId }),
+                getAttributeList()
+            ]).then(([categoryRes, attrRes]) => {
+                const attrs = categoryRes.data[0]?.attrs ?? []
+                const attributeMap = new Map(attrRes.data.map((a) => [a.id, a]))
+
+                attributes.value = attrs.reduce<[string, string][]>((acc, cur) => {
+                    const value = attrMap.get(cur.attributeId)
+                    const attribute = attributeMap.get(cur.attributeId)
+                    if (value && attribute) acc.push([attribute.name, value])
+                    return acc
                 }, [])
             })
         }

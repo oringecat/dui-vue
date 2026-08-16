@@ -79,7 +79,7 @@ const renderColumns = () => props.columns.map((item) =>
         {
             default: ({ row, $index }: { row: T; $index: number }) => {
                 const renderSlot = slots[item.field]
-                const value = getNestedValue(row, item.field)
+                const value = item.formatValue?.(row) ?? getNestedValue(row, item.field)
                 if (renderSlot) {
                     return renderSlot({ row, value, index: $index })
                 }
