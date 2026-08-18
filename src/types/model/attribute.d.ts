@@ -15,7 +15,6 @@ declare namespace Attribute {
         id: number;
         name: string;
         groupId: number;
-        groupName: string;
         values: AttributeValue[];
         multiple: boolean; // 是否多选
         updateTime: number;

@@ -93,6 +93,7 @@ declare global {
 
         /** 商品规格 */
         interface ProductSpec {
+            id: number;
             attributeId: number;
             valueId: number;
             specName: string;

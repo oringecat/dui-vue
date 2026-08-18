@@ -24,6 +24,17 @@ export function createAttributeList(options?: ApiOptions<{ req: Attribute.Attrib
 }
 
 /**
+ * 获取属性分组列表
+ */
+export function createAttributeGroupList(options?: ApiOptions<{ res: Attribute.AttributeGroup[]; }>) {
+  return http.createRequest({
+    method: 'GET',
+    url: '/attribute/group/list',
+    options
+  })
+}
+
+/**
  * 新增/更新属性
  */
 export function createAttributeUpdate(options: ApiOptions<{ req: Attribute.AttributeItem; }>) {

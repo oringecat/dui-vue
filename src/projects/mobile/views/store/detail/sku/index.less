@@ -1,0 +1,21 @@
+.store-detail-sku {
+    &__groups {
+        ul {
+            display: flex;
+
+            li {
+                border: 1px solid #eee;
+                padding: 10px;
+
+                &:not(.disabled).active {
+                    color: #ff3300;
+                    border-color: #ff3300;
+                }
+
+                &.disabled {
+                    color: #ccc;
+                }
+            }
+        }
+    }
+}

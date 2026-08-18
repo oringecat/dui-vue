@@ -2,6 +2,8 @@
 
 多平台一站式客户端基础框架，正在开发中...
 
+除 Mock 数据由 AI 根据业务逻辑生成外，其余代码都是纯手搓。
+
 ## Recommended IDE Setup
 
 [VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
@@ -32,11 +34,11 @@ npm install
 ### Compile and Hot-Reload for Development
 
 ```sh
-npm run dev
+npm run dev <oem>
 ```
 
 ### Type-Check, Compile and Minify for Production
 
 ```sh
-npm run build
+npm run build <oem>
 ```

@@ -7,7 +7,7 @@
             <el-form-item label="编码">
                 <el-input v-model="formData.code" placeholder="请输入" />
             </el-form-item>
-            <el-form-item label="定制">
+            <el-form-item label="是否定制">
                 <el-switch v-model="formData.isCustom" />
             </el-form-item>
             <el-form-item label="销售属性" v-if="saleTemplates.length">
@@ -75,7 +75,7 @@
                         </thead>
                         <tbody>
                             <tr v-for="(sku, index) in formData.skus" :key="index">
-                                <td v-for="spec in sku.specs" :key="`${spec.attributeId}-${spec.valueId}`">
+                                <td v-for="spec in sku.specs" :key="spec.id">
                                     {{ spec.specName || getSpecName(spec.valueId) }}
                                 </td>
                                 <td>
@@ -109,7 +109,7 @@
 import { ref, shallowRef, reactive, computed, onMounted, onBeforeUnmount } from 'vue'
 import type { CheckboxValueType } from 'element-plus'
 import { createCategoryList } from '@/services/api/product'
-import { createAttributeList } from '@/services/api/common'
+import { useAttributeStore } from '@/stores/attribute'
 import type { SaleTemplate } from './types'
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 import AppDialog from '@pc/components/ui/dialog/index.vue'
@@ -118,6 +118,8 @@ const props = defineProps<{
     spu?: Product.ProductSpuItem
     categoryId: number
 }>()
+
+const attributeStore = useAttributeStore()
 
 const saleTemplates = ref<SaleTemplate[]>([])
 
@@ -137,15 +139,9 @@ const handleCreated = (editor: unknown) => {
     editorRef.value = editor
 }
 
-const { loading: categoryLoading, rawFetch: getCategoryList } = createCategoryList({
+const { loading, rawFetch: getCategoryList } = createCategoryList({
     manual: true
 })
-
-const { loading: attrLoading, rawFetch: getAttributeList } = createAttributeList({
-    manual: true
-})
-
-const loading = computed(() => categoryLoading.value || attrLoading.value)
 
 // 已勾选的销售属性
 const checkedSales = computed(() => saleTemplates.value.filter(({ specs }) => specs.length))
@@ -160,9 +156,12 @@ const specNameMap = computed(() => {
 
 const getSpecName = (valueId: number) => specNameMap.value.get(valueId) || '自定义'
 
+let customSpecId = 0
+
 // 新增自定义规格
 const addCustomSpec = (item: SaleTemplate) => {
     item.specs.push({
+        id: --customSpecId,
         attributeId: item.sale.attributeId,
         valueId: 0,
         specName: ''
@@ -180,7 +179,7 @@ const removeSpec = (item: SaleTemplate, index: number) => {
 }
 
 const isCustomDisabled = (item: SaleTemplate) => {
-    return item.specs.filter(({ valueId }) => valueId === 0).length > 2
+    return item.specs.filter(({ valueId }) => valueId === 0).length >= 3
 }
 
 // 重建 SKU 列表
@@ -198,6 +197,7 @@ const onChecked = (target: SaleTemplate, checkedValue: CheckboxValueType[]) => {
     const specs = checkedValues.map((v) => {
         const prev = prevMap.get(`${target.sale.attributeId}-${v.id}`)
         return prev ?? {
+            id: --customSpecId,
             attributeId: target.sale.attributeId,
             valueId: v.id,
             specName: ''
@@ -210,7 +210,7 @@ const onChecked = (target: SaleTemplate, checkedValue: CheckboxValueType[]) => {
 
 // 组合的唯一 key
 const specsKey = (specs: Product.ProductSpec[]) => {
-    return specs.map((a) => `${a.attributeId}-${a.valueId}`).sort().join('|')
+    return specs.map((a) => (a.valueId ? `v-${a.valueId}` : `i-${a.id}`)).sort().join('|')
 }
 
 const createEmptySku = (): Product.ProductSkuItem => ({
@@ -253,22 +253,22 @@ onMounted(() => {
 
     Promise.all([
         getCategoryList({ categoryId }),
-        getAttributeList()
-    ]).then(([categoryRes, attrRes]) => {
+        attributeStore.readyPromise
+    ]).then(([categoryRes]) => {
         const sales = categoryRes.data[0]?.sales ?? []
-        const attributeMap = new Map(attrRes.data.map((item) => [item.id, item]))
 
         saleTemplates.value = sales.flatMap((sale) => {
-            const attribute = attributeMap.get(sale.attributeId)
+            const attribute = attributeStore.getAttributeById(sale.attributeId)
             if (!attribute) return []
 
-            // 从已有 SKU 中收集该销售属性已勾选的规格（按 valueId 去重）
-            const specMap = new Map<number, Product.ProductSpec>()
+            // 从已有 SKU 中收集该销售属性已勾选的规格
+            const specMap = new Map<string, Product.ProductSpec>()
 
             formData.skus.forEach((sku) => {
                 sku.specs.forEach((attr) => {
-                    if (attr.attributeId === sale.attributeId && !specMap.has(attr.valueId)) {
-                        specMap.set(attr.valueId, { ...attr })
+                    const key = attr.valueId ? `v-${attr.valueId}` : `i-${attr.id}`
+                    if (attr.attributeId === sale.attributeId && !specMap.has(key)) {
+                        specMap.set(key, { ...attr })
                     }
                 })
             })
@@ -278,7 +278,7 @@ onMounted(() => {
             return [{
                 sale,
                 attribute,
-                checked: specs.map((attr) => attr.valueId),
+                checked: specs.map((attr) => attr.valueId).filter((id) => id > 0),
                 specs
             }]
         })

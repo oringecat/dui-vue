@@ -26,16 +26,17 @@ export function useDataTable<T extends object>(options: DataTableOptions = {}) {
     }
 
     // 如果首页总数和原始数据总数相同，说明是全量数据
-    const fullData = computed(() => {
+    const isFullData = computed(() => {
         const firstData = rawData.get(1) || []
-        if (firstData.length > 0 && firstData.length === rawTotal.value) {
-            return firstData.filter((item) => matchesFilter(item))
-        }
-        return []
+        return firstData.length > 0 && firstData.length === rawTotal.value
     })
 
-    // 优先使用全量总条数
-    const pageTotal = computed(() => fullData.value.length || rawTotal.value)
+    const fullData = computed(() => {
+        const firstData = rawData.get(1) || []
+        return firstData.filter((item) => matchesFilter(item))
+    })
+
+    const pageTotal = computed(() => isFullData.value ? fullData.value.length : rawTotal.value)
 
     // 总页数
     const pageCount = computed(() => pageTotal.value > 0 ? Math.ceil(pageTotal.value / state.pageSize) : 1)
@@ -44,7 +45,7 @@ export function useDataTable<T extends object>(options: DataTableOptions = {}) {
     const hasMore = computed(() => pageTotal.value < 0 || (!isRefreshing.value && state.pageIndex < pageCount.value))
 
     const getPageItems = (pageIndex: number): T[] => {
-        if (fullData.value.length) {
+        if (isFullData.value) {
             const start = (pageIndex - 1) * state.pageSize
             return fullData.value.slice(start, start + state.pageSize)
         }
@@ -59,7 +60,7 @@ export function useDataTable<T extends object>(options: DataTableOptions = {}) {
 
     // 追加列表
     const appendList = computed(() => {
-        if (fullData.value.length) {
+        if (isFullData.value) {
             // 只返回第 1 页到当前页的累计数据，随 pageIndex 递增逐步追加
             return fullData.value.slice(0, state.pageIndex * state.pageSize)
         }
