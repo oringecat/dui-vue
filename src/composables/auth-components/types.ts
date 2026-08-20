@@ -12,6 +12,7 @@ export interface ActionItem {
     code: string;
     title: string;
     icon?: string;
+    className?: string;
     disabled?: boolean;
     onClick: () => void;
 }

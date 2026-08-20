@@ -1,16 +1,18 @@
 <template>
-    <pc-view class="order-list">
-        <app-filter :options="filterOptions" :rules="filterRules" @submit="onSearch">
-            <template #startTime-endTime="{ item }">
-                <el-form-item :label="item.label" prop="date">
-                    <el-date-picker type="daterange" v-model="dateValue" value-format="YYYY-MM-DD"
-                        start-placeholder="开始日期" end-placeholder="结束日期" />
-                </el-form-item>
-            </template>
-        </app-filter>
-        <el-tabs v-model="componentId" v-if="viewComponents.length">
-            <el-tab-pane v-for="{ code, title } in viewComponents" :key="code" :label="title" :name="code" />
-        </el-tabs>
+    <pc-view flex>
+        <template #header>
+            <app-filter :options="filterOptions" :rules="filterRules" @submit="onSearch">
+                <template #startTime-endTime="{ item }">
+                    <el-form-item :label="item.label" prop="date">
+                        <el-date-picker type="daterange" v-model="dateValue" value-format="YYYY-MM-DD"
+                            start-placeholder="开始日期" end-placeholder="结束日期" />
+                    </el-form-item>
+                </template>
+            </app-filter>
+            <el-tabs v-model="componentId" v-if="viewComponents.length">
+                <el-tab-pane v-for="{ code, title } in viewComponents" :key="code" :label="title" :name="code" />
+            </el-tabs>
+        </template>
         <component ref="componentRef" :is="activeComponent" v-bind="{ componentId, queryParams }"
             v-if="activeComponent" />
     </pc-view>

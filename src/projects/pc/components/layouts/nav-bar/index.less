@@ -1,0 +1,76 @@
+.app-nav-bar {
+    &__tabbar {
+        ul {
+            display: flex;
+            white-space: nowrap;
+
+            li {
+                display: flex;
+                align-items: stretch;
+                height: 40px;
+                cursor: pointer;
+                border-top-left-radius: 4px;
+                border-top-right-radius: 4px;
+
+                &.is-active {
+                    background-color: #374758;
+
+                    span {
+                        color: #fff;
+                    }
+                }
+
+                &:not(.is-active) {
+                    .icon {
+                        width: 20px;
+                        color: transparent;
+                        transition: width 200ms;
+                    }
+
+                    &:hover {
+                        background-color: #eee;
+
+                        .text {
+                            color: #313b46;
+                        }
+
+                        .icon {
+                            width: 40px;
+                            color: #374758;
+                        }
+                    }
+                }
+            }
+
+            .text {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding-left: 20px;
+                color: #777;
+
+                // 既是最后一个，又是第一个
+                &:last-child:first-child {
+                    padding-right: 20px;
+                }
+            }
+
+            .icon {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 40px;
+                height: 100%;
+
+                .el-icon {
+                    font-size: 18px;
+                    transition: color 200ms;
+
+                    &:hover {
+                        color: red;
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,6 +1,8 @@
 <template>
-    <pc-view class="product-category">
-        <app-filter :options="filterOptions" @submit="loadData" />
+    <pc-view>
+        <template #header>
+            <app-filter :options="filterOptions" @submit="loadData" />
+        </template>
         <app-table :data="categoryList" :columns="tableColumns" row-key="id" default-expand-all v-loading="loading">
             <template #toolbar>
                 <app-action :actions="getActions('product-category-add')" />

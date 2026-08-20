@@ -10,6 +10,7 @@ export interface AuthRoute {
     url?: string;
     component?: AsyncComponentLoader;
     icon?: string;
+    className?: string;
     remark?: string;
     children?: AuthRoute[];
 }

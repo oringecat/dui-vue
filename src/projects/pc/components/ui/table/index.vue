@@ -3,11 +3,13 @@
         <div class="app-table__toolbar" v-if="slots.toolbar">
             <slot name="toolbar"></slot>
         </div>
-        <el-table class="app-table__body" @row-contextmenu="onContextmenu" v-bind="$attrs">
-            <!-- 选择列 -->
-            <el-table-column type="selection" width="55" align="center" fixed v-if="selectionType" />
-            <component :is="renderColumns" />
-        </el-table>
+        <div class="app-table__body">
+            <el-table @row-contextmenu="onContextmenu" height="100%" v-bind="$attrs">
+                <!-- 选择列 -->
+                <el-table-column type="selection" width="55" align="center" fixed v-if="selectionType" />
+                <component :is="renderColumns" />
+            </el-table>
+        </div>
         <div class="app-table__footer" v-if="slots.footer">
             <slot name="footer"></slot>
         </div>

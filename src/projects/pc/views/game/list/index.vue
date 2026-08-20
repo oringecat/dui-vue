@@ -1,5 +1,5 @@
 <template>
-    <pc-view class="game-list">
+    <pc-view>
     </pc-view>
 </template>
 

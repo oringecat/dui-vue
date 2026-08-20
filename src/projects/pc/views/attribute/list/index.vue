@@ -1,17 +1,20 @@
 <template>
-    <pc-view class="attribute-list">
-        <app-filter :options="filterOptions" @submit="loadData(true)" />
-        <app-table :data="dataList" :columns="tableColumns" :context-menus="contextMenus"
-            v-loading="attributeStore.loading">
+    <pc-view>
+        <template #header>
+            <app-filter :options="filterOptions" @submit="loadData(true)" />
+        </template>
+        <app-table :data="dataList" :columns="tableColumns" v-loading="attributeStore.loading">
             <template #toolbar>
                 <app-action :actions="getActions('attribute-list-add')" />
             </template>
             <template #action="{ row, index }">
                 <app-action :actions="getRowActions(row, index)" :button-props="{ type: 'primary', size: 'small' }" />
             </template>
+            <template #footer>
+                <app-pagination :total="pageTotal" v-model:page-size="pageSize" v-model:current-page="pageIndex"
+                    @change="loadData" />
+            </template>
         </app-table>
-        <app-pagination :total="pageTotal" v-model:page-size="pageSize" v-model:current-page="pageIndex"
-            @change="loadData" />
         <component :is="actionComponent" v-if="actionComponent" />
     </pc-view>
 </template>
@@ -30,7 +33,7 @@ import AppAction from '@pc/components/ui/action/index.vue'
 
 const attributeStore = useAttributeStore()
 
-const { actionComponent, contextMenus, getActions, getRowActions } = useAuthComponents<Attribute.AttributeItem>()
+const { actionComponent, getActions, getRowActions } = useAuthComponents<Attribute.AttributeItem>()
 
 const { dataList, pageIndex, pageSize, pageTotal, hasData, localFilterParams, updateItems } = useDataTable<Attribute.AttributeItem>()
 

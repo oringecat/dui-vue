@@ -1,32 +1,35 @@
 <template>
-  <el-form ref="formRef" class="el-form--filter" :model="formData" :rules="formRules" :show-message="false">
-    <slot name="before"></slot>
-    <template v-for="(item, index) in options.filters" :key="index">
-      <template v-if="item.visibility?.(formData) ?? true">
-        <slot :name="getFieldName(item.field)" :item="item">
-          <el-form-item :label="item.label" :prop="getFieldName(item.field)">
-            <el-select :placeholder="item.placeholder ?? '请选择'" v-model="item.value" :multiple="item.multiple"
-              :clearable="!item.required" collapse-tags @change="item.onChange" :style="handleStyle(item.width)"
-              v-if="item.options">
-              <el-option v-for="option in item.options(formData)" :key="option.value" :value="option.value"
-                :label="option.label" />
-            </el-select>
-            <el-input :placeholder="item.placeholder ?? '请输入'" v-model="item.value" :style="handleStyle(item.width)"
-              v-else />
-          </el-form-item>
-        </slot>
+  <div class="app-filter">
+    <el-form ref="formRef" class="el-form--filter" :model="formData" :rules="formRules" :show-message="false">
+      <slot name="before"></slot>
+      <template v-for="(item, index) in options.filters" :key="index">
+        <template v-if="item.visibility?.(formData) ?? true">
+          <slot :name="getFieldName(item.field)" :item="item">
+            <el-form-item :label="item.label" :prop="getFieldName(item.field)">
+              <el-select :placeholder="item.placeholder ?? '请选择'" v-model="item.value" :multiple="item.multiple"
+                :clearable="!item.required" collapse-tags @change="item.onChange" :style="handleStyle(item.width)"
+                v-if="item.options">
+                <el-option v-for="option in item.options(formData)" :key="option.value" :value="option.value"
+                  :label="option.label" />
+              </el-select>
+              <el-input :placeholder="item.placeholder ?? '请输入'" v-model="item.value" :style="handleStyle(item.width)"
+                v-else />
+            </el-form-item>
+          </slot>
+        </template>
       </template>
-    </template>
-    <slot name="after"></slot>
-    <el-form-item v-if="options.buttons.length">
-      <template v-for="(item, index) in options.buttons" :key="index">
-        <el-button :class="item.className ?? 'el-button--primary'" :disabled="loading" @click="handleButtonClick(item)">
-          {{ item.label }}
-        </el-button>
-      </template>
-    </el-form-item>
-    <slot></slot>
-  </el-form>
+      <slot name="after"></slot>
+      <el-form-item v-if="options.buttons.length">
+        <template v-for="(item, index) in options.buttons" :key="index">
+          <el-button :class="item.className ?? 'el-button--primary'" :disabled="loading"
+            @click="handleButtonClick(item)">
+            {{ item.label }}
+          </el-button>
+        </template>
+      </el-form-item>
+      <slot></slot>
+    </el-form>
+  </div>
 </template>
 
 <script lang="ts" generic="T extends Record<string, any>" setup>
@@ -116,3 +119,7 @@ defineExpose({
   formInstance: formRef
 })
 </script>
+
+<style lang="less">
+@import './index.less';
+</style>

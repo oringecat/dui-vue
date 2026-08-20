@@ -1,5 +1,5 @@
 <template>
-    <pc-view class="user"></pc-view>
+    <pc-view></pc-view>
 </template>
 
 <script lang="ts" setup>

@@ -54,6 +54,7 @@ export function useAuthComponents<T extends object>(options: Partial<AuthCompone
                     code: a.code,
                     title: a.title,
                     icon: a.icon,
+                    className: a.className,
                     onClick: () => openComponent(a, row)
                 })
                 usedCodes.add(a.code)
@@ -72,6 +73,7 @@ export function useAuthComponents<T extends object>(options: Partial<AuthCompone
                 code: a.code,
                 title: a.title,
                 icon: a.icon,
+                className: a.className,
                 onClick: ({ row, index }) => {
                     onClick?.(row, index)
                     openComponent(a, row)

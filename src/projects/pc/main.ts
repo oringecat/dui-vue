@@ -4,8 +4,9 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
 import App from './App.vue'
 import createRouter from './router'
-import 'element-plus/dist/index.css'
 import layouts from './components/layouts' // 全局布局组件
+import 'element-plus/dist/index.css'
+import './assets/themes/style.less'
 
 const pinia = createPinia()
 const app = createApp(App)

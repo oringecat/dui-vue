@@ -1,6 +1,8 @@
 <template>
-    <pc-view class="product-list">
-        <app-filter :options="filterOptions" @submit="loadData(true)" />
+    <pc-view>
+        <template #header>
+            <app-filter :options="filterOptions" @submit="loadData(true)" />
+        </template>
         <app-table :data="dataList" :columns="tableColumns" :context-menus="contextMenus" v-loading="loading">
             <template #toolbar>
                 <app-action :actions="getActions('product-list-add')" />
@@ -9,9 +11,12 @@
             <template #action="{ row, index }">
                 <app-action :actions="getRowActions(row, index)" :button-props="{ type: 'primary', size: 'small' }" />
             </template>
+            
         </app-table>
-        <app-pagination :total="pageTotal" v-model:page-size="pageSize" v-model:current-page="pageIndex"
-            @change="loadData" />
+        <template #footer>
+                <app-pagination :total="pageTotal" v-model:page-size="pageSize" v-model:current-page="pageIndex"
+                    @change="loadData" />
+            </template>
         <component :is="actionComponent" v-if="actionComponent" />
     </pc-view>
 </template>

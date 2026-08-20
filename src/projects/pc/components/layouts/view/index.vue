@@ -1,23 +1,19 @@
 <template>
-    <div ref="viewRef" class="app-view">
-        <div class="app-view__header">
-            <div class="app-view__container">
-                <slot name="header"></slot>
-            </div>
-        </div>
+    <div ref="viewRef" :class="['app-view', { 'app-view--flex': flex }]">
+        <slot name="header"></slot>
         <div class="app-view__body">
-            <div class="app-view__container">
-                <slot></slot>
-            </div>
+            <slot></slot>
         </div>
-        <div class="app-view__footer">
-            <slot name="footer"></slot>
-        </div>
+        <slot name="footer"></slot>
     </div>
 </template>
 
 <script lang="ts" setup>
 import { onMounted, shallowRef } from 'vue'
+
+defineProps<{
+    flex?: boolean
+}>()
 
 const emit = defineEmits(['ready'])
 

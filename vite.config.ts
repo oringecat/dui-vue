@@ -39,10 +39,10 @@ export default defineConfig(({ command }) => ({
     vueJsx(),
     //vueDevTools(),
     AutoImport({
-      resolvers: [ElementPlusResolver(), VantResolver()],
+      resolvers: [ElementPlusResolver({ importStyle: false }), VantResolver()],
     }),
     Components({
-      resolvers: [ElementPlusResolver(), VantResolver()],
+      resolvers: [ElementPlusResolver({ importStyle: false }), VantResolver()],
     }),
     viteMockServe({
       mockPath: './mock', // Mock 文件目录

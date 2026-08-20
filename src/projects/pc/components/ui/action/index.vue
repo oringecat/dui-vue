@@ -3,8 +3,8 @@
         <template v-if="!dropdown">
             <template v-for="action in actions" :key="action.code">
                 <slot :name="action.code" :action="action">
-                    <el-button :icon="resolveIcon(action.icon)" :disabled="action.disabled" v-bind="buttonProps"
-                        @click="action.onClick">
+                    <el-button :class="action.className" :icon="resolveIcon(action.icon)" :disabled="action.disabled"
+                        v-bind="buttonProps" @click="action.onClick">
                         <template v-if="!buttonProps?.circle || !action.icon">{{ action.title }}</template>
                     </el-button>
                 </slot>

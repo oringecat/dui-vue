@@ -1,4 +1,4 @@
-html:root {
+:root {
     --app-background: #f5f5f5;
     --page-background: #fff;
 
@@ -7,6 +7,15 @@ html:root {
     --block-padding-md: 16px;
     --block-radius-md: 4px;
     --block-radius-lg: 6px;
+
+    /* 侧边栏 */
+    --el-menu-bg-color: #2b3a4a;
+    --el-menu-text-color: #8699ad;
+    --el-menu-active-color: #fff;
+    --el-menu-item-active-color: #278eff;
+    --el-menu-hover-bg-color: #374758;
+    --el-menu-inline-bg-color: #263442;
+    --el-menu-border-color: #374758;
 }
 
 .el-button {
@@ -17,6 +26,10 @@ html:root {
     span:empty {
         display: none;
     }
+}
+
+.el-table {
+    --el-table-header-bg-color: #f1f5f9;
 }
 
 .el-form {
@@ -51,4 +64,8 @@ html:root {
             width: 300px;
         }
     }
+}
+
+.el-tabs {
+    background-color: var(--block-background);
 }
