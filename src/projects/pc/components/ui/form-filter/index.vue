@@ -1,39 +1,47 @@
 <template>
   <div class="app-filter">
-    <el-form ref="formRef" class="el-form--filter" :model="formData" :rules="formRules" :show-message="false">
-      <slot name="before"></slot>
-      <template v-for="(item, index) in options.filters" :key="index">
-        <template v-if="item.visibility?.(formData) ?? true">
-          <slot :name="getFieldName(item.field)" :item="item">
-            <el-form-item :label="item.label" :prop="getFieldName(item.field)">
-              <el-select :placeholder="item.placeholder ?? '请选择'" v-model="item.value" :multiple="item.multiple"
-                :clearable="!item.required" collapse-tags @change="item.onChange" :style="handleStyle(item.width)"
-                v-if="item.options">
-                <el-option v-for="option in item.options(formData)" :key="option.value" :value="option.value"
-                  :label="option.label" />
-              </el-select>
-              <el-input :placeholder="item.placeholder ?? '请输入'" v-model="item.value" :style="handleStyle(item.width)"
-                v-else />
-            </el-form-item>
-          </slot>
+    <div class="app-filter__form" :class="{ 'is-collapsed': collapsed }" :style="formStyle">
+      <el-form ref="formRef" class="el-form--filter" :model="formData" :rules="formRules" :show-message="false">
+        <slot name="before"></slot>
+        <template v-for="(item, index) in options.filters" :key="index">
+          <template v-if="item.visibility?.(formData) ?? true">
+            <slot :name="getFieldName(item.field)" :item="item">
+              <el-form-item :label="item.label" :prop="getFieldName(item.field)">
+                <el-select :placeholder="item.placeholder ?? '请选择'" v-model="item.value" :multiple="item.multiple"
+                  :clearable="!item.required" collapse-tags @change="item.onChange" :style="handleStyle(item.width)"
+                  v-if="item.options">
+                  <el-option v-for="option in item.options(formData)" :key="option.value" :value="option.value"
+                    :label="option.label" />
+                </el-select>
+                <el-input :placeholder="item.placeholder ?? '请输入'" v-model="item.value" :style="handleStyle(item.width)"
+                  v-else />
+              </el-form-item>
+            </slot>
+          </template>
         </template>
-      </template>
-      <slot name="after"></slot>
-      <el-form-item v-if="options.buttons.length">
+        <slot name="after"></slot>
+      </el-form>
+    </div>
+    <div ref="actionsRef" class="app-filter__actions">
+      <div class="app-filter__actions-left">
         <template v-for="(item, index) in options.buttons" :key="index">
           <el-button :class="item.className ?? 'el-button--primary'" :disabled="loading"
             @click="handleButtonClick(item)">
             {{ item.label }}
           </el-button>
         </template>
-      </el-form-item>
-      <slot></slot>
-    </el-form>
+        <slot></slot>
+      </div>
+      <el-button type="primary" :icon="collapsed ? 'ArrowDown' : 'ArrowUp'" text @click="toggleCollapse">
+        {{ collapsed ? '展开' : '收起' }}
+      </el-button>
+    </div>
   </div>
 </template>
 
 <script lang="ts" generic="T extends Record<string, any>" setup>
-import { shallowRef, computed, nextTick, type PropType, type VNode } from 'vue'
+import { shallowRef, computed, nextTick, onMounted } from 'vue'
+import type { PropType, VNode, CSSProperties } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import type { FormOptions, FormButton, FilterField } from '@/composables/datatable/types'
 
@@ -66,6 +74,28 @@ const props = defineProps({
 const emit = defineEmits(['submit'])
 
 const formRef = shallowRef<FormInstance>()
+const actionsRef = shallowRef<HTMLElement>()
+
+const collapsed = shallowRef(true) // 是否折叠
+const formStyle = shallowRef<CSSProperties>({})
+
+const actionsHeight = computed(() => `${actionsRef.value?.offsetHeight ?? 32}px`)
+
+// 展开/收起
+const toggleCollapse = () => {
+  const el: HTMLElement = formRef.value?.$el
+  const formHeight = `${el.scrollHeight}px`
+
+  const from = collapsed.value ? actionsHeight.value : formHeight
+  const to = collapsed.value ? formHeight : actionsHeight.value
+
+  formStyle.value = { height: from }
+
+  nextTick(() => {
+    formStyle.value = { height: to }
+    collapsed.value = !collapsed.value
+  })
+}
 
 // 表单数据映射
 const formData = computed(() => {
@@ -113,6 +143,14 @@ const handleButtonClick = async ({ reset, refresh = true, buildQueryParams }: Fo
     })
   }
 }
+
+onMounted(() => {
+  if (collapsed.value) {
+    formStyle.value = {
+      height: actionsHeight.value
+    }
+  }
+})
 
 // 导出表单实例
 defineExpose({

@@ -1,9 +1,30 @@
 .app-filter {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--block-space-sm);
     border-radius: var(--block-radius);
     background: var(--block-background);
     padding: var(--block-space-md);
 
     &:not(:last-child) {
         margin-bottom: var(--block-space-sm);
+    }
+
+    &__form {
+        overflow: hidden;
+        transition: height var(--el-transition-duration);
+
+        &.is-collapsed {
+            height: var(--app-filter-collapsed-height, 32px);
+        }
+    }
+
+    &__actions {
+        flex: 1;
+        display: flex;
+        justify-content: space-between;
+        white-space: nowrap;
+        gap: var(--block-space-sm);
     }
 }
