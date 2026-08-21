@@ -1,4 +1,6 @@
 .app-nav-bar {
+    padding: 0 var(--block-space-md);
+
     &__tabbar {
         ul {
             display: flex;
@@ -9,8 +11,8 @@
                 align-items: stretch;
                 height: 40px;
                 cursor: pointer;
-                border-top-left-radius: 4px;
-                border-top-right-radius: 4px;
+                border-top-left-radius: var(--block-radius);
+                border-top-right-radius: var(--block-radius);
 
                 &.is-active {
                     background-color: #374758;

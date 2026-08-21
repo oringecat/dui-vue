@@ -1,6 +1,6 @@
 <template>
     <el-splitter class="app-page">
-        <el-splitter-panel class="app-page__sidebar" size="240px">
+        <el-splitter-panel class="app-page__sidebar" size="220px">
             <el-menu class="app-page__menu" :default-active="String(route.name)" unique-opened
                 @select="navigatorTo">
                 <el-menu-item class="app-page__menu-brand" index="brand">管理后台</el-menu-item>

@@ -11,12 +11,11 @@
             <template #action="{ row, index }">
                 <app-action :actions="getRowActions(row, index)" :button-props="{ type: 'primary', size: 'small' }" />
             </template>
-            
-        </app-table>
-        <template #footer>
+            <template #footer>
                 <app-pagination :total="pageTotal" v-model:page-size="pageSize" v-model:current-page="pageIndex"
                     @change="loadData" />
             </template>
+        </app-table>
         <component :is="actionComponent" v-if="actionComponent" />
     </pc-view>
 </template>

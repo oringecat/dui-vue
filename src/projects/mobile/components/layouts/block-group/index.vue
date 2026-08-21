@@ -20,7 +20,7 @@ const props = defineProps({
     },
     gutter: {
         type: [Number, String],
-        default: 'var(--block-padding-sm)'
+        default: 'var(--block-space-sm)'
     }
 })
 

@@ -2,9 +2,9 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    border-radius: 4px;
-    background-color: #fff;
-    padding: 20px;
+    border-radius: var(--block-radius);
+    background: var(--block-background);
+    padding: var(--block-space-md);
 
     &__body {
         flex: 1;
@@ -19,10 +19,10 @@
     }
 
     &__toolbar {
-        margin-bottom: 12px;
+        margin-bottom: var(--block-space-sm);
     }
 
     &__footer {
-        margin-top: 20px;
+        margin-top: var(--block-space-md);
     }
 }
