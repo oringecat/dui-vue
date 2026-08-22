@@ -1,6 +1,6 @@
 <template>
   <div class="app-filter">
-    <div class="app-filter__form" :class="{ 'is-collapsed': collapsed }" :style="formStyle">
+    <div class="app-filter__form" :style="formStyle">
       <el-form ref="formRef" class="el-form--filter" :model="formData" :rules="formRules" :show-message="false">
         <slot name="before"></slot>
         <template v-for="(item, index) in options.filters" :key="index">
@@ -32,7 +32,8 @@
         </template>
         <slot></slot>
       </div>
-      <el-button type="primary" :icon="collapsed ? 'ArrowDown' : 'ArrowUp'" text @click="toggleCollapse">
+      <el-button type="primary" :icon="collapsed ? 'ArrowDown' : 'ArrowUp'" text @click="toggleCollapse"
+        v-if="!!formStyle.height">
         {{ collapsed ? '展开' : '收起' }}
       </el-button>
     </div>
@@ -40,9 +41,9 @@
 </template>
 
 <script lang="ts" generic="T extends Record<string, any>" setup>
-import { shallowRef, computed, nextTick, onMounted } from 'vue'
+import { shallowRef, computed, nextTick, onMounted, onBeforeUnmount } from 'vue'
 import type { PropType, VNode, CSSProperties } from 'vue'
-import type { FormInstance, FormRules } from 'element-plus'
+import { type FormInstance, type FormRules } from 'element-plus'
 import type { FormOptions, FormButton, FilterField } from '@/composables/datatable/types'
 
 // 声明 slot 类型
@@ -78,24 +79,6 @@ const actionsRef = shallowRef<HTMLElement>()
 
 const collapsed = shallowRef(true) // 是否折叠
 const formStyle = shallowRef<CSSProperties>({})
-
-const actionsHeight = computed(() => `${actionsRef.value?.offsetHeight ?? 32}px`)
-
-// 展开/收起
-const toggleCollapse = () => {
-  const el: HTMLElement = formRef.value?.$el
-  const formHeight = `${el.scrollHeight}px`
-
-  const from = collapsed.value ? actionsHeight.value : formHeight
-  const to = collapsed.value ? formHeight : actionsHeight.value
-
-  formStyle.value = { height: from }
-
-  nextTick(() => {
-    formStyle.value = { height: to }
-    collapsed.value = !collapsed.value
-  })
-}
 
 // 表单数据映射
 const formData = computed(() => {
@@ -144,12 +127,43 @@ const handleButtonClick = async ({ reset, refresh = true, buildQueryParams }: Fo
   }
 }
 
-onMounted(() => {
-  if (collapsed.value) {
-    formStyle.value = {
-      height: actionsHeight.value
+// 展开/收起
+const toggleCollapse = () => {
+  const el: HTMLElement = formRef.value?.$el
+  const actionsHeight = actionsRef.value?.offsetHeight ?? 0
+
+  const from = collapsed.value ? actionsHeight : el.scrollHeight
+  const to = collapsed.value ? el.scrollHeight : actionsHeight
+
+  formStyle.value = { height: `${from}px` }
+
+  nextTick(() => {
+    formStyle.value = { height: `${to}px` }
+    collapsed.value = !collapsed.value
+  })
+}
+
+// 监听元素变化
+const resizeObserver = new ResizeObserver((entries) => {
+  for (const { target } of entries) {
+    const actionsHeight = actionsRef.value?.offsetHeight ?? 0
+    const hasOverflow = target.scrollHeight > actionsHeight
+
+    if (collapsed.value && hasOverflow) {
+      formStyle.value = { height: `${actionsHeight}px` }
+    } else {
+      formStyle.value = {}
     }
   }
+})
+
+onMounted(() => {
+  const el: HTMLElement = formRef.value?.$el
+  resizeObserver.observe(el)
+})
+
+onBeforeUnmount(() => {
+  resizeObserver.disconnect()
 })
 
 // 导出表单实例

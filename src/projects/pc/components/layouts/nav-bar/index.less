@@ -1,7 +1,10 @@
 .app-nav-bar {
-    padding: 0 var(--block-space-md);
+    display: flex;
 
     &__tabbar {
+        flex: 1;
+        padding: 0 var(--block-space-md);
+
         ul {
             display: flex;
             white-space: nowrap;
@@ -73,6 +76,18 @@
                     }
                 }
             }
+        }
+    }
+
+    &__dropdown {
+        border-left: 1px solid #f2f2f2;
+
+        .app-icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            padding: 0 var(--block-space-md);
         }
     }
 }

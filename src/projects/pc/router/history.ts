@@ -1,4 +1,4 @@
-import { reactive, computed } from 'vue'
+import { reactive, computed, toRefs } from 'vue'
 import { createRouter } from 'vue-router'
 import { defineStore } from 'pinia'
 import type { RouterOptions, RouteLocationRaw, RouteLocationNormalized } from 'vue-router'
@@ -11,6 +11,7 @@ export const useHistoryStore = defineStore('history', () => {
     historys: [], // 路由历史栈
     excludes: [], // 不缓存的视图
     actionName: '', // 当前路由动作
+    currentName: '', // 当前路由名称
   })
 
   const sessionData = sessionStorage.getItem(sessionKey)
@@ -20,8 +21,11 @@ export const useHistoryStore = defineStore('history', () => {
     state.historys = sessionHistorys
   }
 
-  const historys = computed(() => state.historys)
-  const excludes = computed(() => state.excludes)
+  const currentIndex = computed(() => state.historys.findIndex((e) => e.name === state.currentName))
+
+  const updateHistorys = () => {
+    sessionStorage.setItem(sessionKey, JSON.stringify(state.historys))
+  }
 
   // 创建路由
   const create = (options: RouterOptions) => {
@@ -111,7 +115,8 @@ export const useHistoryStore = defineStore('history', () => {
     }
 
     state.actionName = ''
-    sessionStorage.setItem(sessionKey, JSON.stringify(state.historys))
+    state.currentName = newHistory.name
+    updateHistorys()
   }
 
   // 移除历史记录
@@ -122,18 +127,49 @@ export const useHistoryStore = defineStore('history', () => {
 
       if (index > -1) {
         state.historys.splice(index, 1)
-        sessionStorage.setItem(sessionKey, JSON.stringify(state.historys))
+        updateHistorys()
       }
     } else {
       state.historys = [] // 待优化，清除缓存
-      sessionStorage.setItem(sessionKey, JSON.stringify(state.historys))
+      updateHistorys()
+    }
+  }
+
+  // 移除其他历史记录
+  const removeOtherHistorys = () => {
+    const target = state.historys[currentIndex.value]
+    if (target) {
+      state.excludes = state.historys.filter((e) => e.name !== state.currentName).map((e) => e.name)
+      state.historys = [target]
+      updateHistorys()
+    }
+  }
+
+  // 移除左侧历史记录
+  const removeLeftHistorys = () => {
+    if (currentIndex.value > 0) {
+      const removed = state.historys.splice(0, currentIndex.value)
+      state.excludes.push(...removed.map((e) => e.name))
+      updateHistorys()
+    }
+  }
+
+  // 移除右侧历史记录
+  const removeRightHistorys = () => {
+    if (currentIndex.value > -1 && currentIndex.value < state.historys.length - 1) {
+      const removed = state.historys.splice(currentIndex.value + 1)
+      state.excludes.push(...removed.map((e) => e.name))
+      updateHistorys()
     }
   }
 
   return {
-    historys,
-    excludes,
+    currentIndex,
     create,
-    removeHistory
+    removeHistory,
+    removeOtherHistorys,
+    removeLeftHistorys,
+    removeRightHistorys,
+    ...toRefs(state)
   }
 })

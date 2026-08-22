@@ -1,7 +1,9 @@
 <template>
     <el-popover ref="popoverRef" :width="240" :hide-after="0" trigger="click" @show="onShow">
         <template #reference>
-            <el-button :icon="Setting" plain>设置</el-button>
+            <slot>
+                <el-button :icon="Setting" />
+            </slot>
         </template>
         <div class="app-column-setting">
             <div class="app-column-setting__header">
