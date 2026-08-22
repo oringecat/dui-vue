@@ -149,8 +149,8 @@ const resizeObserver = new ResizeObserver((entries) => {
     const actionsHeight = actionsRef.value?.offsetHeight ?? 0
     const hasOverflow = target.scrollHeight > actionsHeight
 
-    if (collapsed.value && hasOverflow) {
-      formStyle.value = { height: `${actionsHeight}px` }
+    if (hasOverflow) {
+      formStyle.value = { height: `${collapsed.value ? actionsHeight : target.scrollHeight}px` }
     } else {
       formStyle.value = {}
     }
