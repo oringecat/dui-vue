@@ -1,10 +1,10 @@
 <template>
-    <div ref="scrollRef" class="app-scroll-view">
+    <div ref="scrollRef" class="dui-scroll-view">
         <!-- 触顶占位元素 -->
-        <div ref="topRef" class="app-scroll-view__observer" v-if="observer"></div>
+        <div ref="topRef" class="dui-scroll-view__observer" v-if="observer"></div>
         <slot></slot>
         <!-- 触底占位元素 -->
-        <div ref="bottomRef" class="app-scroll-view__observer" v-if="observer"></div>
+        <div ref="bottomRef" class="dui-scroll-view__observer" v-if="observer"></div>
     </div>
 </template>
 

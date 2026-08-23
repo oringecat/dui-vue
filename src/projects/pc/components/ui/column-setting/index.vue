@@ -5,22 +5,22 @@
                 <el-button :icon="Setting" />
             </slot>
         </template>
-        <div class="app-column-setting">
-            <div class="app-column-setting__header">
+        <div class="dui-column-setting">
+            <div class="dui-column-setting__header">
                 <el-checkbox :model-value="allChecked" :indeterminate="indeterminate" @change="toggleAll">
                     全选
                 </el-checkbox>
                 <el-button type="primary" link @click="resetColumns">重置</el-button>
             </div>
-            <el-divider class="app-column-setting__divider" />
-            <el-checkbox-group v-model="checkedKeys" class="app-column-setting__list">
+            <el-divider class="dui-column-setting__divider" />
+            <el-checkbox-group v-model="checkedKeys" class="dui-column-setting__list">
                 <el-checkbox v-for="column in columns" :key="String(column.field)" :value="String(column.field)"
-                    class="app-column-setting__item">
+                    class="dui-column-setting__item">
                     {{ getColumnLabel(column.label) }}
                 </el-checkbox>
             </el-checkbox-group>
-            <el-divider class="app-column-setting__divider" />
-            <div class="app-column-setting__footer">
+            <el-divider class="dui-column-setting__divider" />
+            <div class="dui-column-setting__footer">
                 <el-button type="primary" size="small" @click="confirm">保存</el-button>
             </div>
         </div>

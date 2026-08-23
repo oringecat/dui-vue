@@ -1,5 +1,5 @@
 <template>
-    <div class="app-block" :class="[`app-block--${blockType}`, { 'app-block--inset': injected.inset }]">
+    <div class="dui-block" :class="[`dui-block--${blockType}`, { 'dui-block--inset': injected.inset }]">
         <slot></slot>
     </div>
 </template>

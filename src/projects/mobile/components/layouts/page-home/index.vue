@@ -1,10 +1,10 @@
 <template>
-    <div class="app-page-home">
+    <div class="dui-page-home">
         <router-view v-slot="{ Component }">
             <router-transition :css="cssTransition">
                 <!-- 缓存组件，前进刷新，后退缓存 -->
                 <keep-alive>
-                    <component class="app-page-home__main" :is="Component" />
+                    <component class="dui-page-home__main" :is="Component" />
                 </keep-alive>
             </router-transition>
         </router-view>

@@ -1,5 +1,5 @@
 <template>
-  <div ref="statusbarRef" class="app-status-bar">
+  <div ref="statusbarRef" class="dui-status-bar">
     <slot></slot>
   </div>
 </template>

@@ -1,4 +1,4 @@
-.app-nav-bar {
+.dui-nav-bar {
     display: flex;
 
     &__tabbar {
@@ -67,13 +67,15 @@
                 width: 40px;
                 height: 100%;
 
+                &:hover {
+                    .el-icon {
+                        color: red;
+                    }
+                }
+
                 .el-icon {
                     font-size: 18px;
                     transition: color 200ms;
-
-                    &:hover {
-                        color: red;
-                    }
                 }
             }
         }
@@ -82,12 +84,16 @@
     &__dropdown {
         border-left: 1px solid #f2f2f2;
 
-        .app-icon {
+        .dui-icon {
             display: flex;
             justify-content: center;
             align-items: center;
             cursor: pointer;
             padding: 0 var(--block-space-md);
+
+            &:hover {
+                background-color: var(--el-fill-color-light);
+            }
         }
     }
 }

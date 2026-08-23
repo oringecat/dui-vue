@@ -1,10 +1,10 @@
 <!-- 瀑布流 -->
 <template>
-    <div ref="waterfallRef" class="app-waterfall" :style="waterfallStyles">
+    <div ref="waterfallRef" class="dui-waterfall" :style="waterfallStyles">
         <template v-for="(data, i) in state.columns" :key="i">
-            <div class="app-waterfall__column" :style="i > 0 ? columnStyles : {}">
+            <div class="dui-waterfall__column" :style="i > 0 ? columnStyles : {}">
                 <template v-for="(item, n) in data" :key="n">
-                    <div class="app-waterfall__column-item" :style="n > 0 ? itemStyles : {}">
+                    <div class="dui-waterfall__column-item" :style="n > 0 ? itemStyles : {}">
                         <slot :item="item">{{ item }}</slot>
                     </div>
                 </template>
@@ -82,7 +82,7 @@ watch(() => props.dataList, (newList, oldList) => {
 onMounted(() => {
     const el = waterfallRef.value
     if (el) {
-        const els = el.querySelectorAll<HTMLDivElement>('.app-waterfall__column')
+        const els = el.querySelectorAll<HTMLDivElement>('.dui-waterfall__column')
         columnElements.value = Array.from(els)
     }
 

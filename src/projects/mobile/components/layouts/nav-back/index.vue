@@ -1,5 +1,5 @@
 <template>
-    <app-block class="app-nav-back" @click="onBack">
+    <app-block class="dui-nav-back" @click="onBack">
         <slot>
             <Icon name="arrow-left" v-if="hasBack" />
             <Icon name="wap-home-o" v-else />

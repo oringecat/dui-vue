@@ -1,17 +1,17 @@
 <template>
-    <div class="app-page-view" :class="[`app-page-view--${type}`]">
+    <div class="dui-page-view" :class="[`dui-page-view--${type}`]">
         <slot name="header"></slot>
         <app-scroll-view v-model="scrollTop" :scroll-name="scrollName" :observer="observer"
             @scroll-toupper="emit('scrollToupper')" @scroll-tolower="emit('scrollTolower')">
-            <div class="app-page-view__container">
-                <van-sticky class="app-page-view__header--sticky" :class="{ hide: isScrollDown }" position="top">
+            <div class="dui-page-view__container">
+                <van-sticky class="dui-page-view__header--sticky" :class="{ hide: isScrollDown }" position="top">
                     <slot name="header-sticky"></slot>
                 </van-sticky>
-                <div class="app-page-view__header--scroll" :class="{ show: isScrollDown }"
+                <div class="dui-page-view__header--scroll" :class="{ show: isScrollDown }"
                     v-if="$slots['header-scroll']">
                     <slot name="header-scroll"></slot>
                 </div>
-                <div class="app-page-view__main">
+                <div class="dui-page-view__main">
                     <slot></slot>
                 </div>
             </div>

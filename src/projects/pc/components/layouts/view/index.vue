@@ -1,7 +1,7 @@
 <template>
-    <div ref="viewRef" :class="['app-view', { 'app-view--flex': flex }]">
+    <div ref="viewRef" :class="['dui-view', { 'dui-view--flex': flex }]">
         <slot name="header"></slot>
-        <div class="app-view__body">
+        <div class="dui-view__body">
             <slot></slot>
         </div>
         <slot name="footer"></slot>

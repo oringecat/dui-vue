@@ -1,15 +1,15 @@
 <template>
-    <div class="app-table-v2">
-        <div class="app-table-v2__toolbar" v-if="slots.toolbar">
+    <div class="dui-table-v2">
+        <div class="dui-table-v2__toolbar" v-if="slots.toolbar">
             <slot name="toolbar"></slot>
         </div>
-        <el-auto-resizer class="app-table-v2__resizer">
+        <el-auto-resizer class="dui-table-v2__resizer">
             <template #default="{ height, width }">
                 <el-table-v2 :data="data" :columns="generateColumns(width)" :row-key="rowKey" :width="width"
                     :height="height" :row-event-handlers="rowEventHandlers" fixed />
             </template>
         </el-auto-resizer>
-        <div class="app-table-v2__footer" v-if="slots.footer">
+        <div class="dui-table-v2__footer" v-if="slots.footer">
             <slot name="footer"></slot>
         </div>
         <app-context-menu v-model:state="contextMenuState" :context-menus="contextMenus" v-if="contextMenus.length" />

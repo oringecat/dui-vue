@@ -1,21 +1,21 @@
 <template>
-    <app-status-bar :class="['app-nav-bar', { 'app-nav-bar--fixed': fixed }]">
-        <div class="app-nav-bar__header">
-            <div class="app-nav-bar__col app-nav-bar__col--left">
+    <app-status-bar :class="['dui-nav-bar', { 'dui-nav-bar--fixed': fixed }]">
+        <div class="dui-nav-bar__header">
+            <div class="dui-nav-bar__col dui-nav-bar__col--left">
                 <slot name="left">
                     <app-nav-back v-if="showBackButton" />
                 </slot>
             </div>
-            <div class="app-nav-bar__col app-nav-bar__col--center">
+            <div class="dui-nav-bar__col dui-nav-bar__col--center">
                 <slot>
                     <span v-if="title">{{ title }}</span>
                 </slot>
             </div>
-            <div class="app-nav-bar__col app-nav-bar__col--right">
+            <div class="dui-nav-bar__col dui-nav-bar__col--right">
                 <slot name="right"></slot>
             </div>
         </div>
-        <div class="app-nav-bar__footer">
+        <div class="dui-nav-bar__footer">
             <slot name="footer"></slot>
         </div>
     </app-status-bar>

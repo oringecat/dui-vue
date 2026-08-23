@@ -1,6 +1,6 @@
 <template>
-  <div class="app-filter">
-    <div class="app-filter__form" :style="formStyle">
+  <div class="dui-filter">
+    <div class="dui-filter__form" :style="formStyle">
       <el-form ref="formRef" class="el-form--filter" :model="formData" :rules="formRules" :show-message="false">
         <slot name="before"></slot>
         <template v-for="(item, index) in options.filters" :key="index">
@@ -22,8 +22,14 @@
         <slot name="after"></slot>
       </el-form>
     </div>
-    <div ref="actionsRef" class="app-filter__actions">
-      <div class="app-filter__actions-left">
+    <div ref="actionsRef" class="dui-filter__actions">
+      <el-button type="primary" :icon="collapsed ? 'ArrowDown' : 'ArrowUp'" text @click="toggleCollapse"
+        v-if="!!formStyle.height">
+        {{ collapsed ? '展开' : '收起' }}
+      </el-button>
+    </div>
+    <teleport :to="collapsed ? actionsRef : formRef.$el" v-if="formRef && actionsRef">
+      <div class="dui-filter__actions-left">
         <template v-for="(item, index) in options.buttons" :key="index">
           <el-button :class="item.className ?? 'el-button--primary'" :disabled="loading"
             @click="handleButtonClick(item)">
@@ -32,11 +38,7 @@
         </template>
         <slot></slot>
       </div>
-      <el-button type="primary" :icon="collapsed ? 'ArrowDown' : 'ArrowUp'" text @click="toggleCollapse"
-        v-if="!!formStyle.height">
-        {{ collapsed ? '展开' : '收起' }}
-      </el-button>
-    </div>
+    </teleport>
   </div>
 </template>
 

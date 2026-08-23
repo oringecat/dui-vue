@@ -1,14 +1,14 @@
 <template>
-    <el-splitter class="app-page">
-        <el-splitter-panel class="app-page__sidebar" size="220px">
-            <el-menu class="app-page__menu" :default-active="String(route.name)" unique-opened
+    <el-splitter class="dui-page">
+        <el-splitter-panel class="dui-page__sidebar" size="220px">
+            <el-menu class="dui-page__menu" :default-active="String(route.name)" unique-opened
                 @select="navigatorTo">
-                <el-menu-item class="app-page__menu-brand" index="brand">管理后台</el-menu-item>
+                <el-menu-item class="dui-page__menu-brand" index="brand">管理后台</el-menu-item>
                 <app-side-menu :menus="authStore.userMenus" />
             </el-menu>
         </el-splitter-panel>
-        <el-splitter-panel class="app-page__container">
-            <div class="app-page__header">
+        <el-splitter-panel class="dui-page__container">
+            <div class="dui-page__header">
                 <el-breadcrumb separator-icon="ArrowRight">
                     <template v-for="(item, index) in route.matched" :key="index">
                         <el-breadcrumb-item>
@@ -17,11 +17,11 @@
                     </template>
                 </el-breadcrumb>
             </div>
-            <div class="app-page__body">
-                <div class="app-page__tabs">
+            <div class="dui-page__body">
+                <div class="dui-page__tabs">
                     <app-nav-bar />
                 </div>
-                <div class="app-page__main">
+                <div class="dui-page__main">
                     <router-view v-slot="{ Component, route }">
                         <!-- 缓存组件 -->
                         <keep-alive :exclude="historyStore.excludes">
@@ -30,7 +30,7 @@
                     </router-view>
                 </div>
             </div>
-            <div class="app-page__footer"></div>
+            <div class="dui-page__footer"></div>
         </el-splitter-panel>
     </el-splitter>
 </template>

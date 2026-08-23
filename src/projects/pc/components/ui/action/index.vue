@@ -1,5 +1,5 @@
 <template>
-    <div class="app-action">
+    <div class="dui-action">
         <template v-if="!dropdown">
             <template v-for="action in actions" :key="action.code">
                 <slot :name="action.code" :action="action">

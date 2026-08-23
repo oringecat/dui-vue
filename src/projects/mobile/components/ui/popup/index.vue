@@ -1,5 +1,5 @@
 <template>
-    <van-popup class="app-popup" v-model:show="visible" v-bind="popupOptions" @closed="onClosed">
+    <van-popup class="dui-popup" v-model:show="visible" v-bind="popupOptions" @closed="onClosed">
         <render-mode-provider mode="popup">
             <slot></slot>
         </render-mode-provider>
@@ -25,8 +25,8 @@ const visible = shallowRef(false)
 const popupOptions: Partial<PopupProps> = {
     teleport: 'body',
     position: 'right',
-    overlayClass: 'app-popup__overlay',
-    transition: 'app-popup--transition'
+    overlayClass: 'dui-popup__overlay',
+    transition: 'dui-popup--transition'
 }
 
 const updateShow = () => {

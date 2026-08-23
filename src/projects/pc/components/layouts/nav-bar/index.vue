@@ -1,19 +1,19 @@
 <template>
-    <div class="app-nav-bar">
-        <div class="app-nav-bar__tabbar">
+    <div class="dui-nav-bar">
+        <div class="dui-nav-bar__tabbar">
             <ul>
                 <template v-for="(item, index) in historyStore.historys" :key="index">
                     <li :class="{ 'is-active': historyStore.currentIndex === index }" @click="changeTab(index)">
                         <span class="text">{{ item.title }}</span>
-                        <span class="icon" v-if="historyStore.historys.length > 1">
-                            <app-icon icon="CircleCloseFilled" @click.stop="removeTab(index)" />
+                        <span class="icon" @click.stop="removeTab(index)" v-if="historyStore.historys.length > 1">
+                            <app-icon icon="CircleCloseFilled" />
                         </span>
                     </li>
                 </template>
             </ul>
         </div>
-        <el-dropdown class="app-nav-bar__dropdown" v-if="historyStore.historys.length > 1" @command="handleCommand">
-            <app-icon icon="ArrowDown" />
+        <el-dropdown class="dui-nav-bar__dropdown" v-if="historyStore.historys.length > 1" @command="handleCommand">
+            <app-icon icon="MoreFilled" />
             <template #dropdown>
                 <el-dropdown-menu>
                     <el-dropdown-item icon="Close" command="other">关闭其他</el-dropdown-item>

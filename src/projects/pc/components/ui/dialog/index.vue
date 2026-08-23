@@ -1,5 +1,5 @@
 <template>
-    <el-dialog class="app-dialog" v-model="visible" :close-on-click-modal="false" :close-on-press-escape="false"
+    <el-dialog class="dui-dialog" v-model="visible" :close-on-click-modal="false" :close-on-press-escape="false"
         align-center @closed="onClosed">
         <slot></slot>
         <template #footer>

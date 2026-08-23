@@ -1,7 +1,9 @@
 <template>
-    <el-pagination :total="total" :page-size="pageSize" :current-page="currentPage" :page-sizes="[10, 20, 30, 50]"
-        layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange"
-        @current-change="handleCurrentChange" background />
+    <div class="dui-pagination">
+        <el-pagination :total="total" :page-size="pageSize" :current-page="currentPage" :page-sizes="[10, 20, 30, 50]"
+            layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange"
+            @current-change="handleCurrentChange" background />
+    </div>
 </template>
 
 <script lang="ts" setup>
@@ -38,3 +40,7 @@ const handleCurrentChange = (val: number, reset = false) => {
     emit('change', reset)
 }
 </script>
+
+<style lang="less">
+@import "./index.less";
+</style>

@@ -1,7 +1,7 @@
 <template>
-    <div class="app-view">
+    <div class="dui-view">
         <slot name="header"></slot>
-        <div class="app-view__main">
+        <div class="dui-view__main">
             <slot></slot>
         </div>
         <slot name="footer"></slot>

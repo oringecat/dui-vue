@@ -1,7 +1,7 @@
 <!-- 右键菜单 -->
 <template>
     <teleport to="body" v-if="state">
-        <div class="app-context-menu" :style="{ left: state.x + 'px', top: state.y + 'px' }" @click.stop>
+        <div class="dui-context-menu" :style="{ left: state.x + 'px', top: state.y + 'px' }" @click.stop>
             <ul>
                 <template v-for="(menu, index) in visibleMenus" :key="index">
                     <li :class="[menu.className, { 'is-disabled': menu.disabled(state) }]"

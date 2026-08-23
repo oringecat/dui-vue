@@ -1,6 +1,6 @@
 <template>
-    <div class="app-block-group" :style="styles">
-        <div class="app-block-group__title" v-if="title">{{ title }}</div>
+    <div class="dui-block-group" :style="styles">
+        <div class="dui-block-group__title" v-if="title">{{ title }}</div>
         <slot></slot>
     </div>
 </template>

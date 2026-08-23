@@ -1,5 +1,5 @@
 <template>
-    <span class="app-icon">
+    <span class="dui-icon">
         <el-icon v-if="isComponent">
             <component :is="icon"></component>
         </el-icon>
