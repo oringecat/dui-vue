@@ -1,12 +1,12 @@
 <template>
     <app-dialog class="attribute-edit" :show="show">
-        <el-form :model="formData" label-width="auto">
+        <el-form class="el-form--horizontal" :model="formData" label-width="auto">
             <el-form-item label="属性分组">
                 <el-select v-model="formData.groupId" filterable clearable placeholder="请选择">
                     <el-option v-for="option in attributeStore.attributeGroups" :key="option.id" :value="option.id"
                         :label="option.name" />
                 </el-select>
-                <el-button size="small" plain @click="openComponent('group')">管理</el-button>
+                <el-button @click="openComponent('group')">管理</el-button>
             </el-form-item>
             <el-form-item label="属性名称">
                 <el-input v-model="formData.name" placeholder="请输入" />
@@ -14,7 +14,7 @@
             <el-form-item label="是否多选">
                 <el-switch v-model="formData.multiple" />
             </el-form-item>
-            <el-form-item label="属性枚举">
+            <el-form-item class="el-form-item--row" label="属性枚举">
                 <div class="g-table">
                     <el-button type="primary" size="small">新增</el-button>
                     <table cellspacing="0" cellpadding="0" v-if="formData.values.length">

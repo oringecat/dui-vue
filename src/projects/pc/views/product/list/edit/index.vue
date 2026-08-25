@@ -6,7 +6,7 @@
                     :props="{ label: 'categoryName', }" node-key="id" @node-click="onCategoryClick" highlight-current />
             </el-splitter-panel>
             <el-splitter-panel>
-                <el-form :model="formData" label-width="auto">
+                <el-form class="el-form--vertical" :model="formData" label-width="auto">
                     <el-form-item label="商品标题">
                         <el-input v-model="formData.title" placeholder="请输入" />
                     </el-form-item>

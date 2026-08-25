@@ -1,9 +1,51 @@
 .dui-nav-bar {
     display: flex;
+    overflow: hidden;
+    user-select: none; // 防止快速点击变成双击行为
+
+    &__arrow {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0 var(--block-space-sm);
+        cursor: pointer;
+
+        &:hover:not(.is-disabled) {
+            background-color: var(--el-fill-color-light);
+            border-color: #f2f2f2;
+            box-shadow: none;
+        }
+
+        &.is-disabled {
+            cursor: not-allowed;
+            color: var(--el-disabled-text-color);
+        }
+
+        &--prev {
+            border-right: 1px solid #fff;
+            box-shadow: 5px 0 10px 0 #f2f2f2;
+        }
+
+        &--next {
+            border-left: 1px solid #fff;
+            box-shadow: -5px 0 10px 0 #f2f2f2;
+        }
+    }
+
+    &__arrow+&__tabbar {
+        padding: 0;
+    }
 
     &__tabbar {
         flex: 1;
-        padding: 0 var(--block-space-md);
+        min-width: 0;
+        overflow-x: auto;
+        padding: 0 var(--block-space-sm);
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
 
         ul {
             display: flex;
@@ -18,6 +60,7 @@
                 border-top-right-radius: var(--block-radius);
 
                 &.is-active {
+                    z-index: 1;
                     background-color: #374758;
 
                     span {
@@ -33,6 +76,7 @@
                     }
 
                     &:hover {
+                        z-index: 1;
                         background-color: #eee;
 
                         .text {
@@ -81,7 +125,7 @@
         }
     }
 
-    &__dropdown {
+    &__more {
         border-left: 1px solid #f2f2f2;
 
         .dui-icon {
