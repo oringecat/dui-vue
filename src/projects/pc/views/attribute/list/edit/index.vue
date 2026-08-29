@@ -1,12 +1,14 @@
 <template>
-    <app-dialog class="attribute-edit" :show="show">
-        <el-form class="el-form--horizontal" :model="formData" label-width="auto">
+    <app-dialog class="attribute-edit" title="编辑" :show="show">
+        <el-form class="el-form--vertical" :model="formData" label-width="auto">
             <el-form-item label="属性分组">
-                <el-select v-model="formData.groupId" filterable clearable placeholder="请选择">
+                <el-select ref="selectRef" v-model="formData.groupId" filterable clearable placeholder="请选择">
+                    <template #header>
+                        <el-button text bg size="small" @click="openView">管理</el-button>
+                    </template>
                     <el-option v-for="option in attributeStore.attributeGroups" :key="option.id" :value="option.id"
                         :label="option.name" />
                 </el-select>
-                <el-button @click="openComponent('group')">管理</el-button>
             </el-form-item>
             <el-form-item label="属性名称">
                 <el-input v-model="formData.name" placeholder="请输入" />
@@ -14,7 +16,7 @@
             <el-form-item label="是否多选">
                 <el-switch v-model="formData.multiple" />
             </el-form-item>
-            <el-form-item class="el-form-item--row" label="属性枚举">
+            <el-form-item label="属性枚举">
                 <div class="g-table">
                     <el-button type="primary" size="small">新增</el-button>
                     <table cellspacing="0" cellpadding="0" v-if="formData.values.length">
@@ -49,6 +51,7 @@
 import { ref, onMounted, defineAsyncComponent, type Component } from 'vue'
 import { useComponent } from '@/composables/component'
 import { useAttributeStore } from '@/stores/attribute'
+import type { SelectInstance } from 'element-plus'
 import AppDialog from '@pc/components/ui/dialog/index.vue'
 
 const props = defineProps<{
@@ -64,6 +67,7 @@ const { showComponent, componentId, openComponent, closeComponent } = useCompone
 const attributeStore = useAttributeStore()
 
 const show = ref(true)
+const selectRef = ref<SelectInstance>()
 
 const formData = ref<Attribute.AttributeItem>({
     id: 0,
@@ -73,6 +77,11 @@ const formData = ref<Attribute.AttributeItem>({
     multiple: false,
     updateTime: 0
 })
+
+const openView = () => {
+    selectRef.value?.blur()
+    openComponent('group')
+}
 
 onMounted(() => {
     if (props.record) {

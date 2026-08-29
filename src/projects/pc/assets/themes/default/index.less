@@ -19,8 +19,19 @@
     --el-menu-border-color: #374758;
 }
 
+.el-input,
+.el-select {
+    width: 220px;
+    max-width: 100%;
+
+    table &,
+    &.is-block {
+        width: 100%
+    }
+}
+
 .el-button {
-    &[block] {
+    &.is-block {
         width: 100%;
     }
 
@@ -59,23 +70,25 @@
 
         .el-range-editor {
             width: 300px;
+            max-width: 100%;
         }
     }
 
     &--vertical,
     &--horizontal {
-        padding: 32px;
+        padding: 18px;
+        padding-bottom: 0;
 
         .el-form-item {
             padding: 0 var(--block-space-md);
         }
-    }
 
-    &--vertical {
-
-        .el-input,
-        .el-select {
-            width: 200px;
+        .el-form-field {
+            &--row {
+                display: flex;
+                align-items: center;
+                gap: var(--block-space-sm);
+            }
         }
     }
 
@@ -85,6 +98,10 @@
 
         .el-form-item {
             width: 50%;
+
+            &__content {
+                align-items: flex-start;
+            }
 
             &--row {
                 width: 100%;

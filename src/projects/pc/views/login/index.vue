@@ -9,14 +9,14 @@
                 <h1 class="login__main-title">登录</h1>
                 <el-form size="large">
                     <el-form-item>
-                        <el-input v-model="formData.account" placeholder="请输入用户名" />
+                        <el-input class="is-block" v-model="formData.account" placeholder="请输入用户名" />
                     </el-form-item>
                     <el-form-item>
-                        <el-input type="password" v-model="formData.password" placeholder="请输入密码" />
+                        <el-input class="is-block" type="password" v-model="formData.password" placeholder="请输入密码" />
                     </el-form-item>
                     <el-form-item>
-                        <el-button type="primary" color="#354d67" @click="onSubmit" :loading="loading"
-                            block>登录</el-button>
+                        <el-button class="is-block" type="primary" color="#354d67" @click="onSubmit"
+                            :loading="loading">登录</el-button>
                     </el-form-item>
                 </el-form>
             </div>

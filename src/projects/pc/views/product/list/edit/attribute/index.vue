@@ -11,15 +11,11 @@
                 <tr v-for="(item, index) in categoryAttrs" :key="index">
                     <td>{{ item.attribute.name }}</td>
                     <td>
-                        <el-checkbox-group :model-value="toArray(productAttrs[item.attributeId])"
+                        <el-select
+                            :model-value="item.attribute.multiple ? toArray(productAttrs[item.attributeId]) : productAttrs[item.attributeId]"
                             @update:model-value="(val) => onChange(item.attributeId, val)"
-                            v-if="item.attribute.multiple">
-                            <el-checkbox v-for="{ id, value } in item.attribute.values" :key="id" :value="value"
-                                :label="value" />
-                        </el-checkbox-group>
-                        <el-select :model-value="productAttrs[item.attributeId]"
-                            @update:model-value="(val) => onChange(item.attributeId, val)" placeholder="选填"
-                            v-else-if="item.valueType === AttributeValueType.Enum">
+                            :multiple="item.attribute.multiple" placeholder="选填"
+                            v-if="item.valueType === AttributeValueType.Enum">
                             <el-option v-for="{ id, value } in item.attribute.values" :key="id" :value="value"
                                 :label="value" />
                         </el-select>
@@ -36,7 +32,6 @@
 
 <script lang="ts" setup>
 import { shallowRef, computed, watch } from 'vue'
-import type { CheckboxGroupValueType } from 'element-plus'
 import { AttributeValueType } from '@/constants/enums'
 import { createCategoryList } from '@/services/api/product'
 import { useAttributeStore } from '@/stores/attribute'
@@ -69,7 +64,7 @@ const toArray = (value?: string) => {
     return value ? value.split(',') : []
 }
 
-const onChange = (id: number, value: string | CheckboxGroupValueType) => {
+const onChange = (id: number, value: string | string[]) => {
     const attributeValue = Array.isArray(value) ? value.join(',') : value
     const filtered = props.modelValue.filter((item) => item.attributeId !== id)
 

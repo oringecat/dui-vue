@@ -1,6 +1,6 @@
 <template>
     <app-dialog :show="show">
-        <el-form :model="formData">
+        <el-form class="el-form--vertical" :model="formData">
             <el-form-item label="所属分类">
                 <el-tree-select v-model="formData.parentId" :data="categoryList" :props="{ label: 'categoryName' }"
                     node-key="id" :expand-on-click-node="false" check-strictly default-expand-all />

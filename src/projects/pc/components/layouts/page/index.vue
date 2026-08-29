@@ -1,8 +1,7 @@
 <template>
     <el-splitter class="dui-page">
         <el-splitter-panel class="dui-page__sidebar" size="220px">
-            <el-menu class="dui-page__menu" :default-active="String(route.name)" unique-opened
-                @select="navigatorTo">
+            <el-menu class="dui-page__menu" :default-active="String(route.name)" unique-opened @select="navigatorTo">
                 <el-menu-item class="dui-page__menu-brand" index="brand">管理后台</el-menu-item>
                 <app-side-menu :menus="authStore.userMenus" />
             </el-menu>
@@ -16,6 +15,17 @@
                         </el-breadcrumb-item>
                     </template>
                 </el-breadcrumb>
+                <div class="dui-page__actions">
+                    <el-dropdown trigger="click">
+                        <span>{{ userStore.userInfo.realName }}</span>
+                        <template #dropdown>
+                            <el-dropdown-menu>
+                                <el-dropdown-item icon="SwitchButton"
+                                    @click="userStore.userLogout()">退出登录</el-dropdown-item>
+                            </el-dropdown-menu>
+                        </template>
+                    </el-dropdown>
+                </div>
             </div>
             <div class="dui-page__body">
                 <div class="dui-page__tabs">
@@ -39,6 +49,7 @@
 import type { Component } from 'vue'
 import { useRoute, useRouter, type RouteLocationNormalized } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useUserStore } from '@/stores/user'
 import { useHistoryStore } from '@pc/router/history'
 import AppSideMenu from '@pc/components/layouts/side-menu/index.vue'
 import AppNavBar from '@pc/components/layouts/nav-bar/index.vue'
@@ -46,6 +57,7 @@ import AppNavBar from '@pc/components/layouts/nav-bar/index.vue'
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
+const userStore = useUserStore()
 const historyStore = useHistoryStore()
 
 // 手动给组件添加 name 属性，处理缓存 exclude 无效的问题

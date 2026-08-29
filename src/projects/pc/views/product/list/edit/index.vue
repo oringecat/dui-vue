@@ -8,7 +8,7 @@
             <el-splitter-panel>
                 <el-form class="el-form--vertical" :model="formData" label-width="auto">
                     <el-form-item label="商品标题">
-                        <el-input v-model="formData.title" placeholder="请输入" />
+                        <el-input class="is-block" v-model="formData.title" placeholder="请输入" />
                     </el-form-item>
                     <el-form-item label="关键字">
                         <el-input-tag v-model="keywords" placeholder="请输入后按回车键" />
@@ -49,7 +49,7 @@
                             </table>
                         </div>
                     </el-form-item>
-                    <el-form-item label="详情描述">
+                    <el-form-item label="商品描述">
                         <div class="g-wangeditor">
                             <Toolbar class="g-wangeditor__toolbar" :editor="editorRef" />
                             <Editor class="g-wangeditor__editor" v-model="formData.description"

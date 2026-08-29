@@ -2,21 +2,25 @@
     <app-dialog class="product-category-sale" :show="show">
         <app-table :data="saleRows" :columns="tableColumns">
             <template #toolbar>
-                <el-select v-model="selectedAttributeId" filterable clearable placeholder="请选择">
-                    <el-option-group v-for="group in attrGroups" :key="group.name" :label="group.name">
-                        <el-option v-for="option in group.items" :key="option.id" :value="option.id"
-                            :label="option.name" />
-                    </el-option-group>
-                </el-select>
-                <el-button type="primary" :disabled="!selectedAttributeId" @click="addSale">新增属性</el-button>
+                <div class="g-flex">
+                    <el-select v-model="selectedAttributeId" filterable clearable placeholder="请选择" block>
+                        <el-option-group v-for="group in attrGroups" :key="group.name" :label="group.name">
+                            <el-option v-for="option in group.items" :key="option.id" :value="option.id"
+                                :label="option.name" />
+                        </el-option-group>
+                    </el-select>
+                    <el-button type="primary" :disabled="!selectedAttributeId" @click="addSale">添加</el-button>
+                </div>
             </template>
             <template #attributeName="{ row }">
                 {{ row.attribute?.name ?? row.attributeId }}
             </template>
             <template #attributeValue="{ row }">
-                <el-tag v-for="item in row.attribute?.values ?? []" :key="item.id">
-                    {{ item.value }}
-                </el-tag>
+                <div class="g-flex">
+                    <el-tag v-for="item in row.attribute?.values ?? []" :key="item.id">
+                        {{ item.value }}
+                    </el-tag>
+                </div>
             </template>
             <template #isCustom="{ row, index }">
                 <el-switch :model-value="row.isCustom" @update:model-value="(val) => toggleCustom(index, !!val)" />

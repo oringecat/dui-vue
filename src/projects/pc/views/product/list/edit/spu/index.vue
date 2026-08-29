@@ -1,6 +1,6 @@
 <template>
     <app-dialog class="product-spu" title="规格" width="960">
-        <el-form :model="formData" label-width="auto" v-loading="loading">
+        <el-form class="el-form--vertical" :model="formData" label-width="auto" v-loading="loading">
             <el-form-item label="名称">
                 <el-input v-model="formData.spuName" placeholder="请输入" />
             </el-form-item>
@@ -62,7 +62,7 @@
                 </div>
             </el-form-item>
             <el-form-item label="库存单位" v-if="checkedSales.length">
-                <div class="g-table">
+                <el-scrollbar class="g-table">
                     <table cellspacing="0" cellpadding="0">
                         <thead>
                             <tr>
@@ -90,7 +90,7 @@
                             </tr>
                         </tbody>
                     </table>
-                </div>
+                </el-scrollbar>
             </el-form-item>
             <el-form-item label="规格描述">
                 <div class="g-wangeditor simple">
