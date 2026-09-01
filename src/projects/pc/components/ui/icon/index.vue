@@ -19,7 +19,7 @@ const props = defineProps<{
 const isComponent = computed(() => props.icon && typeof resolveDynamicComponent(props.icon) !== 'string')
 
 const styles = computed<CSSProperties>(() => ({
-    cursor: props.pointer ? 'pointer' : 'none'
+    cursor: props.pointer ? 'pointer' : 'auto'
 }))
 </script>
 
