@@ -1,5 +1,5 @@
 <template>
-    <app-status-bar :class="['dui-nav-bar', { 'dui-nav-bar--fixed': fixed }]">
+    <app-status-bar class="dui-nav-bar" :class="{ 'dui-nav-bar--fixed': fixed }">
         <div class="dui-nav-bar__header">
             <div class="dui-nav-bar__col dui-nav-bar__col--left">
                 <slot name="left">

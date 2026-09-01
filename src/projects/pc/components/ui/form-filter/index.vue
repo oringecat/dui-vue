@@ -160,8 +160,10 @@ const resizeObserver = new ResizeObserver((entries) => {
 })
 
 onMounted(() => {
-  const el: HTMLElement = formRef.value?.$el
-  resizeObserver.observe(el)
+  const el = formRef.value?.$el
+  if (el) {
+    resizeObserver.observe(el)
+  }
 })
 
 onBeforeUnmount(() => {

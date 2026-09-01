@@ -28,7 +28,7 @@ export function useRefresh(callback: () => void, options: Partial<RefreshOptions
         }
     }
 
-    // 手动触发下拉刷新完成事件
+    // 结束下拉刷新
     const refreshFinish = () => {
         emitFinish()
         isEventTriggered.value = false

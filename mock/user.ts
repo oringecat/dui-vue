@@ -12,7 +12,7 @@ export default [
                 id: 1000,
                 roleId: -1,
                 userName: 'admin',
-                realName: '@cname', // 随机中文名
+                realName: '李兔饼',
                 avatar: 'https://picsum.photos/200/200', // 随机头像
                 token: '@string(60)' // 随机60位token
             },
@@ -39,7 +39,7 @@ export default [
                 id: 1000,
                 roleId: -1,
                 userName: 'admin',
-                realName: '@cname',
+                realName: '李兔饼',
                 avatar: 'https://picsum.photos/200/200',
                 token: '@string(60)'
             },

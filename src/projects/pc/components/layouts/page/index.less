@@ -3,7 +3,12 @@
     height: 100vh;
 
     &__sidebar {
+        transition: flex-basis 200ms;
         background-color: var(--el-menu-bg-color);
+
+        &.is-resizing {
+            transition: none;
+        }
 
         .el-menu {
 
@@ -53,6 +58,14 @@
         min-height: var(--el-menu-item-height);
         background: var(--block-background);
         padding: 0 var(--block-space-md);
+    }
+
+    &__user {
+        display: flex;
+        align-items: center;
+        font-weight: bold;
+        cursor: pointer;
+        gap: 4px;
     }
 
     &__tabs {
