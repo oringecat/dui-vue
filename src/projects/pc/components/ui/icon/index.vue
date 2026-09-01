@@ -1,5 +1,5 @@
 <template>
-    <span class="dui-icon" :style="styles">
+    <span class="dui-icon">
         <el-icon :size v-if="isComponent">
             <component :is="icon"></component>
         </el-icon>
@@ -8,7 +8,7 @@
 </template>
 
 <script lang="ts" setup>
-import { resolveDynamicComponent, computed, type CSSProperties } from 'vue'
+import { resolveDynamicComponent, computed } from 'vue'
 
 const props = defineProps<{
     icon: string
@@ -17,10 +17,6 @@ const props = defineProps<{
 }>()
 
 const isComponent = computed(() => props.icon && typeof resolveDynamicComponent(props.icon) !== 'string')
-
-const styles = computed<CSSProperties>(() => ({
-    cursor: props.pointer ? 'pointer' : 'auto'
-}))
 </script>
 
 <style lang="less">

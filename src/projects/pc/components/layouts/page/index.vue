@@ -11,7 +11,7 @@
         <el-splitter-panel class="dui-page__container" :size="contentWidth">
             <div class="dui-page__header">
                 <div class="dui-page__header-left g-flex">
-                    <app-icon :icon="isCollapse ? 'Expand' : 'Fold'" :size="20" pointer @click="toggleCollapse" />
+                    <app-icon class="icon-collapse" :icon="isCollapse ? 'Expand' : 'Fold'" :size="20" @click="toggleCollapse" />
                     <el-breadcrumb separator-icon="ArrowRight">
                         <template v-for="(item, index) in route.matched" :key="index">
                             <el-breadcrumb-item>
