@@ -1,5 +1,5 @@
 <template>
-    <div ref="viewRef" class="'dui-view'" :class="{ 'dui-view--flex': flex }">
+    <div ref="viewRef" class="dui-view" :class="{ 'dui-view--flex': flex }">
         <slot name="header"></slot>
         <div class="dui-view__body">
             <slot></slot>
