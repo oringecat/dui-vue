@@ -162,7 +162,7 @@ export default [
                                 id: 1002,
                                 code: 'SP0001-003',
                                 specs: [
-                                    { id: 507, attributeId: 100, valueId: 0, specName: '樱粉金' },
+                                    { id: 507, attributeId: 100, valueId: 0, specName: '大橘' },
                                     { id: 508, attributeId: 101, valueId: 1013, specName: '512GB' },
                                     { id: 509, attributeId: 102, valueId: 1021, specName: '全网通5G' },
                                 ],

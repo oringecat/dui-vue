@@ -6,7 +6,7 @@
         <app-table :data="dataList" :columns="tableColumns" :context-menus="contextMenus" v-loading="loading">
             <template #toolbar>
                 <app-action :actions="getActions('product-list-add')" />
-                <app-column-setting :columns="rawColumns" v-model:hidden-keys="hiddenKeys" />
+                <app-column-setting :columns="rawColumns" v-model:hidden-fields="hiddenFields" />
             </template>
             <template #action="{ row, index }">
                 <app-action :actions="getRowActions(row, index)" :button-props="{ type: 'primary', size: 'small' }" />
@@ -50,7 +50,7 @@ const { loading, fetch } = createProductList({
     }
 })
 
-const { rawColumns, tableColumns, hiddenKeys } = useTableColumns<Product.ProductListItem>([
+const { rawColumns, tableColumns, hiddenFields } = useTableColumns<Product.ProductListItem>([
     { field: 'id', label: 'ID' },
     { field: 'title', label: '标题' },
     { field: 'action', label: '操作', fixed: 'right' }

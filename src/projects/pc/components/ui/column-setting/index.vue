@@ -13,7 +13,7 @@
                 <el-button type="primary" link @click="resetColumns">重置</el-button>
             </div>
             <el-divider class="dui-column-setting__divider" />
-            <el-checkbox-group v-model="checkedKeys" class="dui-column-setting__list">
+            <el-checkbox-group v-model="checkedFields" class="dui-column-setting__list">
                 <el-checkbox v-for="column in columns" :key="String(column.field)" :value="String(column.field)"
                     class="dui-column-setting__item">
                     {{ getColumnLabel(column.label) }}
@@ -35,27 +35,27 @@ import type { TableColumn } from './types'
 
 const props = defineProps<{
     columns: TableColumn<T>[]
-    hiddenKeys: Set<string>
+    hiddenFields: Set<string>
 }>()
 
 const emit = defineEmits<{
-    'update:hiddenKeys': [Set<string>]
+    'update:hiddenFields': [Set<string>]
 }>()
 
-const checkedKeys = shallowRef<string[]>([])
+const checkedFields = shallowRef<string[]>([])
 
 const popoverRef = shallowRef<PopoverInstance>()
 
 const fields = computed(() => props.columns.map((col) => String(col.field)))
 
 // 全选
-const allChecked = computed(() => checkedKeys.value.length === fields.value.length)
+const allChecked = computed(() => checkedFields.value.length === fields.value.length)
 
 // 不确定状态
-const indeterminate = computed(() => checkedKeys.value.length > 0 && checkedKeys.value.length < fields.value.length)
+const indeterminate = computed(() => checkedFields.value.length > 0 && checkedFields.value.length < fields.value.length)
 
 const onShow = () => {
-    checkedKeys.value = fields.value.filter((key) => !props.hiddenKeys.has(key))
+    checkedFields.value = fields.value.filter((field) => !props.hiddenFields.has(field))
 }
 
 const getColumnLabel = (label: unknown) => {
@@ -63,16 +63,16 @@ const getColumnLabel = (label: unknown) => {
 }
 
 const toggleAll = (val: boolean | string | number) => {
-    checkedKeys.value = val ? [...fields.value] : []
+    checkedFields.value = val ? [...fields.value] : []
 }
 
 const resetColumns = () => {
-    checkedKeys.value = [...fields.value]
+    checkedFields.value = [...fields.value]
 }
 
 const confirm = () => {
-    const keys = fields.value.filter((key) => !checkedKeys.value.includes(key))
-    emit('update:hiddenKeys', new Set(keys))
+    const values = fields.value.filter((field) => !checkedFields.value.includes(field))
+    emit('update:hiddenFields', new Set(values))
     popoverRef.value?.hide()
 }
 </script>

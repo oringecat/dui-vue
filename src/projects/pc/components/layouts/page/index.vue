@@ -1,17 +1,21 @@
 <template>
     <el-splitter ref="splitterRef" class="dui-page" @resize-start="isResizing = true" @resize-end="isResizing = false">
         <el-splitter-panel class="dui-page__sidebar" :class="{ 'is-resizing': isResizing }" v-model:size="sidebar.width"
-            :resizable="!isCollapse" @transitionend.self="onTransitionEnd">
+            :resizable="!isFolded" @transitionend.self="onTransitionEnd">
             <el-menu class="dui-page__menu" :default-active="String(route.name)" :collapse="isCollapse"
                 :collapse-transition="false" unique-opened @select="navigatorTo">
-                <el-menu-item class="dui-page__menu-brand" index="brand">管理后台</el-menu-item>
+                <el-menu-item class="dui-page__menu-brand" index="brand">
+                    <app-icon icon="Menu" pointer @click.stop="expandSidebar" v-if="isCollapse" />
+                    <template #title>管理后台</template>
+                </el-menu-item>
                 <app-side-menu :menus="authStore.userMenus" />
             </el-menu>
         </el-splitter-panel>
-        <el-splitter-panel class="dui-page__container" :size="contentWidth">
+        <el-splitter-panel class="dui-page__container" :size="contentWidth" @click="collapseSidebar">
             <div class="dui-page__header">
                 <div class="dui-page__header-left g-flex">
-                    <app-icon class="icon-collapse" :icon="isCollapse ? 'Expand' : 'Fold'" :size="20" @click="toggleCollapse" />
+                    <app-icon class="icon-collapse" :icon="isFolded ? 'Expand' : 'Fold'" :size="20"
+                        @click="toggleCollapse" />
                     <el-breadcrumb separator-icon="ArrowRight">
                         <template v-for="(item, index) in route.matched" :key="index">
                             <el-breadcrumb-item>
@@ -41,10 +45,12 @@
                 </div>
                 <div class="dui-page__main">
                     <router-view v-slot="{ Component, route }">
-                        <!-- 缓存组件 -->
-                        <keep-alive :exclude="historyStore.excludes">
-                            <component :is="handleComponent(Component, route)" :key="route.fullPath" />
-                        </keep-alive>
+                        <transition name="view" mode="out-in">
+                            <!-- 缓存组件 -->
+                            <keep-alive :exclude="historyStore.excludes">
+                                <component :is="handleComponent(Component, route)" :key="route.fullPath" />
+                            </keep-alive>
+                        </transition>
                     </router-view>
                 </div>
             </div>
@@ -54,7 +60,7 @@
 </template>
 
 <script lang="ts" setup>
-import { shallowRef, reactive, computed, onMounted, onBeforeUnmount, type Component } from 'vue'
+import { shallowRef, reactive, computed, onMounted, nextTick, onBeforeUnmount, type Component } from 'vue'
 import { useRoute, useRouter, type RouteLocationNormalized } from 'vue-router'
 import type { SplitterInstance } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
@@ -73,8 +79,9 @@ const historyStore = useHistoryStore()
 const splitterRef = shallowRef<SplitterInstance>()
 const splitterWidth = shallowRef(0) // 面板总宽度
 
-const isResizing = shallowRef(false)
-const isCollapse = shallowRef(false)
+const isResizing = shallowRef(true) // 阻止首次加载动画
+const isCollapse = shallowRef(false) // 菜单折叠
+const isFolded = shallowRef(false) // 手动折叠
 
 const sidebar = reactive({
     width: 220, // 当前宽度
@@ -87,15 +94,27 @@ const contentWidth = computed(() => {
     return width > 0 ? width : undefined
 })
 
+// 展开菜单
+const expandSidebar = () => {
+    isCollapse.value = false
+    sidebar.width = sidebar.expanded // 还原展开后的宽度
+}
+
+// 折叠菜单
+const collapseSidebar = () => {
+    if (!isFolded.value) return
+
+    if (sidebar.width !== sidebar.collapsed) {
+        sidebar.expanded = sidebar.width // 记住拖拽后的宽度
+    }
+
+    sidebar.width = sidebar.collapsed
+}
+
 // 折叠/展开
 const toggleCollapse = () => {
-    if (isCollapse.value) {
-        isCollapse.value = false
-        sidebar.width = sidebar.expanded
-    } else {
-        sidebar.expanded = sidebar.width
-        sidebar.width = sidebar.collapsed
-    }
+    isFolded.value = !isFolded.value
+    isFolded.value ? collapseSidebar() : expandSidebar()
 }
 
 // 折叠动画结束
@@ -114,6 +133,7 @@ const handleComponent = (component: Component, route: RouteLocationNormalized) =
 }
 
 const navigatorTo = (name: string) => {
+    if (name === 'brand') return
     router.push({ name })
 }
 
@@ -130,7 +150,12 @@ onMounted(() => {
     if (el) {
         resizeObserver.observe(el)
     }
+
+    nextTick(() => {
+        isResizing.value = false
+    })
 })
+
 onBeforeUnmount(() => {
     resizeObserver?.disconnect()
 })

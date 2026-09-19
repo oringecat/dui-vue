@@ -10,7 +10,7 @@ export function getAuthRoutes(authCodes?: string[]) {
             authType: AuthType.Route,
             url: '/config',
             component: Page,
-            icon: 'default',
+            icon: 'Tools',
             children: [
                 {
                     code: 'attribute-list',
@@ -18,7 +18,6 @@ export function getAuthRoutes(authCodes?: string[]) {
                     authType: AuthType.Route,
                     url: '/attribute/list',
                     component: () => import('@pc/views/attribute/list/index.vue'),
-                    icon: 'default',
                     children: [
                         {
                             code: 'attribute-list-add',
@@ -44,7 +43,7 @@ export function getAuthRoutes(authCodes?: string[]) {
             authType: AuthType.Route,
             url: '/order',
             component: Page,
-            icon: 'default',
+            icon: 'List',
             children: [
                 {
                     code: 'order-list',
@@ -52,7 +51,6 @@ export function getAuthRoutes(authCodes?: string[]) {
                     authType: AuthType.Route,
                     url: '/order/list',
                     component: () => import('@pc/views/order/index.vue'),
-                    icon: 'default',
                     children: [
                         {
                             code: 'order-list-tb',
@@ -98,7 +96,7 @@ export function getAuthRoutes(authCodes?: string[]) {
             authType: AuthType.Route,
             url: '/product',
             component: Page,
-            icon: 'default',
+            icon: 'Shop',
             children: [
                 {
                     code: 'product-list',
@@ -106,7 +104,6 @@ export function getAuthRoutes(authCodes?: string[]) {
                     authType: AuthType.Route,
                     url: '/product/list',
                     component: () => import('@pc/views/product/list/index.vue'),
-                    icon: 'default',
                     children: [
                         {
                             code: 'product-list-add',
@@ -152,7 +149,6 @@ export function getAuthRoutes(authCodes?: string[]) {
                     authType: AuthType.Route,
                     url: '/product/category',
                     component: () => import('@pc/views/product/category/index.vue'),
-                    icon: 'default',
                     children: [
                         {
                             code: 'product-category-add',
@@ -192,15 +188,14 @@ export function getAuthRoutes(authCodes?: string[]) {
             authType: AuthType.Route,
             url: '/game',
             component: Page,
-            icon: 'default',
+            icon: 'SwitchFilled',
             children: [
                 {
                     code: 'game-list',
                     title: '游戏列表',
                     authType: AuthType.Route,
                     url: '/game/list',
-                    component: () => import('@pc/views/game/list/index.vue'),
-                    icon: 'default'
+                    component: () => import('@pc/views/game/list/index.vue')
                 }
             ]
         },
@@ -210,7 +205,7 @@ export function getAuthRoutes(authCodes?: string[]) {
             authType: AuthType.Route,
             url: '/user',
             component: Page,
-            icon: 'default',
+            icon: 'Avatar',
             children: [
                 {
                     code: 'user-list',
@@ -218,7 +213,6 @@ export function getAuthRoutes(authCodes?: string[]) {
                     authType: AuthType.Route,
                     url: '/user/list',
                     component: () => import('@pc/views/user/list/index.vue'),
-                    icon: 'default',
                     children: [
                         {
                             code: 'user-list-details',
