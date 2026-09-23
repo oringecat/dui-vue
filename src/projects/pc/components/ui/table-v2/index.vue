@@ -89,13 +89,13 @@ const generateColumns = (width: number): Column<T>[] => {
         key: prop.field,
         dataKey: prop.field,
         title: getColumnLabel(prop.label),
-        width: defaultWidth < minWidth ? minWidth : defaultWidth,
+        width: prop.width ?? (defaultWidth < minWidth ? minWidth : defaultWidth),
         align: prop.align ?? 'left',
         sortable: prop.sortable,
         fixed: prop.fixed ? fixedMap[prop.fixed] : undefined,
         cellRenderer: ({ rowData, rowIndex }: { rowData: T; rowIndex: number }) => {
             const renderSlot = slots[prop.field]
-            const value = getNestedValue(rowData, prop.field)
+            const value = prop.formatValue?.(rowData) ?? getNestedValue(rowData, prop.field)
             if (renderSlot) {
                 return h(Fragment, null, renderSlot({ row: rowData, value, index: rowIndex }))
             }

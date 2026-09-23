@@ -4,7 +4,7 @@
             <slot name="toolbar"></slot>
         </div>
         <div class="dui-table__body">
-            <el-table @row-contextmenu="onContextmenu" height="100%" v-bind="$attrs">
+            <el-table @row-contextmenu="onContextmenu" height="100%" v-bind="$attrs" border>
                 <!-- 选择列 -->
                 <el-table-column type="selection" width="55" align="center" fixed v-if="selectionType" />
                 <component :is="renderColumns" />
@@ -73,7 +73,7 @@ const renderColumns = () => props.columns.map((item) =>
             key: item.field,
             prop: item.field,
             align: item.align ?? 'left',
-            minWidth: item.width,
+            width: item.width,
             label: getColumnLabel(item.label),
             sortable: item.sortable,
             fixed: item.fixed

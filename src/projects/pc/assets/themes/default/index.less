@@ -7,6 +7,8 @@
     --block-space-md: 16px;
     --block-radius: 4px;
 
+    //--el-color-primary: #1677ff;
+
     /* 侧边栏 */
     --el-menu-item-height: 48px;
     --el-menu-sub-item-height: var(--el-menu-item-height);
@@ -110,4 +112,12 @@
 
 .el-tabs {
     background-color: var(--block-background);
+
+    &--border-card {
+        height: 100%;
+    }
+
+    &--border-card &__content {
+        padding: 0;
+    }
 }

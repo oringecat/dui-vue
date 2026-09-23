@@ -9,7 +9,7 @@
                 <app-column-setting :columns="rawColumns" v-model:hidden-fields="hiddenFields" />
             </template>
             <template #action="{ row, index }">
-                <app-action :actions="getRowActions(row, index)" :button-props="{ type: 'primary', size: 'small' }" />
+                <app-action type="text" :actions="getRowActions(row, index)" />
             </template>
             <template #footer>
                 <app-pagination :total="pageTotal" v-model:page-size="pageSize" v-model:current-page="pageIndex"
@@ -25,6 +25,7 @@ import { createProductList } from '@/services/api/product'
 import { useDataTable, useDataFilter } from '@/composables/datatable'
 import { useAuthComponents } from '@/composables/auth-components'
 import AppColumnSetting, { useTableColumns } from '@pc/components/ui/column-setting'
+import dayjs from 'dayjs'
 import AppTable from '@pc/components/ui/table/index.vue'
 import AppFilter from '@pc/components/ui/form-filter/index.vue'
 import AppPagination from '@pc/components/ui/pagination/index.vue'
@@ -53,7 +54,9 @@ const { loading, fetch } = createProductList({
 const { rawColumns, tableColumns, hiddenFields } = useTableColumns<Product.ProductListItem>([
     { field: 'id', label: 'ID' },
     { field: 'title', label: '标题' },
-    { field: 'action', label: '操作', fixed: 'right' }
+    { field: 'status', label: '状态' },
+    { field: 'createTime', label: '更新', formatValue: (row) => dayjs(row.createTime).format('YYYY-MM-DD HH:mm:ss') },
+    { field: 'action', label: '操作', fixed: 'right', width: 180 }
 ])
 
 const { filterOptions, queryParams } = useDataFilter<Product.ProductListRequest>({

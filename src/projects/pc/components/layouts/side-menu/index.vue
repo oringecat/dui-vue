@@ -1,6 +1,6 @@
 <template>
     <template v-for="(item, index) in menus" :key="index">
-        <el-sub-menu :index="item.code" :show-timeout="100" :hide-timeout="100" v-if="item.children?.length">
+        <el-sub-menu :index="item.code" v-if="item.children?.length">
             <template #title>
                 <template v-if="item.icon">
                     <app-icon class="menu-icon" :icon="item.icon" />

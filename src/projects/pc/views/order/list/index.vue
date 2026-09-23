@@ -1,16 +1,14 @@
 <template>
-    <pc-view flex>
-        <app-table :data="dataList" :columns="tableColumns" :context-menus="contextMenus" v-loading="loading">
-            <template #action="{ row, index }">
-                <app-action :actions="getRowActions(row, index)" :button-props="{ type: 'primary', size: 'small' }" />
-            </template>
-            <template #footer>
-                <app-pagination :total="pageTotal" v-model:page-size="pageSize" v-model:current-page="pageIndex"
-                    @change="loadData" />
-            </template>
-        </app-table>
-        <component :is="actionComponent" v-if="actionComponent" />
-    </pc-view>
+    <app-table :data="dataList" :columns="tableColumns" :context-menus="contextMenus" v-loading="loading">
+        <template #action="{ row, index }">
+            <app-action type="text" :actions="getRowActions(row, index)" />
+        </template>
+        <template #footer>
+            <app-pagination :total="pageTotal" v-model:page-size="pageSize" v-model:current-page="pageIndex"
+                @change="loadData" />
+            <component :is="actionComponent" v-if="actionComponent" />
+        </template>
+    </app-table>
 </template>
 
 <script lang="ts" setup>
@@ -50,7 +48,7 @@ const { tableColumns } = useTableColumns<Order.OrderListItem>([
     { field: 'orderNumber', label: '订单号' },
     { field: 'status', label: '状态' },
     { field: 'orderTime', label: '订单日期', formatValue: (row) => dayjs(row.orderTime).format('YYYY-MM-DD HH:mm:ss') },
-    { field: 'action', label: '操作', fixed: 'right', visibility: () => hasRowAction.value }
+    { field: 'action', label: '操作', fixed: 'right', width: 160, visibility: () => hasRowAction.value }
 ])
 
 const loadData = (force = false) => {

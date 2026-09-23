@@ -9,12 +9,13 @@
                     </el-form-item>
                 </template>
             </app-filter>
-            <el-tabs v-model="componentId" v-if="viewComponents.length">
-                <el-tab-pane v-for="{ code, title } in viewComponents" :key="code" :label="title" :name="code" />
-            </el-tabs>
         </template>
-        <component ref="componentRef" :is="activeComponent" v-bind="{ componentId, queryParams }"
-            v-if="activeComponent" />
+        <el-tabs type="border-card" v-model="componentId" v-if="viewComponents.length">
+            <el-tab-pane v-for="{ code, title } in viewComponents" :key="code" :label="title"
+                :name="code"></el-tab-pane>
+            <component ref="componentRef" :is="activeComponent" v-bind="{ componentId, queryParams }"
+                v-if="activeComponent" />
+        </el-tabs>
     </pc-view>
 </template>
 

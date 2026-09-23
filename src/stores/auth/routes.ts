@@ -138,8 +138,7 @@ export function getAuthRoutes(authCodes?: string[]) {
                             title: '删除',
                             authType: AuthType.Action,
                             component: () => import('@pc/views/product/list/delete/index.vue'),
-                            icon: 'Delete',
-                            className: 'el-button--danger'
+                            icon: 'Delete'
                         }
                     ]
                 },
