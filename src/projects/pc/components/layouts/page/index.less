@@ -13,7 +13,6 @@
 
         flex-shrink: 0;
         transition: flex-basis 200ms;
-        background-color: var(--el-menu-bg-color);
         overflow-x: hidden;
 
         &.is-resizing {
@@ -25,26 +24,21 @@
                 background-color: var(--el-menu-inline-bg-color);
             }
 
-            &.is-fixed {
-                position: fixed;
-                top: 0;
-                bottom: 0;
-                left: 0;
-                z-index: 10;
-                overflow-x: hidden;
-                overflow-y: auto;
+            &--collapse {
+                .text-icon {
+                    display: inline-block;
+                    width: 24px;
+                    font-size: 18px;
+                    text-align: center;
+                }
             }
 
             &:not(.el-menu--collapse) {
                 min-width: min-content;
+            }
 
-                &.is-fixed {
-                    width: 220px;
-                    min-width: 0;
-                    border-top-right-radius: var(--block-radius);
-                    border-bottom-right-radius: var(--block-radius);
-                    box-shadow: 2px 0 8px 0 rgba(0, 0, 0, 0.2);
-                }
+            .text-icon {
+                font-style: normal;
             }
 
             .el-sub-menu__title,
@@ -58,7 +52,7 @@
                 }
             }
 
-            .el-sub-menu.is-active .el-sub-menu__title {
+            .el-sub-menu.is-active>.el-sub-menu__title {
                 color: var(--el-menu-active-color);
             }
 
@@ -68,14 +62,38 @@
         }
     }
 
-    &__menu-brand {
-        font-weight: bold;
-        color: var(--el-menu-active-color);
-        border-bottom: 1px solid var(--el-menu-border-color);
-        pointer-events: none;
+    &__menu {
+        height: 100%;
+        background-color: var(--el-menu-bg-color);
 
-        .el-menu--collapse & {
-            pointer-events: auto;
+        &.is-fixed {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 10;
+            overflow: hidden;
+
+            &:has(.el-menu:not(.el-menu--collapse)) {
+                border-radius: 0 var(--block-radius) var(--block-radius) 0;
+                box-shadow: 2px 0 8px 0 rgba(0, 0, 0, 0.2);
+            }
+
+            .el-menu:not(.el-menu--collapse) {
+                width: 220px;
+                min-width: 0;
+            }
+        }
+
+        &-brand {
+            font-weight: bold;
+            color: var(--el-menu-active-color);
+            border-bottom: 1px solid var(--el-menu-border-color);
+            pointer-events: none;
+
+            .el-menu--collapse & {
+                pointer-events: auto;
+            }
         }
     }
 

@@ -3,14 +3,18 @@
         @resize-end="state.isResizing = false" @pointerdown.once="state.isResizing = false">
         <el-splitter-panel class="dui-page__sidebar" :class="{ 'is-resizing': state.isResizing }"
             v-model:size="sidebar.width" :resizable="!state.isFolded" @transitionend.self="onTransitionEnd">
-            <el-menu class="dui-page__menu" :class="{ 'is-fixed': state.isFixed }" :default-active="String(route.name)"
-                :collapse="state.isCollapse" :collapse-transition="state.isFixed" unique-opened @select="navigatorTo">
-                <li class="el-menu-item dui-page__menu-brand" @click="state.isCollapse = false">
-                    <app-icon icon="Menu" pointer v-if="state.isCollapse" />
-                    <span v-else>管理后台</span>
-                </li>
-                <app-side-menu :menus="authStore.userMenus" />
-            </el-menu>
+            <div class="dui-page__menu" :class="{ 'is-fixed': state.isFixed }">
+                <el-scrollbar>
+                    <el-menu :default-active="String(route.name)" :collapse="state.isCollapse"
+                        :collapse-transition="state.isFixed" unique-opened @select="navigatorTo">
+                        <li class="el-menu-item dui-page__menu-brand" @click="state.isCollapse = false">
+                            <app-icon icon="Menu" pointer v-if="state.isCollapse" />
+                            <span v-else>管理后台</span>
+                        </li>
+                        <app-side-menu :menus="authStore.userMenus" />
+                    </el-menu>
+                </el-scrollbar>
+            </div>
         </el-splitter-panel>
         <el-splitter-panel class="dui-page__container" :size="contentWidth" @click="collapseSidebar">
             <div class="dui-page__header">
@@ -80,16 +84,18 @@ const historyStore = useHistoryStore()
 const splitterRef = shallowRef<SplitterInstance>()
 const splitterWidth = shallowRef(0) // 面板总宽度
 
+const initFolded = false // 初始折叠状态
+
 // https://developer.mozilla.org/zh-CN/docs/Web/API/Element/pointerdown_event
 const state = reactive({
     isResizing: true, // 阻止首次加载动画
-    isCollapse: false, // 菜单折叠
-    isFolded: false, // 手动折叠
-    isFixed: false // 菜单固定
+    isCollapse: initFolded, // 菜单折叠
+    isFolded: initFolded, // 手动折叠
+    isFixed: initFolded // 菜单固定
 })
 
 const sidebar = reactive({
-    width: 220, // 当前宽度
+    width: initFolded ? 64 : 220, // 当前宽度
     expanded: 220, // 展开宽度
     collapsed: 64 // 折叠宽度
 })

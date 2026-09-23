@@ -1,6 +1,6 @@
 <template>
-    <el-dialog class="dui-dialog" v-model="visible" :close-on-click-modal="false" :close-on-press-escape="false"
-        align-center @closed="onClosed">
+    <el-dialog class="dui-dialog" v-model="visible" :width="width" :close-on-click-modal="false"
+        :close-on-press-escape="false" align-center @closed="onClosed">
         <slot></slot>
         <template #footer>
             <el-button @click="visible = false">取消</el-button>
@@ -20,6 +20,10 @@ const props = defineProps({
     loading: {
         type: Boolean,
         default: false
+    },
+    width: {
+        type: [String, Number],
+        default: 'auto'
     }
 })
 

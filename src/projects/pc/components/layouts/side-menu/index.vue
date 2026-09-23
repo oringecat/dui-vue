@@ -3,12 +3,12 @@
         <el-sub-menu :index="item.code" v-if="item.children?.length">
             <template #title>
                 <template v-if="item.icon">
-                    <app-icon class="menu-icon" :icon="item.icon" />
+                    <app-icon :icon="item.icon" />
                     <span>{{ item.title }}</span>
                 </template>
                 <!--如果没有图标，用标题第一个字代替-->
                 <template v-else>
-                    <i class="menu-icon menu-icon--text">{{ item.title.slice(0, 1) }}</i>
+                    <i class="text-icon">{{ item.title.slice(0, 1) }}</i>
                     <span>{{ item.title.slice(1) }}</span>
                 </template>
             </template>
@@ -16,7 +16,7 @@
             <app-sub-menu :menus="item.children" />
         </el-sub-menu>
         <el-menu-item :index="item.code" v-else>
-            <app-icon class="menu-icon" :icon="item.icon" v-if="item.icon" />
+            <app-icon :icon="item.icon" v-if="item.icon" />
             <span>{{ item.title }}</span>
         </el-menu-item>
     </template>
