@@ -8,7 +8,7 @@
                 <app-action :actions="getActions('attribute-list-add')" />
             </template>
             <template #action="{ row, index }">
-                <app-action type="text" :actions="getRowActions(row, index)" />
+                <app-action type="link" :actions="getRowActions(row, index)" />
             </template>
             <template #footer>
                 <app-pagination :total="pageTotal" v-model:page-size="pageSize" v-model:current-page="pageIndex"

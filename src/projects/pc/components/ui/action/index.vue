@@ -36,7 +36,7 @@ import { MoreFilled, Warning } from '@element-plus/icons-vue'
 import type { ButtonProps } from 'element-plus'
 import type { ActionItem } from '@/composables/auth-components/types'
 
-type ActionType = 'button' | 'text' | 'dropdown'
+type ActionType = 'button' | 'link' | 'dropdown'
 
 const props = defineProps<{
     actions: ActionItem[]
@@ -47,7 +47,7 @@ const props = defineProps<{
 const bindProps = computed<ButtonProps>(() => {
     const defaultProps: Record<ActionType, ButtonProps> = {
         button: {},
-        text: {
+        link: {
             link: true,
             type: 'primary',
             size: 'small',

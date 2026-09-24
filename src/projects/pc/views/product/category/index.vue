@@ -18,7 +18,7 @@
                 </template>
             </template>
             <template #action="{ row, index }">
-                <app-action type="text" :actions="getRowActions(row, index)" />
+                <app-action type="link" :actions="getRowActions(row, index)" />
             </template>
         </app-table>
         <component :is="actionComponent" v-if="actionComponent" />
