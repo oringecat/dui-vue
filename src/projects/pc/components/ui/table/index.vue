@@ -1,10 +1,16 @@
 <template>
-    <div class="dui-table">
-        <div class="dui-table__toolbar" v-if="slots.toolbar">
-            <slot name="toolbar"></slot>
+    <div class="dui-table" v-loading="loading">
+        <div class="dui-table__toolbar">
+            <div class="dui-table__toolbar-slot" v-if="slots.toolbar">
+                <slot name="toolbar"></slot>
+            </div>
+            <el-button-group class="dui-table__toolbar-tools" v-if="showTools">
+                <el-button icon="Refresh" @click="$emit('refresh')" v-if="attrs.onRefresh" />
+                <app-column-setting :columns="rawColumns" v-model:hidden-fields="hiddenFields" />
+            </el-button-group>
         </div>
         <div class="dui-table__body">
-            <el-table @row-contextmenu="onContextmenu" height="100%" v-bind="$attrs" border>
+            <el-table @row-contextmenu="onContextmenu" height="100%" v-bind="attrs" border>
                 <!-- 选择列 -->
                 <el-table-column type="selection" width="55" align="center" fixed v-if="selectionType" />
                 <component :is="renderColumns" />
@@ -18,10 +24,10 @@
 </template>
 
 <script lang="ts" generic="T extends object" setup>
-import { shallowRef, useSlots, h, type VNode } from 'vue'
+import { shallowRef, useSlots, useAttrs, h, type VNode } from 'vue'
 import type { TableColumnCtx } from 'element-plus'
 import { getNestedValue } from '@/helpers/filters'
-import type { TableColumn } from '@pc/components/ui/column-setting'
+import AppColumnSetting, { useTableColumns, type TableColumn } from '@pc/components/ui/column-setting'
 import type { ContextMenuState, ContextMenuItem } from '@pc/components/ui/context-menu/types'
 import AppContextMenu from '@pc/components/ui/context-menu/index.vue'
 
@@ -43,14 +49,19 @@ const props = withDefaults(defineProps<{
     columns: TableColumn<T>[]
     contextMenus?: ContextMenuItem<T>[]
     selectionType?: 'single' | 'multiple'
+    loading?: boolean
+    showTools?: boolean
 }>(), {
-    border: true,
+    showTools: true,
     contextMenus: () => []
 })
 
 const slots = useSlots()
+const attrs = useAttrs()
 
 const contextMenuState = shallowRef<ContextMenuState<T>>()
+
+const { rawColumns, tableColumns, hiddenFields } = useTableColumns(props.columns)
 
 // 鼠标右键
 const onContextmenu = (row: T, column: TableColumnCtx<T>, event: PointerEvent) => {
@@ -66,7 +77,7 @@ const onContextmenu = (row: T, column: TableColumnCtx<T>, event: PointerEvent) =
 }
 
 // 渲染数据列
-const renderColumns = () => props.columns.map((item) =>
+const renderColumns = () => tableColumns.value.map((item) =>
     h(
         ElTableColumn,
         {

@@ -39,7 +39,7 @@
 import { shallowRef, computed, reactive } from 'vue'
 import { ElMessage } from 'element-plus'
 import { createCategorySaleUpdate } from '@/services/api/product'
-import { useTableColumns } from '@pc/components/ui/column-setting'
+import type { TableColumn } from '@pc/components/ui/column-setting'
 import { useAttributeStore } from '@/stores/attribute'
 import type { SaleRow } from './types'
 import AppDialog from '@pc/components/ui/dialog/index.vue'
@@ -56,13 +56,13 @@ const selectedAttributeId = shallowRef<number>()
 
 const formData = reactive(props.record.sales.map((sale) => ({ ...sale })))
 
-const { tableColumns } = useTableColumns<SaleRow>([
+const tableColumns: TableColumn<SaleRow>[] = [
     { field: 'id', label: 'ID' },
     { field: 'attributeName', label: '属性' },
     { field: 'attributeValue', label: '规格', width: 300 },
     { field: 'isCustom', label: '自定义' },
     { field: 'action', label: '操作', fixed: 'right' }
-])
+]
 
 const { loading, rawFetch: updateSales } = createCategorySaleUpdate({
     manual: true

@@ -3,7 +3,7 @@
         <template #header>
             <app-filter :options="filterOptions" @submit="loadData" />
         </template>
-        <app-table :data="categoryList" :columns="tableColumns" row-key="id" default-expand-all v-loading="loading">
+        <app-table :data="categoryList" :columns="tableColumns" row-key="id" :loading="loading" default-expand-all>
             <template #toolbar>
                 <app-action :actions="getActions('product-category-add')" />
             </template>
@@ -31,7 +31,7 @@ import { buildTree } from '@/helpers/filters'
 import { createCategoryList } from '@/services/api/product'
 import { useDataFilter } from '@/composables/datatable'
 import { useAuthComponents } from '@/composables/auth-components'
-import { useTableColumns } from '@pc/components/ui/column-setting'
+import type { TableColumn } from '@pc/components/ui/column-setting'
 import AppTable from '@pc/components/ui/table/index.vue'
 import AppFilter from '@pc/components/ui/form-filter/index.vue'
 import AppAction from '@pc/components/ui/action/index.vue'
@@ -48,14 +48,14 @@ const { loading, fetch } = createCategoryList({
     }
 })
 
-const { tableColumns } = useTableColumns<Product.CategoryItem>([
+const tableColumns: TableColumn<Product.CategoryItem>[] = [
     { field: 'categoryName', label: '分类名称' },
     { field: 'code', label: '编码' },
     { field: 'attribute', label: '基础属性', visibility: () => hasAction('product-category-attr') },
     { field: 'sale', label: '销售属性', visibility: () => hasAction('product-category-sale') },
     { field: 'status', label: '状态' },
     { field: 'action', label: '操作', fixed: 'right' }
-])
+]
 
 const { filterOptions, queryParams } = useDataFilter<Product.CategoryListRequest>({
     filters: [

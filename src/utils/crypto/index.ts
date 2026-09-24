@@ -26,6 +26,16 @@ export function getClientUUID(text = 'canvas') {
 }
 
 /**
+ * 生成哈希值
+ * @param text 
+ * @param length 
+ * @returns 
+ */
+export function getHash(text: string, length = 12) {
+    return cryptojs.MD5(text).toString().slice(0, length)
+}
+
+/**
  * AES加密
  * @param data 
  * @param key 

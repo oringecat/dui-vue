@@ -7,6 +7,8 @@
 </template>
 
 <script lang="ts" setup>
+import { LoadMode } from '@/constants/enums'
+
 const props = defineProps({
     // 总条数
     total: {
@@ -25,19 +27,23 @@ const props = defineProps({
     }
 })
 
-const emit = defineEmits(['update:currentPage', 'update:pageSize', 'change'])
+const emit = defineEmits<{
+    'update:currentPage': [index: number]
+    'update:pageSize': [size: number]
+    change: [mode: LoadMode]
+}>()
 
-const handleSizeChange = (val: number) => {
-    emit('update:pageSize', val)
+const handleSizeChange = (size: number) => {
+    emit('update:pageSize', size)
 
     if (props.total > 0) {
-        handleCurrentChange(1, true)
+        handleCurrentChange(1, LoadMode.Reset)
     }
 }
 
-const handleCurrentChange = (val: number, reset = false) => {
-    emit('update:currentPage', val)
-    emit('change', reset)
+const handleCurrentChange = (index: number, mode = LoadMode.Cache) => {
+    emit('update:currentPage', index)
+    emit('change', mode)
 }
 </script>
 

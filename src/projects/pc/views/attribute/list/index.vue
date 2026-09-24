@@ -1,7 +1,7 @@
 <template>
     <pc-view>
         <template #header>
-            <app-filter :options="filterOptions" @submit="loadData(true)" />
+            <app-filter :options="filterOptions" @submit="loadData(LoadMode.Reset)" />
         </template>
         <app-table :data="dataList" :columns="tableColumns" v-loading="attributeStore.loading">
             <template #toolbar>
@@ -21,9 +21,10 @@
 
 <script lang="ts" setup>
 import { watch } from 'vue'
+import { LoadMode } from '@/constants/enums'
 import { useDataTable, useDataFilter } from '@/composables/datatable'
 import { useAuthComponents } from '@/composables/auth-components'
-import { useTableColumns } from '@pc/components/ui/column-setting'
+import type { TableColumn } from '@pc/components/ui/column-setting'
 import { useAttributeStore } from '@/stores/attribute'
 import dayjs from 'dayjs'
 import AppTable from '@pc/components/ui/table/index.vue'
@@ -37,12 +38,12 @@ const { actionComponent, getActions, getRowActions } = useAuthComponents<Attribu
 
 const { dataList, pageIndex, pageSize, pageTotal, hasData, localFilterParams, updateItems } = useDataTable<Attribute.AttributeItem>()
 
-const { tableColumns } = useTableColumns<Attribute.AttributeItem>([
+const tableColumns: TableColumn<Attribute.AttributeItem>[] = [
     { field: 'id', label: 'ID' },
     { field: 'name', label: '名称' },
     { field: 'updateTime', label: '更新时间', formatValue: (row) => dayjs(row.updateTime).format('YYYY-MM-DD HH:mm:ss') },
     { field: 'action', label: '操作', fixed: 'right' }
-])
+]
 
 const { filterOptions, queryParams } = useDataFilter<Attribute.AttributeItem>({
     filters: [
@@ -65,9 +66,9 @@ const { filterOptions, queryParams } = useDataFilter<Attribute.AttributeItem>({
     ]
 })
 
-const loadData = (force = false) => {
-    if (!force && hasData.value) return
-    if (force) pageIndex.value = 1
+const loadData = (mode = LoadMode.Cache) => {
+    if (mode === LoadMode.Cache && hasData.value) return
+    if (mode === LoadMode.Reset) pageIndex.value = 1
     localFilterParams.value = queryParams.value
 }
 

@@ -11,21 +11,35 @@
         overflow-y: auto;
     }
 
-    &__toolbar,
-    &__footer {
+    &__toolbar {
+        margin-bottom: var(--block-space-sm);
+
         &:empty {
             display: none;
         }
-    }
 
-    &__toolbar {
-        display: flex;
-        justify-content: space-between;
-        gap: var(--block-space-sm);
-        margin-bottom: var(--block-space-sm);
+        &,
+        &-slot {
+            display: flex;
+            align-items: center;
+            gap: var(--block-space-sm);
+        }
+
+        &-slot {
+            flex: 1;
+            justify-content: space-between;
+        }
+
+        &-tools {
+            margin-left: auto;
+        }
     }
 
     &__footer {
         margin-top: var(--block-space-md);
+
+        &:empty {
+            display: none;
+        }
     }
 }

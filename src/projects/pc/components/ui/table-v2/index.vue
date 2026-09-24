@@ -1,7 +1,13 @@
 <template>
-    <div class="dui-table-v2">
-        <div class="dui-table-v2__toolbar" v-if="slots.toolbar">
-            <slot name="toolbar"></slot>
+    <div class="dui-table-v2" v-loading="loading">
+        <div class="dui-table-v2__toolbar">
+            <div class="dui-table-v2__toolbar-slot" v-if="slots.toolbar">
+                <slot name="toolbar"></slot>
+            </div>
+            <el-button-group class="dui-table-v2__toolbar-tools" v-if="showTools">
+                <el-button icon="Refresh" @click="$emit('refresh')" v-if="attrs.onRefresh" />
+                <app-column-setting :columns="rawColumns" v-model:hidden-fields="hiddenFields" />
+            </el-button-group>
         </div>
         <el-auto-resizer class="dui-table-v2__resizer">
             <template #default="{ height, width }">
@@ -17,10 +23,10 @@
 </template>
 
 <script lang="ts" generic="T extends object" setup>
-import { shallowRef, computed, useSlots, h, Fragment, type VNode } from 'vue'
+import { shallowRef, computed, useSlots, useAttrs, h, Fragment, type VNode } from 'vue'
 import { type Column, type RowEventHandlers, TableV2FixedDir } from 'element-plus'
 import { getNestedValue } from '@/helpers/filters'
-import type { TableColumn } from '@pc/components/ui/column-setting'
+import AppColumnSetting, { useTableColumns, type TableColumn } from '@pc/components/ui/column-setting'
 import type { ContextMenuState, ContextMenuItem } from '@pc/components/ui/context-menu/types'
 import AppContextMenu from '@pc/components/ui/context-menu/index.vue'
 
@@ -40,13 +46,18 @@ const props = withDefaults(defineProps<{
     border?: boolean
     columns: TableColumn<T>[]
     contextMenus?: ContextMenuItem<T>[]
+    loading?: boolean
+    showTools?: boolean
 }>(), {
     contextMenus: () => []
 })
 
 const slots = useSlots()
+const attrs = useAttrs()
 
 const contextMenuState = shallowRef<ContextMenuState<T>>()
+
+const { rawColumns, tableColumns, hiddenFields } = useTableColumns(props.columns)
 
 const rowEventHandlers: RowEventHandlers = {
     onContextmenu: ({ event, rowData, rowIndex }) => {
@@ -65,7 +76,7 @@ const rowEventHandlers: RowEventHandlers = {
 }
 
 // 计算出固定宽度
-const fixedWidth = computed(() => props.columns.reduce((pre, cur) => {
+const fixedWidth = computed(() => tableColumns.value.reduce((pre, cur) => {
     if (cur.width) {
         pre.length += 1
         pre.width += cur.width
@@ -83,9 +94,9 @@ const generateColumns = (width: number): Column<T>[] => {
     // 最小宽度
     const minWidth = 120
     // 计算平均剩余宽度，减去 --el-table-scrollbar-size 宽度
-    const defaultWidth = (width - 6 - fixedWidth.value.width) / (props.columns.length - fixedWidth.value.length)
+    const defaultWidth = (width - 6 - fixedWidth.value.width) / (tableColumns.value.length - fixedWidth.value.length)
 
-    return props.columns.map((prop) => ({
+    return tableColumns.value.map((prop) => ({
         key: prop.field,
         dataKey: prop.field,
         title: getColumnLabel(prop.label),
