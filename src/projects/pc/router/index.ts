@@ -55,6 +55,8 @@ export default function createRouter() {
 
   eventBus.on('logout', () => {
     authStore.resetAuth(router)
+    historyStore.removeHistory()
+    router.replace({ name: 'login' })
   })
 
   return router

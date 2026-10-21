@@ -9,3 +9,11 @@ export enum LoadMode {
     Current = 0,  // 保持页码并刷新
     Reset = 1     // 重置页码并刷新
 }
+
+// 图片类型
+export const ImageTypes: Readonly<string[]> = [
+    'image/jpeg',
+    'image/png',
+    'image/webp',
+    'image/bmp'
+]

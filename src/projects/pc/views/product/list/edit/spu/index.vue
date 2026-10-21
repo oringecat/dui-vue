@@ -32,25 +32,31 @@
                                     <el-button size="small" icon="plus" :disabled="isCustomDisabled(item)"
                                         @click="addCustomSpec(item)" v-if="item.sale.isCustom">自定义</el-button>
                                     <table cellspacing="0" cellpadding="0"
-                                        v-if="item.sale.isCustom && item.specs.length">
+                                        v-if="(item.sale.isCustom || item.sale.isImage) && item.specs.length">
                                         <thead>
                                             <tr>
                                                 <th>已选</th>
-                                                <th>自定义</th>
+                                                <th v-if="item.sale.isCustom">自定义</th>
+                                                <th v-if="item.sale.isImage">图片</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-for="(spec, index) in item.specs" :key="index">
+                                            <tr v-for="(spec, specIndex) in item.specs" :key="specIndex">
                                                 <td>
                                                     <el-tag :type="spec.valueId ? 'primary' : 'warning'"
-                                                        @close="removeSpec(item, index)" closable>
+                                                        @close="removeSpec(item, specIndex)" closable>
                                                         {{ getSpecName(spec.valueId) }}
                                                     </el-tag>
                                                 </td>
-                                                <td>
+                                                <td v-if="item.sale.isCustom">
                                                     <el-input v-model="spec.specName"
                                                         :placeholder="spec.valueId ? '选填' : '必填'"
                                                         @change="rebuildSkus" />
+                                                </td>
+                                                <td v-if="item.sale.isImage">
+                                                    <app-upload size="small" :limit="1"
+                                                        :model-value="spec.image.url ? [spec.image] : []"
+                                                        @update:model-value="(images) => (spec.image = updateImage(images[0]))" />
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -113,6 +119,7 @@ import { useAttributeStore } from '@/stores/attribute'
 import type { SaleTemplate } from './types'
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 import AppDialog from '@pc/components/ui/dialog/index.vue'
+import AppUpload from '@pc/components/ui/upload/index.vue'
 
 const props = defineProps<{
     spu?: Product.ProductSpuItem
@@ -164,7 +171,13 @@ const addCustomSpec = (item: SaleTemplate) => {
         id: --customSpecId,
         attributeId: item.sale.attributeId,
         valueId: 0,
-        specName: ''
+        specName: '',
+        image: {
+            url: '',
+            name: '',
+            width: 0,
+            height: 0
+        }
     })
     rebuildSkus()
 }
@@ -200,7 +213,13 @@ const onChecked = (target: SaleTemplate, checkedValue: CheckboxValueType[]) => {
             id: --customSpecId,
             attributeId: target.sale.attributeId,
             valueId: v.id,
-            specName: ''
+            specName: '',
+            image: {
+                url: '',
+                name: '',
+                width: 0,
+                height: 0
+            }
         }
     })
 
@@ -218,12 +237,7 @@ const createEmptySku = (): Product.ProductSkuItem => ({
     code: '',
     specs: [],
     price: 0,
-    stock: 0,
-    image: {
-        url: '',
-        width: 0,
-        height: 0
-    }
+    stock: 0
 })
 
 // 计算笛卡尔积
@@ -246,6 +260,10 @@ const cartesianSku = (specs: Product.ProductSpec[][]) => {
             specs
         }
     })), [createEmptySku()])
+}
+
+const updateImage = (item?: Common.UploadFile) => {
+    return item ?? { url: '', name: '', width: 0, height: 0 }
 }
 
 onMounted(() => {

@@ -16,6 +16,7 @@ export default [
                     title: '@ctitle(10,20)', // 随机中文标题（10-20字）
                     price: '@float(100, 9999, 2, 2)', // 随机价格（100-9999，两位小数）
                     image: {
+                        name: `product${1000 + i}.png`,
                         url: `https://picsum.photos/seed/product${1000 + i}`,
                         width: Math.floor(Math.random() * 51) + 250,
                         height: Math.floor(Math.random() * 51) + 250
@@ -45,9 +46,9 @@ export default [
                         { id: 104, attributeId: 104, valueType: 2, required: false },
                     ],
                     sales: [
-                        { id: 100, attributeId: 100, isCustom: true },
-                        { id: 101, attributeId: 101, isCustom: false },
-                        { id: 102, attributeId: 102, isCustom: false },
+                        { id: 100, attributeId: 100, isCustom: true, isImage: true },
+                        { id: 101, attributeId: 101, isCustom: false, isImage: false },
+                        { id: 102, attributeId: 102, isCustom: false, isImage: false },
                     ],
                 },
                 { id: 1200, parentId: 1000, code: 'computer', categoryName: '电脑办公', status: 1, icon: '', sort: 2, attrs: [], sales: [] },
@@ -65,8 +66,8 @@ export default [
                         { id: 202, attributeId: 202, valueType: 3, required: true },
                     ],
                     sales: [
-                        { id: 200, attributeId: 200, isCustom: true },
-                        { id: 201, attributeId: 201, isCustom: false },
+                        { id: 200, attributeId: 200, isCustom: true, isImage: false },
+                        { id: 201, attributeId: 201, isCustom: false, isImage: false },
                     ],
                 },
                 { id: 3200, parentId: 3000, code: 'fruit', categoryName: '生鲜水果', status: 1, icon: '', sort: 2, attrs: [], sales: [] }
@@ -106,9 +107,9 @@ export default [
                         { id: 1004, attributeId: 104, attributeValue: 'iOS' },
                     ],
                     images: [
-                        { id: 1000, url: 'https://picsum.photos/seed/iphone1', width: 800, height: 800, isMain: true },
-                        { id: 1001, url: 'https://picsum.photos/seed/iphone2', width: 600, height: 800, isMain: false },
-                        { id: 1002, url: 'https://picsum.photos/seed/iphone3', width: 800, height: 600, isMain: false },
+                        { id: 1000, name: 'iphone1.png', url: 'https://picsum.photos/seed/iphone1', width: 800, height: 800, isMain: true },
+                        { id: 1001, name: 'iphone2.jpg', url: 'https://picsum.photos/seed/iphone2', width: 600, height: 800, isMain: false },
+                        { id: 1002, name: 'iphone3.jpg', url: 'https://picsum.photos/seed/iphone3', width: 800, height: 600, isMain: false },
                     ],
                     description: '<h3>产品详情</h3><p>iPhone 15 Pro Max 搭载 <strong>A17 Pro 芯片</strong>，性能空前强大。采用航空航天级钛金属设计，坚固轻盈。4800 万像素主摄带来专业级摄影体验，支持新一代人像模式。USB-C 接口统一充电生态，动作按钮让你一键直达常用功能。</p><h4>包装清单</h4><ul><li>iPhone 15 Pro Max ×1</li><li>USB-C 充电线 ×1</li><li>卡针 ×1</li><li>说明书 ×1</li></ul><h4>售后保障</h4><p>Apple 官方一年有限保修，享受 AppleCare+ 延长保修服务（需单独购买）。</p>',
                     status: 1,
@@ -138,37 +139,34 @@ export default [
                                 id: 1000,
                                 code: 'SP0001-001',
                                 specs: [
-                                    { id: 501, attributeId: 100, valueId: 1001, specName: '亮黑色' },
-                                    { id: 502, attributeId: 101, valueId: 1012, specName: '256GB' },
-                                    { id: 503, attributeId: 102, valueId: 1021, specName: '全网通5G' },
+                                    { id: 501, attributeId: 100, valueId: 1001, specName: '亮黑色', image: { name: 'titanium.png', url: 'https://picsum.photos/seed/titanium', width: 200, height: 200 } },
+                                    { id: 502, attributeId: 101, valueId: 1012, specName: '256GB', image: { name: '', url: '', width: 0, height: 0 } },
+                                    { id: 503, attributeId: 102, valueId: 1021, specName: '全网通5G', image: { name: '', url: '', width: 0, height: 0 } },
                                 ],
                                 price: 6999,
                                 stock: 50,
-                                image: { url: 'https://picsum.photos/seed/titanium', width: 200, height: 200 },
                             },
                             {
                                 id: 1001,
                                 code: 'SP0001-002',
                                 specs: [
-                                    { id: 504, attributeId: 100, valueId: 1003, specName: '极光蓝' },
-                                    { id: 505, attributeId: 101, valueId: 1013, specName: '512GB' },
-                                    { id: 506, attributeId: 102, valueId: 1021, specName: '全网通5G' },
+                                    { id: 504, attributeId: 100, valueId: 1003, specName: '极光蓝', image: { name: 'aurora-blue.png', url: 'https://picsum.photos/seed/aurora-blue', width: 200, height: 200 } },
+                                    { id: 505, attributeId: 101, valueId: 1013, specName: '512GB', image: { name: '', url: '', width: 0, height: 0 } },
+                                    { id: 506, attributeId: 102, valueId: 1021, specName: '全网通5G', image: { name: '', url: '', width: 0, height: 0 } },
                                 ],
                                 price: 7998,
                                 stock: 0,
-                                image: { url: 'https://picsum.photos/seed/aurora-blue', width: 200, height: 200 },
                             },
                             {
                                 id: 1002,
                                 code: 'SP0001-003',
                                 specs: [
-                                    { id: 507, attributeId: 100, valueId: 0, specName: '大橘' },
-                                    { id: 508, attributeId: 101, valueId: 1013, specName: '512GB' },
-                                    { id: 509, attributeId: 102, valueId: 1021, specName: '全网通5G' },
+                                    { id: 507, attributeId: 100, valueId: 0, specName: '大橘', image: { name: 'orange.png', url: 'https://picsum.photos/seed/orange', width: 200, height: 200 } },
+                                    { id: 508, attributeId: 101, valueId: 1013, specName: '512GB', image: { name: '', url: '', width: 0, height: 0 } },
+                                    { id: 509, attributeId: 102, valueId: 1021, specName: '全网通5G', image: { name: '', url: '', width: 0, height: 0 } },
                                 ],
                                 price: 11999,
                                 stock: 25,
-                                image: { url: 'https://picsum.photos/seed/sakura-gold', width: 200, height: 200 },
                             },
                         ],
                     },

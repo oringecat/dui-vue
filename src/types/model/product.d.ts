@@ -16,11 +16,7 @@ declare global {
             categoryId: number;
             title: string;
             price: number;
-            image: {
-                url: string;
-                width: number;
-                height: number;
-            };
+            image: Common.UploadFile;
             status: number;
             createTime: number;
         }
@@ -48,11 +44,8 @@ declare global {
             updateTime: number;
         }
 
-        interface ProductImage {
+        interface ProductImage extends Common.UploadFile {
             id: number;
-            url: string;
-            width: number; // 原始宽度
-            height: number; // 原始高度
             isMain: boolean;
         }
 
@@ -84,11 +77,6 @@ declare global {
             specs: ProductSpec[];
             price: number;
             stock: number;
-            image: {
-                url: string;
-                width: number;
-                height: number;
-            };
         }
 
         /** 商品规格 */
@@ -97,6 +85,7 @@ declare global {
             attributeId: number;
             valueId: number;
             specName: string;
+            image: Common.UploadFile;
         }
 
         /** 分类列表 */
@@ -131,6 +120,7 @@ declare global {
             id: number;
             attributeId: number;
             isCustom: boolean; // 是否允许自定义规格
+            isImage: boolean; // 是否支持上传图片
         }
     }
 }

@@ -1,6 +1,6 @@
 <template>
     <app-dialog class="product-category-sale" :show="show">
-        <app-table :data="saleRows" :columns="tableColumns">
+        <app-table :data="formData" :columns="tableColumns">
             <template #toolbar>
                 <div class="g-flex">
                     <el-select v-model="selectedAttributeId" filterable clearable placeholder="请选择" block>
@@ -13,17 +13,20 @@
                 </div>
             </template>
             <template #attributeName="{ row }">
-                {{ row.attribute?.name ?? row.attributeId }}
+                {{ attributeStore.getAttributeById(row.attributeId)?.name ?? row.attributeId }}
             </template>
             <template #attributeValue="{ row }">
                 <div class="g-flex">
-                    <el-tag v-for="item in row.attribute?.values ?? []" :key="item.id">
+                    <el-tag v-for="item in attributeStore.getAttributeById(row.attributeId)?.values ?? []" :key="item.id">
                         {{ item.value }}
                     </el-tag>
                 </div>
             </template>
-            <template #isCustom="{ row, index }">
-                <el-switch :model-value="row.isCustom" @update:model-value="(val) => toggleCustom(index, !!val)" />
+            <template #isCustom="{ row }">
+                <el-switch v-model="row.isCustom" />
+            </template>
+            <template #isImage="{ row }">
+                <el-switch v-model="row.isImage" />
             </template>
             <template #action="{ index }">
                 <el-button type="danger" size="small" plain @click="removeSale(index)">删除</el-button>
@@ -41,7 +44,6 @@ import { ElMessage } from 'element-plus'
 import { createCategorySaleUpdate } from '@/services/api/product'
 import type { TableColumn } from '@pc/components/ui/column-setting'
 import { useAttributeStore } from '@/stores/attribute'
-import type { SaleRow } from './types'
 import AppDialog from '@pc/components/ui/dialog/index.vue'
 import AppTable from '@pc/components/ui/table/index.vue'
 
@@ -56,22 +58,18 @@ const selectedAttributeId = shallowRef<number>()
 
 const formData = reactive(props.record.sales.map((sale) => ({ ...sale })))
 
-const tableColumns: TableColumn<SaleRow>[] = [
+const tableColumns: TableColumn<Product.CategorySale>[] = [
     { field: 'id', label: 'ID' },
     { field: 'attributeName', label: '属性' },
     { field: 'attributeValue', label: '规格', width: 300 },
     { field: 'isCustom', label: '自定义' },
+    { field: 'isImage', label: '图片上传' },
     { field: 'action', label: '操作', fixed: 'right' }
 ]
 
 const { loading, rawFetch: updateSales } = createCategorySaleUpdate({
     manual: true
 })
-
-const saleRows = computed<SaleRow[]>(() => formData.map((sale) => ({
-    ...sale,
-    attribute: attributeStore.getAttributeById(sale.attributeId)
-})))
 
 const attrGroups = computed(() => {
     const usedIds = new Set(formData.map((sale) => sale.attributeId))
@@ -88,7 +86,8 @@ const addSale = () => {
         formData.push({
             id: 0,
             attributeId: selectedAttributeId.value,
-            isCustom: false
+            isCustom: false,
+            isImage: false
         })
         selectedAttributeId.value = undefined
     }
@@ -96,10 +95,6 @@ const addSale = () => {
 
 const removeSale = (index: number) => {
     formData.splice(index, 1)
-}
-
-const toggleCustom = (index: number, val: boolean) => {
-    formData[index]!.isCustom = val
 }
 
 const onSubmit = async () => {
