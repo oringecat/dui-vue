@@ -1,10 +1,10 @@
 <template>
-    <span class="dui-icon" :style="styles">
+    <div class="dui-icon" :style="styles">
         <el-icon :size v-if="isComponent">
             <component :is="icon"></component>
         </el-icon>
         <i class="g-icon" :class="icon" v-else></i>
-    </span>
+    </div>
 </template>
 
 <script lang="ts" setup>

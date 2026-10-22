@@ -5,7 +5,7 @@
                 <el-button type="primary" @click="uploadRef?.click()">上传</el-button>
             </slot>
             <ul>
-                <li v-for="(item, index) in uploadItems" :key="item.url">
+                <li v-for="(item, index) in uploadItems" :key="index">
                     <span>{{ item.name || item.url }}</span>
                     <el-button type="primary" size="small" @click="handleDelete(index)" link>删除</el-button>
                     <el-button type="primary" size="small" link>下载</el-button>
@@ -13,7 +13,7 @@
             </ul>
         </div>
         <ul class="dui-upload-list" :class="{ [`dui-upload-list--${size}`]: !!size }" v-else>
-            <li class="dui-upload-list__item" v-for="(item, index) in uploadItems" :key="item.url">
+            <li class="dui-upload-list__item" v-for="(item, index) in uploadItems" :key="index">
                 <el-popover placement="top" width="auto" :popper-style="{ minWidth: 0 }"
                     :disabled="uploading.has(item.url)">
                     <template #reference>
@@ -101,12 +101,17 @@ const handleUpload = async (event: Event) => {
     const files = Array.from(input.files ?? []).slice(0, maxCount.value)
     input.value = ''
 
-    const localItems: Common.UploadFile[] = files.map((file) => ({
-        name: file.name,
-        url: URL.createObjectURL(file),
-        width: 0,
-        height: 0
-    }))
+    const localItems: Common.UploadFile[] = files.map((file) => {
+        const url = URL.createObjectURL(file)
+        uploading.add(url)
+
+        return {
+            name: file.name,
+            url,
+            width: 0,
+            height: 0
+        }
+    })
 
     uploadItems.value = [...uploadItems.value, ...localItems]
 
@@ -118,10 +123,9 @@ const handleUpload = async (event: Event) => {
             const local = localItems[i]
             if (!local) return
 
-            uploading.add(local.url)
-
             try {
                 let target = file
+
                 // 上传前压缩图片
                 if (ImageTypes.includes(file.type)) {
                     target = await imageCompression(file, {
@@ -131,6 +135,7 @@ const handleUpload = async (event: Event) => {
                         useWebWorker: false
                     })
                 }
+
                 const res = await uploadFile(target)
                 uploaded.set(local.url, res.data || { ...local, url: '失败占位图' })
             } catch {

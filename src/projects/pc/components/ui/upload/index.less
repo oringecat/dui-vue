@@ -32,6 +32,16 @@
             object-fit: cover;
             cursor: pointer;
         }
+
+        .el-loading {
+            &-mask {
+                --el-mask-color: rgba(0, 0, 0, .5);
+            }
+
+            &-spinner .path {
+                stroke: #fff;
+            }
+        }
     }
 
     &-input {

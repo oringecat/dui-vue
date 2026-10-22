@@ -6,14 +6,13 @@ export default [
         url: serviceConfig.apiUrl + '/file/upload',
         method: 'post',
         rawResponse: (req, res) => {
-            const name = `image-${Date.now()}.png`
+            const stamp = `${Date.now()}${randomInt(1000, 9999)}`
             mockResponse(res, {
                 code: 200,
                 message: 'ok',
                 data: {
-                    name,
-                    // 模拟支持尺寸后缀的图片服务：组件会在末尾追加 /32、/800
-                    url: `https://picsum.photos/id/${randomInt(1, 200)}`,
+                    name: `image-${stamp}.jpg`,
+                    url: `https://picsum.photos/seed/${stamp}`,
                     width: randomInt(600, 1200),
                     height: randomInt(600, 1200)
                 },
