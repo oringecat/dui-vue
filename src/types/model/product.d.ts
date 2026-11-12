@@ -88,9 +88,9 @@ declare global {
             image: Common.UploadFile;
         }
 
-        /** 分类列表 */
+        /** 商品分类列表 */
         interface CategoryListRequest {
-            categoryId?: number;
+            id?: number;
             code?: string;
             categoryName?: string;
             status?: number;
@@ -121,6 +121,7 @@ declare global {
             attributeId: number;
             isCustom: boolean; // 是否允许自定义规格
             isImage: boolean; // 是否支持上传图片
+            sort: number;
         }
     }
 }

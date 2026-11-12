@@ -1,4 +1,4 @@
-import { shallowRef } from 'vue'
+import { shallowRef, computed } from 'vue'
 import axios from 'axios'
 import type { AxiosRequestConfig } from 'axios'
 import type { RequestConfig, RequestShape, BaseResponse } from './types'
@@ -37,12 +37,7 @@ export default new (class {
             this.axiosInstance.request<T>(config).then((res) => {
                 // 延迟返回结果，防止动画过程中实时渲染，导致动画卡顿
                 transitionStore.addTask(() => resolve(res.data))
-            }).catch((err) => {
-                if (axios.isCancel(err)) {
-                    console.warn('请求中断')
-                }
-                reject(err)
-            })
+            }).catch(reject)
         })
     }
 
@@ -61,12 +56,19 @@ export default new (class {
         const { method = 'GET', url, options = {}, defaultData } = config
 
         const loading = shallowRef(false)
-        const failed = shallowRef(false) // 失败状态
+        const failedCount = shallowRef(0) // 失败计数
+
+        // 失败状态
+        const failed = computed({
+            get: () => !loading.value && failedCount.value > 0,
+            set: (status) => failedCount.value = Number(status)
+        })
+
         const pendingRequests = new Map<string, { promise: Promise<T['res']>; controller: AbortController; }>()
 
         // 原始请求方法
-        const rawFetch = (data: Partial<T['req']> = {}) => {
-            const mergedData = { ...defaultData?.(), ...options.data, ...data }
+        const rawFetch = async (data: Partial<T['req']> = {}) => {
+            const mergedData = Array.isArray(data) ? data : { ...defaultData?.(), ...options.data, ...data }
             const requestKey = JSON.stringify(mergedData)
 
             // 复用同一个请求
@@ -76,7 +78,9 @@ export default new (class {
             }
 
             loading.value = true
-            failed.value = false
+            if (pendingRequests.size === 0) {
+                failedCount.value = 0
+            }
 
             const controller = new AbortController()
 
@@ -98,25 +102,32 @@ export default new (class {
                     if (this.isBaseResponse(res)) {
                         switch (res.code) {
                             case ResultCode.Unauthorized:
-                                failed.value = true
+                                failedCount.value++
                                 reject('令牌无效')
                                 break
                             case ResultCode.Success:
                                 resolve(res)
                                 break
                             default:
-                                failed.value = true
+                                failedCount.value++
                                 reject(res.message ?? '请求失败，请稍后再试')
                         }
                     } else {
                         resolve(res)
                     }
                 }).catch((err) => {
-                    failed.value = true
+                    // 中断不抛错
+                    if (!axios.isCancel(err)) {
+                        failedCount.value++
+                    }
                     reject(err)
                 }).finally(() => {
-                    loading.value = false
-                    pendingRequests.delete(requestKey)
+                    const current = pendingRequests.get(requestKey)
+                    // 防误删相同请求
+                    if (current?.controller === controller) {
+                        pendingRequests.delete(requestKey)
+                    }
+                    loading.value = pendingRequests.size > 0
                 })
             })
 
@@ -124,16 +135,31 @@ export default new (class {
             return promise
         }
 
+        let requestId = 0
+        let failedStatus = 0 // 防止旧请求慢于新请求返回失败覆盖新请求状态
+
         // 请求并自动处理回调
-        const fetch = async (data: Partial<T['req']> = {}) => {
-            try {
-                const res = await rawFetch(data)
-                options.onSuccess?.(res)
-            } catch (err) {
-                options.onError?.(String(err))
-            } finally {
-                options.onFinally?.()
-            }
+        const fetch = (data: Partial<T['req']> = {}) => {
+            const currentId = ++requestId
+            failedStatus = 0
+
+            abort() // 取消之前的所有请求
+
+            rawFetch(data).then((res) => {
+                if (currentId === requestId) {
+                    options.onSuccess?.(res)
+                }
+            }).catch((err) => {
+                if (currentId === requestId && !axios.isCancel(err)) {
+                    failedStatus = 1
+                    options.onError?.(String(err))
+                }
+                failedCount.value = failedStatus
+            }).finally(() => {
+                if (currentId === requestId) {
+                    options.onFinally?.()
+                }
+            })
         }
 
         // 取消所有请求
@@ -142,13 +168,16 @@ export default new (class {
             pendingRequests.clear()
         }
 
-        // 默认立即请求
-        if (!options.manual) {
+        const hasCallback = Boolean(options.onSuccess || options.onError || options.onFinally)
+
+        // 是否自动请求
+        if (!(options.manual ?? !hasCallback)) {
             fetch()
         }
 
         return {
             loading,
+            failedCount,
             failed,
             rawFetch,
             fetch,

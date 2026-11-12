@@ -1,6 +1,6 @@
 <template>
     <app-dialog class="product-category-sale" :show="show">
-        <app-table :data="formData" :columns="tableColumns">
+        <app-table :data="formData" :columns="tableColumns" :show-tools="false">
             <template #toolbar>
                 <div class="g-flex">
                     <el-select v-model="selectedAttributeId" filterable clearable placeholder="请选择" block>
@@ -17,7 +17,8 @@
             </template>
             <template #attributeValue="{ row }">
                 <div class="g-flex">
-                    <el-tag v-for="item in attributeStore.getAttributeById(row.attributeId)?.values ?? []" :key="item.id">
+                    <el-tag v-for="item in attributeStore.getAttributeById(row.attributeId)?.values ?? []"
+                        :key="item.id">
                         {{ item.value }}
                     </el-tag>
                 </div>
@@ -67,9 +68,7 @@ const tableColumns: TableColumn<Product.CategorySale>[] = [
     { field: 'action', label: '操作', fixed: 'right' }
 ]
 
-const { loading, rawFetch: updateSales } = createCategorySaleUpdate({
-    manual: true
-})
+const { loading, rawFetch: updateSales } = createCategorySaleUpdate()
 
 const attrGroups = computed(() => {
     const usedIds = new Set(formData.map((sale) => sale.attributeId))
@@ -87,7 +86,8 @@ const addSale = () => {
             id: 0,
             attributeId: selectedAttributeId.value,
             isCustom: false,
-            isImage: false
+            isImage: false,
+            sort: 0
         })
         selectedAttributeId.value = undefined
     }

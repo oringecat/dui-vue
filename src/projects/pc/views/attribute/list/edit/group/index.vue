@@ -1,6 +1,7 @@
 <template>
-    <app-dialog class="attribute-edit-group" :show="show">
-        <app-table :data="attributeStore.groups" :columns="tableColumns" v-loading="attributeStore.loading">
+    <app-dialog class="attribute-edit-group" :width="600" :show="show">
+        <app-table :data="attributeStore.groups" :columns="tableColumns" :show-tools="false"
+            v-loading="attributeStore.loading">
             <template #name="{ row }">
                 <el-input v-model="row.name" placeholder="请输入" />
             </template>
@@ -27,7 +28,6 @@ const attributeStore = useAttributeStore()
 const show = ref(true)
 
 const tableColumns: TableColumn<Attribute.AttributeGroup>[] = [
-    { field: 'id', label: 'ID' },
     { field: 'name', label: '名称' },
     { field: 'code', label: '代码' },
     { field: 'action', label: '操作', fixed: 'right' }

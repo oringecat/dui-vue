@@ -32,7 +32,7 @@ export default [
         url: serviceConfig.apiUrl + '/product/category',
         method: 'get',
         rawResponse: (req, res) => {
-            const { categoryId } = parse(req.url!, true).query
+            const { id } = parse(req.url!, true).query
             const categories = [
                 { id: 1000, parentId: 0, code: 'digital', categoryName: '数码', status: 1, icon: '', sort: 1, attrs: [], sales: [] },
                 { id: 1100, parentId: 1000, code: 'phone', categoryName: '手机通讯', status: 1, icon: '', sort: 1, attrs: [], sales: [] },
@@ -46,9 +46,9 @@ export default [
                         { id: 104, attributeId: 104, valueType: 2, required: false },
                     ],
                     sales: [
-                        { id: 100, attributeId: 100, isCustom: true, isImage: true },
-                        { id: 101, attributeId: 101, isCustom: false, isImage: false },
-                        { id: 102, attributeId: 102, isCustom: false, isImage: false },
+                        { id: 100, attributeId: 100, isCustom: true, isImage: true, sort: 1 },
+                        { id: 101, attributeId: 101, isCustom: false, isImage: false, sort: 2 },
+                        { id: 102, attributeId: 102, isCustom: false, isImage: false, sort: 3 },
                     ],
                 },
                 { id: 1200, parentId: 1000, code: 'computer', categoryName: '电脑办公', status: 1, icon: '', sort: 2, attrs: [], sales: [] },
@@ -66,14 +66,14 @@ export default [
                         { id: 202, attributeId: 202, valueType: 3, required: true },
                     ],
                     sales: [
-                        { id: 200, attributeId: 200, isCustom: true, isImage: false },
-                        { id: 201, attributeId: 201, isCustom: false, isImage: false },
+                        { id: 200, attributeId: 200, isCustom: true, isImage: false, sort: 1 },
+                        { id: 201, attributeId: 201, isCustom: false, isImage: false, sort: 2 },
                     ],
                 },
                 { id: 3200, parentId: 3000, code: 'fruit', categoryName: '生鲜水果', status: 1, icon: '', sort: 2, attrs: [], sales: [] }
             ]
 
-            const data = categoryId ? categories.filter((item) => item.id === Number(categoryId)) : categories
+            const data = id ? categories.filter((item) => item.id === Number(id)) : categories
 
             mockResponse(res, {
                 code: 200,

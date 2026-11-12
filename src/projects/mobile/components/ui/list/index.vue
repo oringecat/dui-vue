@@ -23,7 +23,10 @@ const props = defineProps({
     }
 })
 
-const emit = defineEmits(['update:error', 'load'])
+const emit = defineEmits<{
+    'update:error': [status: boolean]
+    load: []
+}>()
 
 const errorState = computed({
     get: () => props.error,

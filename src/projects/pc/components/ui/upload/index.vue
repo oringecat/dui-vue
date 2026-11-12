@@ -129,10 +129,10 @@ const handleUpload = async (event: Event) => {
                 // 上传前压缩图片
                 if (ImageTypes.includes(file.type)) {
                     target = await imageCompression(file, {
-                        maxSizeMB: 2,
+                        maxSizeMB: 1,
                         maxWidthOrHeight: 1920,
                         initialQuality: 0.9,
-                        useWebWorker: false
+                        useWebWorker: true
                     })
                 }
 

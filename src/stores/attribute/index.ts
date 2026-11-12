@@ -19,8 +19,8 @@ export const useAttributeStore = defineStore('attribute', () => {
         return attributeMap.value.get(id)
     }
 
-    const { rawFetch: getAttributes } = createAttributeList({ manual: true })
-    const { rawFetch: getAttributeGroups } = createAttributeGroupList({ manual: true })
+    const { rawFetch: getAttributes } = createAttributeList()
+    const { rawFetch: getAttributeGroups } = createAttributeGroupList()
 
     const loadData = async () => {
         try {

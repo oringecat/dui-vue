@@ -29,9 +29,9 @@ export const useUserStore = defineStore('user', () => {
     const token = computed(() => state.userInfo.token)
     const isAdmin = computed(() => state.userInfo.roleId === -1) // 是否超级管理员
 
-    const tokenRequest = createCheckToken({ manual: true })
-    const loginRequest = createLogin({ manual: true })
-    const logoutRequest = createLogout({ manual: true })
+    const tokenRequest = createCheckToken()
+    const loginRequest = createLogin()
+    const logoutRequest = createLogout()
 
     // 加载初始数据
     const loadBaseData = async () => {

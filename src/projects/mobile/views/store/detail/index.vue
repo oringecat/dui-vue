@@ -64,9 +64,7 @@ const spuItem = computed(() => spus.value[spuIndex.value])
 
 const loading = computed(() => detailLoading.value || spuLoading.value)
 
-const { rawFetch: getCategoryList } = createCategoryList({
-    manual: true
-})
+const { rawFetch: getCategoryList } = createCategoryList()
 
 const { loading: detailLoading } = createProductDetail({
     data: {
@@ -77,7 +75,7 @@ const { loading: detailLoading } = createProductDetail({
 
         if (attrMap.size) {
             Promise.all([
-                getCategoryList({ categoryId: res.data.categoryId }),
+                getCategoryList({ id: res.data.categoryId }),
                 attributeStore.readyPromise
             ]).then(([categoryRes]) => {
                 const attrs = categoryRes.data[0]?.attrs ?? []

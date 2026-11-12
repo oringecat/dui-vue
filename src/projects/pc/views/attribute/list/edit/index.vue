@@ -1,7 +1,7 @@
 <template>
     <app-dialog class="attribute-edit" title="编辑" :show="show">
         <el-form class="el-form--vertical" :model="formData" label-width="auto">
-            <el-form-item label="属性分组">
+            <el-form-item label="所在分组">
                 <el-select ref="selectRef" v-model="formData.groupId" filterable clearable placeholder="请选择">
                     <template #header>
                         <el-button text bg size="small" @click="openView">管理</el-button>
@@ -18,8 +18,7 @@
             </el-form-item>
             <el-form-item label="属性枚举">
                 <div class="g-table">
-                    <el-button type="primary" size="small">新增</el-button>
-                    <table cellspacing="0" cellpadding="0" v-if="formData.values.length">
+                    <table cellspacing="0" cellpadding="0">
                         <thead>
                             <tr>
                                 <th>名称</th>
@@ -27,6 +26,14 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <tr>
+                                <td>
+                                    <el-input />
+                                </td>
+                                <td>
+                                    <el-button size="small">添加</el-button>
+                                </td>
+                            </tr>
                             <tr v-for="(item, index) in formData.values" :key="index">
                                 <td>
                                     <el-input v-model="item.value" />

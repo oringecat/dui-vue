@@ -7,7 +7,7 @@
             <el-form-item label="编码">
                 <el-input v-model="formData.code" placeholder="请输入" />
             </el-form-item>
-            <el-form-item label="是否定制">
+            <el-form-item label="接受定制">
                 <el-switch v-model="formData.isCustom" />
             </el-form-item>
             <el-form-item label="销售属性" v-if="saleTemplates.length">
@@ -146,9 +146,7 @@ const handleCreated = (editor: unknown) => {
     editorRef.value = editor
 }
 
-const { loading, rawFetch: getCategoryList } = createCategoryList({
-    manual: true
-})
+const { loading, rawFetch: getCategoryList } = createCategoryList()
 
 // 已勾选的销售属性
 const checkedSales = computed(() => saleTemplates.value.filter(({ specs }) => specs.length))
@@ -270,7 +268,7 @@ onMounted(() => {
     const categoryId = props.categoryId
 
     Promise.all([
-        getCategoryList({ categoryId }),
+        getCategoryList({ id: categoryId }),
         attributeStore.readyPromise
     ]).then(([categoryRes]) => {
         const sales = categoryRes.data[0]?.sales ?? []

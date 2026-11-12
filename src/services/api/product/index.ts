@@ -25,7 +25,7 @@ export function createProductDetail(options?: ApiOptions<{ req: Product.ProductD
 /**
  * 新增/更新商品
  */
-export function createProductUpdate(options: ApiOptions<{ req: Product.ProductDetail; }>) {
+export function createProductUpdate(options?: ApiOptions<{ req: Product.ProductDetail; }>) {
   return http.createRequest({
     method: 'POST',
     url: '/product/update',
@@ -36,7 +36,7 @@ export function createProductUpdate(options: ApiOptions<{ req: Product.ProductDe
 /**
  * 获取标准商品化单元列表
  */
-export function createProductSpuList(options: ApiOptions<{ req: Product.ProductSpuListRequest; res: Product.ProductSpuItem[]; }>) {
+export function createProductSpuList(options?: ApiOptions<{ req: Product.ProductSpuListRequest; res: Product.ProductSpuItem[]; }>) {
   return http.createRequest({
     method: 'GET',
     url: '/product/spu/list',
@@ -69,7 +69,7 @@ export function createCategoryList(options?: ApiOptions<{ req: Product.CategoryL
 /**
  * 更新分类销售属性
  */
-export function createCategorySaleUpdate(options: ApiOptions<{ req: Product.CategorySale[]; }>) {
+export function createCategorySaleUpdate(options?: ApiOptions<{ req: Product.CategorySale[]; }>) {
   return http.createRequest({
     method: 'POST',
     url: '/product/category/sale/update',

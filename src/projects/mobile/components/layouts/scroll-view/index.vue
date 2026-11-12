@@ -9,15 +9,11 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onUnmounted, onActivated, onDeactivated, shallowRef, computed, watch, nextTick } from 'vue'
+import { onMounted, onUnmounted, onActivated, onDeactivated, shallowRef, watch, nextTick } from 'vue'
 import { useScrollParent, useEventListener } from '@vant/use'
 import { debounce } from 'lodash'
 
 const props = defineProps({
-    modelValue: {
-        type: Number,
-        default: 0
-    },
     // 滚动元素名称 (用于共用组件缓存不同滚动条位置)
     scrollName: {
         type: String,
@@ -35,19 +31,20 @@ const props = defineProps({
     }
 })
 
-const emit = defineEmits(['update:modelValue', 'scroll', 'scrollToupper', 'scrollTolower'])
+const emit = defineEmits<{
+    scroll: [el: HTMLDivElement]
+    scrollToupper: []
+    scrollTolower: []
+}>()
+
+const scrollTop = defineModel<number>({ default: 0 })
 
 const scrollRef = shallowRef<HTMLDivElement>()
 const topRef = shallowRef<HTMLDivElement>()
 const bottomRef = shallowRef<HTMLDivElement>()
 
 const scrollParent = useScrollParent(scrollRef)
-const scrollMap = new Map<string, number>([[props.scrollName, props.modelValue]])
-
-const scrollTop = computed({
-    get: () => props.modelValue,
-    set: (val) => emit('update:modelValue', val)
-})
+const scrollMap = new Map<string, number>([[props.scrollName, scrollTop.value]])
 
 const setScrollTop = () => {
     const el = scrollRef.value

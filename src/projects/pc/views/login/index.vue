@@ -1,5 +1,5 @@
 <template>
-    <div class="login">
+    <div class="login" v-loading="loading" element-loading-background="transparent">
         <div class="login__wrapper">
             <div class="login__header">
                 <div class="login__header-title">管理后台</div>
@@ -15,8 +15,7 @@
                         <el-input class="is-block" type="password" v-model="formData.password" placeholder="请输入密码" />
                     </el-form-item>
                     <el-form-item>
-                        <el-button class="is-block" type="primary" color="#354d67" @click="onSubmit"
-                            :loading="loading">登录</el-button>
+                        <el-button class="is-block" type="primary" color="#354d67" @click="onSubmit">登录</el-button>
                     </el-form-item>
                 </el-form>
             </div>

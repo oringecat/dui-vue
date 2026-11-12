@@ -15,7 +15,9 @@ defineProps<{
     flex?: boolean
 }>()
 
-const emit = defineEmits(['ready'])
+const emit = defineEmits<{
+    ready: [el?: HTMLDivElement]
+}>()
 
 const viewRef = shallowRef<HTMLDivElement>()
 

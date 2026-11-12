@@ -8,16 +8,18 @@
 import { ref, onMounted, nextTick } from 'vue'
 import plus from '@/utils/plus'
 
-const emit = defineEmits(['ready'])
+const emit = defineEmits<{
+  ready: [el: HTMLElement]
+}>()
 
 const statusbarRef = ref<HTMLElement>()
 
 onMounted(() => {
-    const el = statusbarRef.value
-    if (el) {
-        const statusBarHeight = plus.getSystemInfo('statusBarHeight')
-        el.style.setProperty('padding-top', statusBarHeight + 'px')
-        nextTick(() => emit('ready', el))
-    }
+  const el = statusbarRef.value
+  if (el) {
+    const statusBarHeight = plus.getSystemInfo('statusBarHeight')
+    el.style.setProperty('padding-top', statusBarHeight + 'px')
+    nextTick(() => emit('ready', el))
+  }
 })
 </script>

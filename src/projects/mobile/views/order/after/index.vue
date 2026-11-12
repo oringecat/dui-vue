@@ -17,7 +17,9 @@ defineProps<{
     show: boolean;
 }>()
 
-const emit = defineEmits(['closed'])
+const emit = defineEmits<{
+    closed: [status: boolean]
+}>()
 
 const visible = shallowRef(true)
 const isRefresh = shallowRef(false)

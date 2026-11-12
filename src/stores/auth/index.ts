@@ -9,7 +9,7 @@ import { useUserStore } from '@/stores/user'
 export const useAuthStore = defineStore('auth', () => {
     const userStore = useUserStore()
 
-    const { loading, rawFetch } = createUserAuths({ manual: true })
+    const { rawFetch } = createUserAuths()
 
     // 用户权限
     const userAuths = shallowRef<AuthRoute[]>([])
@@ -91,7 +91,6 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     return {
-        loading,
         userAuths,
         userRoutes,
         userMenus,

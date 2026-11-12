@@ -56,9 +56,7 @@ const productAttrs = computed(() => props.modelValue.reduce<Record<number, strin
     return map
 }, {}))
 
-const { loading, rawFetch: getCategoryList } = createCategoryList({
-    manual: true
-})
+const { loading, rawFetch: getCategoryList } = createCategoryList()
 
 const toArray = (value?: string) => {
     return value ? value.split(',') : []
@@ -84,7 +82,7 @@ watch(() => props.categoryId, (id) => {
     categoryAttrs.value = []
 
     Promise.all([
-        getCategoryList({ categoryId: id }),
+        getCategoryList({ id }),
         attributeStore.readyPromise
     ]).then(([categoryRes]) => {
         const attrs = categoryRes.data[0]?.attrs ?? []

@@ -14,8 +14,7 @@
                         <el-input-tag v-model="keywords" placeholder="请输入后按回车键" />
                     </el-form-item>
                     <el-form-item label="品牌">
-                        <el-select v-model="formData.brandId" placeholder="请选择">
-                        </el-select>
+                        <app-brand-select ref="brandRef" v-model="formData.brandId" />
                     </el-form-item>
                     <el-form-item label="商品属性" v-if="formData.categoryId">
                         <app-attribute v-model="formData.attrs" :category-id="formData.categoryId" />
@@ -68,7 +67,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, shallowRef, computed, onMounted, nextTick, onBeforeUnmount, defineAsyncComponent, type Component } from 'vue'
+import { ref, computed, onMounted, nextTick, onBeforeUnmount, defineAsyncComponent, type Component } from 'vue'
 import { ElMessage, ElMessageBox, type TreeInstance } from 'element-plus'
 import type Node from 'element-plus/es/components/tree/src/model/node'
 import { buildTree } from '@/helpers/filters'
@@ -77,6 +76,7 @@ import { createCategoryList, createProductDetail, createProductUpdate, createPro
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 import '@wangeditor/editor/dist/css/style.css'
 import AppDialog from '@pc/components/ui/dialog/index.vue'
+import AppBrandSelect from '@pc/components/business/brand-select/index.vue'
 import AppAttribute from './attribute/index.vue'
 
 const props = defineProps<{
@@ -89,12 +89,13 @@ const components: Record<string, Component> = {
 
 const { showComponent, componentId, componentProps, openComponent, closeComponent } = useComponent()
 
-const show = shallowRef(true)
-const treeRef = shallowRef<TreeInstance>()
-const categoryList = shallowRef<Product.CategoryItem[]>([])
+const show = ref(true)
+const categoryList = ref<Product.CategoryItem[]>([])
 const spuList = ref<Product.ProductSpuItem[]>([])
 
-const editorRef = shallowRef()
+const treeRef = ref<TreeInstance>()
+const brandRef = ref()
+const editorRef = ref()
 
 const handleCreated = (editor: unknown) => {
     editorRef.value = editor
@@ -128,17 +129,11 @@ const { loading: categoryLoading } = createCategoryList({
     }
 })
 
-const { loading: detailLoading, rawFetch: getProductDetail, failed } = createProductDetail({
-    manual: true
-})
+const { loading: detailLoading, rawFetch: getProductDetail, failed } = createProductDetail()
 
-const { loading: spuLoading, rawFetch: getProductSpuList } = createProductSpuList({
-    manual: true
-})
+const { loading: spuLoading, rawFetch: getProductSpuList } = createProductSpuList()
 
-const { loading: submitLoading, rawFetch: updateProduct } = createProductUpdate({
-    manual: true
-})
+const { loading: submitLoading, rawFetch: updateProduct } = createProductUpdate()
 
 // 编辑模式禁止修改分类
 const onCategoryClick = (item: Product.CategoryItem, node: Node) => {
@@ -173,6 +168,7 @@ onMounted(() => {
         ]).then(([detailRes, spuRes]) => {
             formData.value = detailRes.data
             spuList.value = spuRes.data
+            brandRef.value.onReset(detailRes.data.brandId)
         }).catch((err) => {
             ElMessage.error(err)
         })
