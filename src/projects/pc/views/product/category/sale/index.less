@@ -1,17 +1,35 @@
 .product-category-sale {
-    &__spec {
-        li {
-            display: flex;
-            align-items: center;
+    &__container {
+        display: flex;
+    }
 
-            &:not(:first-child) {
-                margin-top: 8px;
-            }
+    &__aside {
+        padding: var(--block-space-md);
 
-            .el-input {
-                width: 160px;
-                margin-right: 12px;
-            }
+        &-panel {
+            max-height: 500px;
+            border: 1px solid var(--el-border-color-lighter);
+            padding: var(--block-space-sm);
         }
+
+        .el-input {
+            width: 200px;
+            margin-bottom: var(--block-space-sm);
+        }
+    }
+
+    &__actions {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+
+        .el-button+.el-button {
+            margin-left: 0;
+            margin-top: var(--block-space-sm);
+        }
+    }
+
+    &__main {
+        flex: 1;
     }
 }

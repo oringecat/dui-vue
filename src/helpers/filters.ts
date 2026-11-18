@@ -18,7 +18,7 @@ export function buildTree<T>(data: T[], idKey: keyof T, parentIdKey: keyof T, fi
         if (parentId !== id) {
             const currentNode = map.get(id)
             const parentNode = map.get(parentId)
-            if (currentNode && parentNode) {
+            if (currentNode && parentNode && !filter(currentNode)) {
                 parentNode.children.push(currentNode)
             }
         }

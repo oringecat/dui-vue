@@ -1,52 +1,68 @@
 <template>
-    <app-dialog class="product-category-sale" :show="show">
-        <app-table :data="formData" :columns="tableColumns" :show-tools="false">
-            <template #toolbar>
-                <div class="g-flex">
-                    <el-select v-model="selectedAttributeId" filterable clearable placeholder="请选择" block>
-                        <el-option-group v-for="group in attrGroups" :key="group.name" :label="group.name">
-                            <el-option v-for="option in group.items" :key="option.id" :value="option.id"
-                                :label="option.name" />
-                        </el-option-group>
-                    </el-select>
-                    <el-button type="primary" :disabled="!selectedAttributeId" @click="addSale">添加</el-button>
-                </div>
-            </template>
-            <template #attributeName="{ row }">
-                {{ attributeStore.getAttributeById(row.attributeId)?.name ?? row.attributeId }}
-            </template>
-            <template #attributeValue="{ row }">
-                <div class="g-flex">
-                    <el-tag v-for="item in attributeStore.getAttributeById(row.attributeId)?.values ?? []"
-                        :key="item.id">
-                        {{ item.value }}
-                    </el-tag>
-                </div>
-            </template>
-            <template #isCustom="{ row }">
-                <el-switch v-model="row.isCustom" />
-            </template>
-            <template #isImage="{ row }">
-                <el-switch v-model="row.isImage" />
-            </template>
-            <template #action="{ index }">
-                <el-button type="danger" size="small" plain @click="removeSale(index)">删除</el-button>
-            </template>
-        </app-table>
+    <app-dialog class="product-category-sale" title="销售属性" :show="show" :loading="loading">
+        <div class="product-category-sale__container">
+            <div class="product-category-sale__aside">
+                <pc-view class="product-category-sale__aside-panel">
+                    <template #header>
+                        <el-input v-model="filterText" placeholder="关键字" @input="onFilter">
+                            <template #prefix>
+                                <app-icon icon="Search" />
+                            </template>
+                        </el-input>
+                    </template>
+                    <el-scrollbar>
+                        <el-tree ref="treeRef" :data="treeData" node-key="key" empty-text="暂无属性模板"
+                            :default-checked-keys="checkedKeys" :filter-node-method="filterNode" default-expand-all
+                            show-checkbox />
+                    </el-scrollbar>
+                </pc-view>
+            </div>
+            <div class="product-category-sale__actions">
+                <el-button icon="ArrowRight" :disabled="treeData.length < 1" @click="moveRight"></el-button>
+                <el-button icon="ArrowLeft" :disabled="formData.length < 1" @click="moveLeft"></el-button>
+            </div>
+            <div class="product-category-sale__main">
+                <app-table :data="formData" :columns="tableColumns" :show-tools="false" height="auto"
+                    selection-type="multiple" @selection-change="onSelectionChange">
+                    <template #attributeName="{ row }">
+                        {{ attributeStore.getAttributeById(row.attributeId)?.name ?? row.attributeId }}
+                    </template>
+                    <template #attributeValue="{ row }">
+                        <div class="g-flex">
+                            <el-tag v-for="item in attributeStore.getAttributeById(row.attributeId)?.values ?? []"
+                                :key="item.id" disable-transitions>
+                                {{ item.value }}
+                            </el-tag>
+                        </div>
+                    </template>
+                    <template #isCustom="{ row }">
+                        <el-switch size="small" v-model="row.isCustom" />
+                    </template>
+                    <template #isImage="{ row }">
+                        <el-switch size="small" v-model="row.isImage" />
+                    </template>
+                    <template #action="{ index }">
+                        <el-button type="primary" icon="Top" link v-if="index > 0"></el-button>
+                        <el-button type="primary" icon="Bottom" link v-if="index < formData.length - 1"></el-button>
+                    </template>
+                </app-table>
+            </div>
+        </div>
         <template #footer>
-            <el-button type="primary" :loading="loading" @click="onSubmit">保存</el-button>
+            <el-button type="primary" @click="onSubmit">保存</el-button>
         </template>
     </app-dialog>
 </template>
 
 <script lang="ts" setup>
 import { shallowRef, computed, reactive } from 'vue'
-import { ElMessage } from 'element-plus'
+import { ElMessage, type FilterNodeMethodFunction, type TreeInstance } from 'element-plus'
 import { createCategorySaleUpdate } from '@/services/api/product'
 import type { TableColumn } from '@pc/components/ui/column-setting'
 import { useAttributeStore } from '@/stores/attribute'
 import AppDialog from '@pc/components/ui/dialog/index.vue'
 import AppTable from '@pc/components/ui/table/index.vue'
+import AppIcon from '@pc/components/ui/icon/index.vue'
 
 const props = defineProps<{
     record: Product.CategoryItem
@@ -55,49 +71,86 @@ const props = defineProps<{
 const attributeStore = useAttributeStore()
 
 const show = shallowRef(true)
-const selectedAttributeId = shallowRef<number>()
+const treeRef = shallowRef<TreeInstance>()
+const filterText = shallowRef('')
+const selectedRows = shallowRef<Product.CategorySale[]>([])
 
 const formData = reactive(props.record.sales.map((sale) => ({ ...sale })))
 
-const tableColumns: TableColumn<Product.CategorySale>[] = [
-    { field: 'id', label: 'ID' },
-    { field: 'attributeName', label: '属性' },
-    { field: 'attributeValue', label: '规格', width: 300 },
-    { field: 'isCustom', label: '自定义' },
-    { field: 'isImage', label: '图片上传' },
-    { field: 'action', label: '操作', fixed: 'right' }
-]
-
 const { loading, rawFetch: updateSales } = createCategorySaleUpdate()
 
-const attrGroups = computed(() => {
+const tableColumns: TableColumn<Product.CategorySale>[] = [
+    { field: 'attributeName', label: '属性', width: 100 },
+    { field: 'attributeValue', label: '规格', width: 240 },
+    { field: 'isCustom', label: '自定义' },
+    { field: 'isImage', label: '图片上传', width: 100 },
+    { field: 'action', label: '操作' }
+]
+
+const checkedKeys = computed(() => formData.map((sale) => `a-${sale.attributeId}`))
+
+const treeData = computed(() => {
     const usedIds = new Set(formData.map((sale) => sale.attributeId))
 
-    return attributeStore.attributeGroups.map(({ name, attrs }) => ({
-        name,
-        items: attrs.filter((item) => !usedIds.has(item.id))
-    })).filter(({ items }) => items.length > 0)
+    return attributeStore.attributeGroups.map(({ id, name, attrs }) => ({
+        key: `g-${id}`,
+        label: name,
+        disabled: attrs.length > 0 && attrs.every((item) => usedIds.has(item.id)),
+        children: attrs.map((item) => ({
+            key: `a-${item.id}`,
+            label: item.name,
+            attributeId: item.id,
+            disabled: usedIds.has(item.id)
+        }))
+    }))
 })
 
-// 添加销售属性
-const addSale = () => {
-    if (selectedAttributeId.value) {
-        formData.push({
-            id: 0,
-            attributeId: selectedAttributeId.value,
-            isCustom: false,
-            isImage: false,
-            sort: 0
-        })
-        selectedAttributeId.value = undefined
-    }
+const filterNode: FilterNodeMethodFunction = (value, data) => {
+    return !value || String(data.label).includes(value)
 }
 
-const removeSale = (index: number) => {
-    formData.splice(index, 1)
+const onFilter = (value: string) => {
+    treeRef.value?.filter(value)
+}
+
+const onSelectionChange = (rows: Product.CategorySale[]) => {
+    selectedRows.value = rows
+}
+
+// 追加数据到表格中
+const moveRight = () => {
+    const usedIds = new Set(formData.map((sale) => sale.attributeId))
+    const nodes = treeRef.value?.getCheckedNodes(true)
+
+    nodes?.forEach((node) => {
+        const attributeId = Number(node.attributeId)
+
+        if (attributeId && !usedIds.has(attributeId)) {
+            formData.push({
+                id: 0,
+                attributeId,
+                isCustom: false,
+                isImage: false,
+                sort: 0
+            })
+        }
+    })
+}
+
+// 移除表格数据
+const moveLeft = () => {
+    const ids = new Set(selectedRows.value.map((row) => row.attributeId))
+    const items = formData.filter((row) => !ids.has(row.attributeId))
+
+    formData.splice(0, formData.length, ...items)
 }
 
 const onSubmit = async () => {
+    if (formData.length > 5) {
+        ElMessage.warning('销售属性最多 5 个')
+        return
+    }
+
     try {
         await updateSales(formData)
         ElMessage.success('保存成功')

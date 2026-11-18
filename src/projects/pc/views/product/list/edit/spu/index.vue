@@ -1,6 +1,6 @@
 <template>
-    <app-dialog class="product-spu" title="规格" width="960">
-        <el-form class="el-form--vertical" :model="formData" label-width="auto" v-loading="loading">
+    <app-dialog class="product-spu" title="规格" width="960" :show="show" :loading="loading">
+        <el-form class="el-form--vertical" :model="formData" label-width="auto">
             <el-form-item label="名称">
                 <el-input v-model="formData.spuName" placeholder="请输入" />
             </el-form-item>
@@ -44,7 +44,8 @@
                                             <tr v-for="(spec, specIndex) in item.specs" :key="specIndex">
                                                 <td>
                                                     <el-tag :type="spec.valueId ? 'primary' : 'warning'"
-                                                        @close="removeSpec(item, specIndex)" closable>
+                                                        @close="removeSpec(item, specIndex)" closable
+                                                        disable-transitions>
                                                         {{ getSpecName(spec.valueId) }}
                                                     </el-tag>
                                                 </td>
@@ -106,7 +107,7 @@
             </el-form-item>
         </el-form>
         <template #footer>
-            <el-button type="primary">保存</el-button>
+            <el-button type="primary" @click="onSubmit">保存</el-button>
         </template>
     </app-dialog>
 </template>
@@ -128,6 +129,7 @@ const props = defineProps<{
 
 const attributeStore = useAttributeStore()
 
+const show = ref(true)
 const saleTemplates = ref<SaleTemplate[]>([])
 
 const formData = reactive<Product.ProductSpuItem>({
@@ -262,6 +264,10 @@ const cartesianSku = (specs: Product.ProductSpec[][]) => {
 
 const updateImage = (item?: Common.UploadFile) => {
     return item ?? { url: '', name: '', width: 0, height: 0 }
+}
+
+const onSubmit = () => {
+    show.value = false
 }
 
 onMounted(() => {

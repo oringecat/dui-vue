@@ -1,35 +1,67 @@
 <template>
-    <app-dialog class="attribute-edit-group" :width="600" :show="show">
-        <app-table :data="attributeStore.groups" :columns="tableColumns" :show-tools="false"
-            v-loading="attributeStore.loading">
-            <template #name="{ row }">
-                <el-input v-model="row.name" placeholder="请输入" />
-            </template>
-            <template #code="{ row }">
-                <el-input v-model="row.code" placeholder="请输入" />
-            </template>
-            <template #action>
-                <el-button type="primary" size="small">编辑</el-button>
-                <el-button type="danger" size="small">删除</el-button>
-            </template>
-        </app-table>
+    <app-dialog title="分组" :width="600" :show="show" @closed="emit('closed', refresh)">
+        <div class="dui-table g-table">
+            <table cellspacing="0" cellpadding="0">
+                <thead>
+                    <tr>
+                        <th>名称</th>
+                        <th>代码</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <el-input />
+                        </td>
+                        <td>
+                            <el-input />
+                        </td>
+                        <td>
+                            <el-button size="small">添加</el-button>
+                        </td>
+                    </tr>
+                    <tr v-for="(item, index) in dataList" :key="index">
+                        <td>
+                            <el-input v-model="item.name" placeholder="请输入" />
+                        </td>
+                        <td>
+                            <el-input v-model="item.code" placeholder="请输入" />
+                        </td>
+                        <td>
+                            <el-button type="danger" size="small">删除</el-button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <template #footer>
+            <el-button type="primary" @click="onSubmit">保存</el-button>
+        </template>
     </app-dialog>
 </template>
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-import type { TableColumn } from '@pc/components/ui/column-setting'
 import { useAttributeStore } from '@/stores/attribute'
 import AppDialog from '@pc/components/ui/dialog/index.vue'
-import AppTable from '@pc/components/ui/table/index.vue'
+
+const emit = defineEmits<{ closed: [boolean] }>()
 
 const attributeStore = useAttributeStore()
 
 const show = ref(true)
+const refresh = ref(false)
+const dataList = ref<Attribute.AttributeGroup[]>([])
 
-const tableColumns: TableColumn<Attribute.AttributeGroup>[] = [
-    { field: 'name', label: '名称' },
-    { field: 'code', label: '代码' },
-    { field: 'action', label: '操作', fixed: 'right' }
-]
+attributeStore.readyPromise.then(() => {
+    // 拷贝对象
+    dataList.value = attributeStore.groups.map((group) => ({ ...group }))
+})
+
+const onSubmit = () => {
+    // 比较原始数据提交表单
+    show.value = false
+    refresh.value = true
+}
 </script>

@@ -10,7 +10,7 @@
                     <el-form-item label="商品标题">
                         <el-input class="is-block" v-model="formData.title" placeholder="请输入" />
                     </el-form-item>
-                    <el-form-item label="关键字">
+                    <el-form-item label="标签">
                         <el-input-tag v-model="keywords" placeholder="请输入后按回车键" />
                     </el-form-item>
                     <el-form-item label="品牌">
@@ -59,10 +59,10 @@
             </el-splitter-panel>
         </el-splitter>
         <template #footer>
-            <el-button type="primary" :loading="submitLoading" :disabled="failed" @click="onSubmit">提交</el-button>
+            <el-button type="primary" :disabled="failed" @click="onSubmit">提交</el-button>
         </template>
-        <component :show="showComponent" :is="components[componentId]"
-            v-bind="{ categoryId: formData.categoryId, ...componentProps }" @closed="closeComponent" />
+        <component :is="components[componentId]" v-bind="{ categoryId: formData.categoryId, ...componentProps }"
+            @closed="closeComponent" />
     </app-dialog>
 </template>
 
@@ -87,7 +87,7 @@ const components: Record<string, Component> = {
     spu: defineAsyncComponent(() => import('./spu/index.vue'))
 }
 
-const { showComponent, componentId, componentProps, openComponent, closeComponent } = useComponent()
+const { componentId, componentProps, openComponent, closeComponent } = useComponent()
 
 const show = ref(true)
 const categoryList = ref<Product.CategoryItem[]>([])
@@ -114,7 +114,7 @@ const keywords = computed({
     set: (val) => formData.value.tags = val.join(',')
 })
 
-const loading = computed(() => categoryLoading.value || detailLoading.value || spuLoading.value)
+const loading = computed(() => categoryLoading.value || detailLoading.value || spuLoading.value || submitLoading.value)
 
 const { loading: categoryLoading } = createCategoryList({
     onSuccess: (res) => {

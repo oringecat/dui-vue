@@ -26,7 +26,7 @@ const props = withDefaults(defineProps<{
     loading?: boolean
 }>(), {
     optionProps: () => ({}),
-    placeholder: '请选择'
+    placeholder: '请输入关键字'
 })
 
 const emit = defineEmits<{
