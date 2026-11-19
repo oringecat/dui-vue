@@ -39,11 +39,11 @@ export default [
                 {
                     id: 1110, parentId: 1100, code: 'smartphone', categoryName: '智能手机', status: 1, icon: '', sort: 1,
                     attrs: [
-                        { id: 100, attributeId: 100, valueType: 1, required: true },
-                        { id: 101, attributeId: 101, valueType: 1, required: true },
-                        { id: 102, attributeId: 102, valueType: 2, required: false },
-                        { id: 103, attributeId: 103, valueType: 2, required: false },
-                        { id: 104, attributeId: 104, valueType: 2, required: false },
+                        { id: 100, attributeId: 100, valueType: 1, required: true, sort: 1 },
+                        { id: 101, attributeId: 101, valueType: 1, required: true, sort: 2 },
+                        { id: 102, attributeId: 102, valueType: 2, required: false, sort: 3 },
+                        { id: 103, attributeId: 103, valueType: 2, required: false, sort: 4 },
+                        { id: 104, attributeId: 104, valueType: 2, required: false, sort: 5 },
                     ],
                     sales: [
                         { id: 100, attributeId: 100, isCustom: true, isImage: true, sort: 1 },
@@ -61,9 +61,9 @@ export default [
                 {
                     id: 3100, parentId: 3000, code: 'snacks', categoryName: '休闲零食', status: 1, icon: '', sort: 1,
                     attrs: [
-                        { id: 200, attributeId: 200, valueType: 2, required: true },
-                        { id: 201, attributeId: 201, valueType: 1, required: false },
-                        { id: 202, attributeId: 202, valueType: 3, required: true },
+                        { id: 200, attributeId: 200, valueType: 2, required: true, sort: 1 },
+                        { id: 201, attributeId: 201, valueType: 1, required: false, sort: 2 },
+                        { id: 202, attributeId: 202, valueType: 3, required: true, sort: 3 },
                     ],
                     sales: [
                         { id: 200, attributeId: 200, isCustom: true, isImage: false, sort: 1 },

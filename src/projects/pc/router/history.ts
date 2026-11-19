@@ -72,7 +72,10 @@ export const useHistoryStore = defineStore('history', () => {
     }
 
     router.beforeResolve((to) => {
-      addHistory(to)
+      // 存在子路由才添加
+      if (to.matched.some((e) => e.children.length)) {
+        addHistory(to)
+      }
     })
 
     router.afterEach(() => {

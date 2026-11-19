@@ -15,11 +15,11 @@
                             :model-value="item.attribute.multiple ? toArray(productAttrs[item.attributeId]) : productAttrs[item.attributeId]"
                             @update:model-value="(val) => onChange(item.attributeId, val)"
                             :multiple="item.attribute.multiple" placeholder="选填"
-                            v-if="item.valueType === AttributeValueType.Enum">
+                            v-if="item.valueType === ValueType.Enum">
                             <el-option v-for="{ id, value } in item.attribute.values" :key="id" :value="value"
                                 :label="value" />
                         </el-select>
-                        <el-input :type="item.valueType === AttributeValueType.Number ? 'number' : 'text'"
+                        <el-input :type="item.valueType === ValueType.Number ? 'number' : 'text'"
                             :model-value="productAttrs[item.attributeId]"
                             @update:model-value="(val) => onChange(item.attributeId, val)" placeholder="选填" v-else />
                     </td>
@@ -32,7 +32,7 @@
 
 <script lang="ts" setup>
 import { shallowRef, computed, watch } from 'vue'
-import { AttributeValueType } from '@/constants/enums'
+import { ValueType } from '@/constants/enums'
 import { createCategoryList } from '@/services/api/product'
 import { useAttributeStore } from '@/stores/attribute'
 

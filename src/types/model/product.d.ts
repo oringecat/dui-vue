@@ -1,4 +1,4 @@
-import { AttributeValueType } from '@/constants/enums'
+import { ValueType } from '@/constants/enums'
 
 declare global {
     namespace Product {
@@ -112,8 +112,9 @@ declare global {
         interface CategoryAttr {
             id: number;
             attributeId: number;
-            valueType: AttributeValueType;
+            valueType: ValueType;
             required: boolean;
+            sort: number;
         }
 
         interface CategorySale {

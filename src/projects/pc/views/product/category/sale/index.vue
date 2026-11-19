@@ -2,27 +2,17 @@
     <app-dialog class="product-category-sale" title="销售属性" :show="show" :loading="loading">
         <div class="product-category-sale__container">
             <div class="product-category-sale__aside">
-                <pc-view class="product-category-sale__aside-panel">
-                    <template #header>
-                        <el-input v-model="filterText" placeholder="关键字" @input="onFilter">
-                            <template #prefix>
-                                <app-icon icon="Search" />
-                            </template>
-                        </el-input>
-                    </template>
-                    <el-scrollbar>
-                        <el-tree ref="treeRef" :data="treeData" node-key="key" empty-text="暂无属性模板"
-                            :default-checked-keys="checkedKeys" :filter-node-method="filterNode" default-expand-all
-                            show-checkbox />
-                    </el-scrollbar>
-                </pc-view>
+                <app-attribute-picker node-key="key" :data="treeData" v-model:checked-nodes="checkedNodes"
+                    :default-checked-keys="checkedKeys" />
             </div>
             <div class="product-category-sale__actions">
-                <el-button icon="ArrowRight" :disabled="treeData.length < 1" @click="moveRight"></el-button>
-                <el-button icon="ArrowLeft" :disabled="formData.length < 1" @click="moveLeft"></el-button>
+                <el-button icon="ArrowRight" size="small" :disabled="checkedNodes.length < 1"
+                    @click="moveRight"></el-button>
+                <el-button icon="ArrowLeft" size="small" :disabled="selectedRows.length < 1"
+                    @click="moveLeft"></el-button>
             </div>
             <div class="product-category-sale__main">
-                <app-table :data="formData" :columns="tableColumns" :show-tools="false" height="auto"
+                <app-table :data="formData" :columns="tableColumns" row-key="attributeId" :show-tools="false" height="auto"
                     selection-type="multiple" @selection-change="onSelectionChange">
                     <template #attributeName="{ row }">
                         {{ attributeStore.getAttributeById(row.attributeId)?.name ?? row.attributeId }}
@@ -42,8 +32,10 @@
                         <el-switch size="small" v-model="row.isImage" />
                     </template>
                     <template #action="{ index }">
-                        <el-button type="primary" icon="Top" link v-if="index > 0"></el-button>
-                        <el-button type="primary" icon="Bottom" link v-if="index < formData.length - 1"></el-button>
+                        <el-button type="primary" icon="Top" link v-if="index > 0"
+                            @click="moveRow(index, index - 1)"></el-button>
+                        <el-button type="primary" icon="Bottom" link v-if="index < formData.length - 1"
+                            @click="moveRow(index, index + 1)"></el-button>
                     </template>
                 </app-table>
             </div>
@@ -56,13 +48,13 @@
 
 <script lang="ts" setup>
 import { shallowRef, computed, reactive } from 'vue'
-import { ElMessage, type FilterNodeMethodFunction, type TreeInstance } from 'element-plus'
+import { ElMessage, type TreeNodeData } from 'element-plus'
 import { createCategorySaleUpdate } from '@/services/api/product'
 import type { TableColumn } from '@pc/components/ui/column-setting'
 import { useAttributeStore } from '@/stores/attribute'
 import AppDialog from '@pc/components/ui/dialog/index.vue'
 import AppTable from '@pc/components/ui/table/index.vue'
-import AppIcon from '@pc/components/ui/icon/index.vue'
+import AppAttributePicker from '@pc/components/ui/attribute-picker/index.vue'
 
 const props = defineProps<{
     record: Product.CategoryItem
@@ -71,9 +63,8 @@ const props = defineProps<{
 const attributeStore = useAttributeStore()
 
 const show = shallowRef(true)
-const treeRef = shallowRef<TreeInstance>()
-const filterText = shallowRef('')
 const selectedRows = shallowRef<Product.CategorySale[]>([])
+const checkedNodes = shallowRef<TreeNodeData[]>([])
 
 const formData = reactive(props.record.sales.map((sale) => ({ ...sale })))
 
@@ -105,14 +96,6 @@ const treeData = computed(() => {
     }))
 })
 
-const filterNode: FilterNodeMethodFunction = (value, data) => {
-    return !value || String(data.label).includes(value)
-}
-
-const onFilter = (value: string) => {
-    treeRef.value?.filter(value)
-}
-
 const onSelectionChange = (rows: Product.CategorySale[]) => {
     selectedRows.value = rows
 }
@@ -120,12 +103,12 @@ const onSelectionChange = (rows: Product.CategorySale[]) => {
 // 追加数据到表格中
 const moveRight = () => {
     const usedIds = new Set(formData.map((sale) => sale.attributeId))
-    const nodes = treeRef.value?.getCheckedNodes(true)
 
-    nodes?.forEach((node) => {
+    checkedNodes.value.forEach((node) => {
         const attributeId = Number(node.attributeId)
 
         if (attributeId && !usedIds.has(attributeId)) {
+            usedIds.add(attributeId)
             formData.push({
                 id: 0,
                 attributeId,
@@ -135,6 +118,8 @@ const moveRight = () => {
             })
         }
     })
+
+    checkedNodes.value = []
 }
 
 // 移除表格数据
@@ -143,6 +128,20 @@ const moveLeft = () => {
     const items = formData.filter((row) => !ids.has(row.attributeId))
 
     formData.splice(0, formData.length, ...items)
+    selectedRows.value = []
+}
+
+// 移动排序
+const moveRow = (from: number, to: number) => {
+    const row = formData[from]
+    const target = formData[to]
+
+    if (row && target) {
+        [row.sort, target.sort] = [target.sort, row.sort] // 交换顺序
+
+        formData.splice(from, 1)
+        formData.splice(to, 0, row)
+    }
 }
 
 const onSubmit = async () => {

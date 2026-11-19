@@ -39,7 +39,7 @@ const treeData = computed(() => {
         id: 0,
         parentId: 0,
         code: '',
-        categoryName: '默认',
+        categoryName: '一级分类',
         attrs: [],
         sales: [],
         status: 1,

@@ -1,8 +1,14 @@
-export enum AttributeValueType {
+export enum ValueType {
     Enum = 1, // 枚举值
     Text = 2, // 文本
     Number = 3, // 数值
 }
+
+export const valueTypeOptions = [
+    { label: '选项', value: ValueType.Enum },
+    { label: '文本', value: ValueType.Text },
+    { label: '数字', value: ValueType.Number }
+] as const
 
 export enum LoadMode {
     Cache = -1,   // 缓存复用不刷新

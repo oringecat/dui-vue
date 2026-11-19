@@ -1,0 +1,21 @@
+.product-category-attr {
+    &__container {
+        display: flex;
+    }
+
+    &__aside {
+        padding: var(--block-space-md);
+    }
+
+    &__actions {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+
+        .el-button+.el-button {
+            margin-left: 0;
+            margin-top: var(--block-space-sm);
+        }
+    }
+
+}
