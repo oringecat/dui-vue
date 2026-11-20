@@ -113,6 +113,8 @@ export default [
                     ],
                     description: '<h3>产品详情</h3><p>iPhone 15 Pro Max 搭载 <strong>A17 Pro 芯片</strong>，性能空前强大。采用航空航天级钛金属设计，坚固轻盈。4800 万像素主摄带来专业级摄影体验，支持新一代人像模式。USB-C 接口统一充电生态，动作按钮让你一键直达常用功能。</p><h4>包装清单</h4><ul><li>iPhone 15 Pro Max ×1</li><li>USB-C 充电线 ×1</li><li>卡针 ×1</li><li>说明书 ×1</li></ul><h4>售后保障</h4><p>Apple 官方一年有限保修，享受 AppleCare+ 延长保修服务（需单独购买）。</p>',
                     status: 1,
+                    creatorId: 0,
+                    creatorName: '系统',
                     createTime: Date.now(),
                     updateTime: Date.now(),
                 },

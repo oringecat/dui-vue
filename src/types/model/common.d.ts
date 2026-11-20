@@ -5,4 +5,9 @@ declare namespace Common {
         width: number; // 原始宽度
         height: number; // 原始高度
     }
+
+    interface SelectOption<T = number> {
+        label: string;
+        value: T;
+    }
 }

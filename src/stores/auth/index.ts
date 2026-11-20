@@ -1,24 +1,24 @@
 import { shallowRef, computed } from 'vue'
 import { defineStore } from 'pinia'
 import type { Router, RouteRecordRaw } from 'vue-router'
-import { createUserAuths } from '@/services/api/user'
+import { createUserAuth } from '@/services/api/user'
 import { getAuthRoutes } from './routes'
 import { AuthType, type AuthRoute } from './types'
-import { useUserStore } from '@/stores/user'
+import { useLoginStore } from '@/stores/login'
 
 export const useAuthStore = defineStore('auth', () => {
-    const userStore = useUserStore()
+    const loginStore = useLoginStore()
 
-    const { rawFetch } = createUserAuths()
+    const { rawFetch } = createUserAuth()
 
     // 用户权限
-    const userAuths = shallowRef<AuthRoute[]>([])
+    const userAuth = shallowRef<AuthRoute[]>([])
 
     // 用户路由
-    const userRoutes = computed(() => resolveRoute(userAuths.value))
+    const userRoutes = computed(() => resolveRoute(userAuth.value))
 
     // 用户菜单
-    const userMenus = computed(() => filterAuthMenus(userAuths.value))
+    const userMenus = computed(() => filterAuthMenus(userAuth.value))
 
     // 默认首页
     const defaultHomeUrl = computed(() => getFirstRoutePath(userRoutes.value))
@@ -39,12 +39,12 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     // 请求用户权限
-    const fetchUserAuths = async (router: Router) => {
-        if (userStore.isAdmin) {
-            userAuths.value = getAuthRoutes()
+    const fetchUserAuth = async (router: Router) => {
+        if (loginStore.isAdmin) {
+            userAuth.value = getAuthRoutes()
         } else {
             const res = await rawFetch()
-            userAuths.value = getAuthRoutes(res.data)
+            userAuth.value = getAuthRoutes(res.data)
         }
         userRoutes.value.forEach(router.addRoute)
     }
@@ -87,16 +87,16 @@ export const useAuthStore = defineStore('auth', () => {
         userRoutes.value.forEach(({ name }) => {
             if (name) router.removeRoute(name)
         })
-        userAuths.value = []
+        userAuth.value = []
     }
 
     return {
-        userAuths,
+        userAuth,
         userRoutes,
         userMenus,
         hasAuth,
         defaultHomeUrl,
-        fetchUserAuths,
+        fetchUserAuth,
         resetAuth
     }
 })

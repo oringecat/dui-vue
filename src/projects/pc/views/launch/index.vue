@@ -4,23 +4,23 @@
 
 <script lang="ts" setup>
 import { useRoute, useRouter } from 'vue-router'
-import { useUserStore } from '@/stores/user'
+import { useLoginStore } from '@/stores/login'
 import { useAuthStore } from '@/stores/auth'
 
 const route = useRoute()
 const router = useRouter()
-const userStore = useUserStore()
+const loginStore = useLoginStore()
 const authStore = useAuthStore()
 
 const initializeApp = async () => {
     try {
-        await userStore.autoLogin()
+        await loginStore.autoLogin()
 
-        if (userStore.token) {
-            await authStore.fetchUserAuths(router)
+        if (loginStore.token) {
+            await authStore.fetchUserAuth(router)
         }
 
-        if (userStore.token && authStore.hasAuth) {
+        if (loginStore.token && authStore.hasAuth) {
             const redirected = route.redirectedFrom
             if (redirected) {
                 router.replace(redirected.fullPath)

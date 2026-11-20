@@ -12,7 +12,7 @@ export function useAuthComponents<T extends object>(options: Partial<AuthCompone
     const authStore = useAuthStore()
     const authCode = options.authCode ?? String(route.name)
 
-    const { children = [] } = findTreeNodeById(authStore.userAuths, authCode, { id: 'code' }) ?? {}
+    const { children = [] } = findTreeNodeById(authStore.userAuth, authCode, { id: 'code' }) ?? {}
 
     const viewComponents = children.filter(({ authType }) => authType === AuthType.Component)
 
@@ -22,12 +22,11 @@ export function useAuthComponents<T extends object>(options: Partial<AuthCompone
 
     const actionComponent = shallowRef<Component>()
 
-    // 打开组件
-    const openComponent = ({ code, component }: AuthRoute, row?: T) => {
+    // 创建组件
+    const createComponent = ({ code, component }: Pick<AuthRoute, 'code' | 'component'>, row?: T) => {
         if (component) {
             const asyncComponent = defineAsyncComponent(component)
 
-            // 创建组件
             actionComponent.value = h(asyncComponent, {
                 authCode: code,
                 record: toRaw(row),
@@ -39,6 +38,15 @@ export function useAuthComponents<T extends object>(options: Partial<AuthCompone
         } else {
             console.warn(code, '组件未定义')
         }
+    }
+
+    // 打开组件
+    const openComponent = (code: string, row?: T) => {
+        const target = actions.find((a) => a.code === code) ?? {
+            code,
+            component: options.customComponents?.[code]
+        }
+        createComponent(target, row)
     }
 
     const hasAction = (code: string) => {
@@ -55,7 +63,7 @@ export function useAuthComponents<T extends object>(options: Partial<AuthCompone
                     title: a.title,
                     icon: a.icon,
                     className: a.className,
-                    onClick: () => openComponent(a, row)
+                    onClick: () => createComponent(a, row)
                 })
                 usedCodes.add(a.code)
             }
@@ -76,7 +84,7 @@ export function useAuthComponents<T extends object>(options: Partial<AuthCompone
                 className: a.className,
                 onClick: ({ row, index }) => {
                     onClick?.(row, index)
-                    openComponent(a, row)
+                    createComponent(a, row)
                 },
                 visibility: (state) => visibility?.(state.row, state.index) ?? true,
                 disabled: (state) => disabled?.(state.row, state.index) ?? false,
@@ -86,7 +94,10 @@ export function useAuthComponents<T extends object>(options: Partial<AuthCompone
         }, [])
     })
 
-    const getRowActions = (row: T, index: number) => {
+    const hasRestAction = computed(() => contextMenus.value.length > 0)
+
+    // 获取剩余权限组件
+    const getRestActions = (row: T, index: number) => {
         const state: ContextMenuState<T> = { x: 0, y: 0, index, row }
 
         return contextMenus.value.reduce<ActionItem[]>((result, { onClick, disabled, visibility, ...rest }) => {
@@ -105,15 +116,14 @@ export function useAuthComponents<T extends object>(options: Partial<AuthCompone
         }, [])
     }
 
-    const hasRowAction = computed(() => contextMenus.value.length > 0)
-
     return {
         viewComponents,
         actionComponent,
         contextMenus,
-        hasRowAction,
+        hasRestAction,
         hasAction,
         getActions,
-        getRowActions
+        getRestActions,
+        openComponent
     }
 }

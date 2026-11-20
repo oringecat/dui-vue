@@ -1,3 +1,5 @@
+import type { AsyncComponentLoader } from 'vue'
+
 export interface AuthComponentsOptions<T> {
     authCode: string;
     rowActions: Record<string, {
@@ -5,6 +7,7 @@ export interface AuthComponentsOptions<T> {
         visibility?: (row: T, index: number) => boolean;
         onClick?: (row: T, index: number) => void;
     }>;
+    customComponents: Record<string, AsyncComponentLoader>; // 注册自定义组件
     onClosed: (code: string) => void;
 }
 

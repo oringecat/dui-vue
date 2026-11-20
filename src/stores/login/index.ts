@@ -6,11 +6,11 @@ import { localData, sessionData } from '../storage'
 import serviceConfig from '@/services/config'
 import eventBus from '@/utils/bus'
 
-export const useUserStore = defineStore('user', () => {
+export const useLoginStore = defineStore('login', () => {
     const tokenStorage = serviceConfig.getAppConfig('tokenStorage')
 
-    // 初始化用户信息
-    const initUserInfo = (): User.UserInfo => {
+    // 初始化登录信息
+    const initLoginInfo = (): User.LoginInfo => {
         return {
             id: 0,
             roleId: 0,
@@ -23,11 +23,11 @@ export const useUserStore = defineStore('user', () => {
 
     const state = reactive({
         loading: false,
-        userInfo: initUserInfo(),
+        loginInfo: initLoginInfo(),
     })
 
-    const token = computed(() => state.userInfo.token)
-    const isAdmin = computed(() => state.userInfo.roleId === -1) // 是否超级管理员
+    const token = computed(() => state.loginInfo.token)
+    const isAdmin = computed(() => state.loginInfo.roleId === -1) // 是否超级管理员
 
     const tokenRequest = createCheckToken()
     const loginRequest = createLogin()
@@ -38,18 +38,18 @@ export const useUserStore = defineStore('user', () => {
         await serviceConfig.init()
     }
 
-    const getUserInfo = <K extends keyof User.UserInfo>(key: K) => {
-        return state.userInfo[key]
+    const getLoginInfo = <K extends keyof User.LoginInfo>(key: K) => {
+        return state.loginInfo[key]
     }
 
-    const setUserInfo = (data: User.UserInfo) => {
+    const setLoginInfo = (data: User.LoginInfo) => {
         if (tokenStorage === 'local') {
             localData.setValue('accessToken', data.token)
         } else {
             sessionData.setValue('accessToken', data.token)
         }
 
-        state.userInfo = data
+        state.loginInfo = data
         eventBus.emit('login', data)
     }
 
@@ -68,7 +68,7 @@ export const useUserStore = defineStore('user', () => {
                 localData.setValue('autoLoginEncrypted', encryptedString)
             }
 
-            setUserInfo(res.data)
+            setLoginInfo(res.data)
         } finally {
             state.loading = false
         }
@@ -80,9 +80,14 @@ export const useUserStore = defineStore('user', () => {
             const encryptedData = localData.getValue('autoLoginEncrypted')
 
             if (encryptedData) {
-                const decryptedString = decryptAES(encryptedData)
-                const loginParams = JSON.parse(decryptedString)
-                await userLogin(loginParams, true) // 尝试用加密数据登录
+                try {
+                    const decryptedString = decryptAES(encryptedData)
+                    const params = JSON.parse(decryptedString)
+                    await userLogin(params, true) // 尝试用加密数据登录
+                } catch {
+                    cleanup()
+                    await loadBaseData()
+                }
                 return
             }
         }
@@ -94,7 +99,7 @@ export const useUserStore = defineStore('user', () => {
             if (token.value) {
                 try {
                     const res = await tokenRequest.rawFetch()
-                    setUserInfo(res.data)
+                    setLoginInfo(res.data)
                 } catch {
                     cleanup()
                 }
@@ -109,7 +114,7 @@ export const useUserStore = defineStore('user', () => {
         sessionData.reset('accessToken')
         localData.reset('accessToken')
         localData.reset('autoLoginEncrypted')
-        state.userInfo = initUserInfo()
+        state.loginInfo = initLoginInfo()
     }
 
     // 用户登出
@@ -122,7 +127,7 @@ export const useUserStore = defineStore('user', () => {
     return {
         token,
         isAdmin,
-        getUserInfo,
+        getLoginInfo,
         userLogin,
         autoLogin,
         userLogout,

@@ -4,11 +4,11 @@ export enum ValueType {
     Number = 3, // 数值
 }
 
-export const valueTypeOptions = [
+export const valueTypeOptions: Readonly<Common.SelectOption[]> = [
     { label: '选项', value: ValueType.Enum },
     { label: '文本', value: ValueType.Text },
     { label: '数字', value: ValueType.Number }
-] as const
+]
 
 export enum LoadMode {
     Cache = -1,   // 缓存复用不刷新
@@ -22,4 +22,14 @@ export const ImageTypes: Readonly<string[]> = [
     'image/png',
     'image/webp',
     'image/bmp'
+]
+
+export enum EnableStatus {
+    Disabled = 0, // 禁用
+    Enabled = 1, // 启用
+}
+
+export const enableStatusOptions: Readonly<Common.SelectOption[]> = [
+    { label: '停用', value: EnableStatus.Disabled },
+    { label: '启用', value: EnableStatus.Enabled }
 ]

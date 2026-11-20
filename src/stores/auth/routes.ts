@@ -162,20 +162,6 @@ export function getAuthRoutes(authCodes?: string[]) {
                             authType: AuthType.Action,
                             component: () => import('@pc/views/product/category/edit/index.vue'),
                             icon: 'Edit'
-                        },
-                        {
-                            code: 'product-category-attr',
-                            title: '基础属性',
-                            authType: AuthType.Action,
-                            component: () => import('@pc/views/product/category/attribute/index.vue'),
-                            icon: 'SetUp'
-                        },
-                        {
-                            code: 'product-category-sale',
-                            title: '销售属性',
-                            authType: AuthType.Action,
-                            component: () => import('@pc/views/product/category/sale/index.vue'),
-                            icon: 'SetUp'
                         }
                     ]
                 }
@@ -226,6 +212,43 @@ export function getAuthRoutes(authCodes?: string[]) {
                             authType: AuthType.Action,
                             component: () => import('@pc/views/user/list/edit/index.vue'),
                             icon: 'Edit'
+                        }
+                    ]
+                },
+                {
+                    code: 'user-role',
+                    title: '用户角色',
+                    authType: AuthType.Route,
+                    url: '/user/role',
+                    component: () => import('@pc/views/user/role/index.vue'),
+                    children: [
+                        {
+                            code: 'user-role-add',
+                            title: '新增',
+                            authType: AuthType.Action,
+                            component: () => import('@pc/views/user/role/edit/index.vue'),
+                            icon: 'Plus'
+                        },
+                        {
+                            code: 'user-role-modify',
+                            title: '修改',
+                            authType: AuthType.Action,
+                            component: () => import('@pc/views/user/role/edit/index.vue'),
+                            icon: 'Edit'
+                        },
+                        {
+                            code: 'user-role-details',
+                            title: '详情',
+                            authType: AuthType.Action,
+                            component: () => import('@pc/views/user/role/details/index.vue'),
+                            icon: 'Search'
+                        },
+                        {
+                            code: 'user-role-children',
+                            title: '下级角色',
+                            authType: AuthType.Action,
+                            component: () => import('@pc/views/user/role/children/index.vue'),
+                            icon: 'SetUp'
                         }
                     ]
                 }

@@ -4,7 +4,7 @@ import type { ApiOptions } from '@/services/http/types'
 /**
  * 用户登录
  */
-export function createLogin(options?: ApiOptions<{ req: User.LoginRequest; res: User.UserInfo; }>) {
+export function createLogin(options?: ApiOptions<{ req: User.LoginRequest; res: User.LoginInfo; }>) {
   return http.createRequest({
     method: 'POST',
     url: '/user/login',
@@ -26,7 +26,7 @@ export function createLogout(options?: ApiOptions) {
 /**
  * 令牌校验
  */
-export function createCheckToken(options?: ApiOptions<{ res: User.UserInfo; }>) {
+export function createCheckToken(options?: ApiOptions<{ res: User.LoginInfo; }>) {
   return http.createRequest({
     method: 'GET',
     url: '/user/checktoken',
@@ -37,10 +37,43 @@ export function createCheckToken(options?: ApiOptions<{ res: User.UserInfo; }>) 
 /**
  * 获取用户权限
  */
-export function createUserAuths(options?: ApiOptions<{ res: string[]; }>) {
+export function createUserAuth(options?: ApiOptions<{ res: string[]; }>) {
   return http.createRequest({
     method: 'GET',
-    url: '/user/auths',
+    url: '/user/auth',
+    options
+  })
+}
+
+/**
+ * 获取同级及子级管理员列表
+ */
+export function createAdminList(options?: ApiOptions<{ req: User.AdminListRequest; res: User.AdminListItem[]; }>) {
+  return http.createRequest({
+    method: 'GET',
+    url: '/admin/list',
+    options
+  })
+}
+
+/**
+ * 获取同级管理员角色列表
+ */
+export function createAdminRoleList(options?: ApiOptions<{ req: User.AdminRoleRequest; res: User.AdminRoleItem[]; }>) {
+  return http.createRequest({
+    method: 'GET',
+    url: '/admin/role',
+    options
+  })
+}
+
+/**
+ * 获取管理员角色详情
+ */
+export function createAdminRoleDetail(options?: ApiOptions<{ req: User.AdminRoleDetailRequest; res: User.AdminRoleDetail; }>) {
+  return http.createRequest({
+    method: 'GET',
+    url: '/admin/role/detail',
     options
   })
 }

@@ -11,7 +11,7 @@
                     autocomplete="new-password" />
             </van-cell-group>
             <app-block>
-                <van-button type="primary" native-type="submit" :disabled="userStore.loading" block>登录</van-button>
+                <van-button type="primary" native-type="submit" :disabled="loginStore.loading" block>登录</van-button>
             </app-block>
         </van-form>
     </app-page-view>
@@ -21,11 +21,11 @@
 import { reactive } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { showLoadingToast, showFailToast, closeToast } from 'vant'
-import { useUserStore } from '@/stores/user'
+import { useLoginStore } from '@/stores/login'
 
 const route = useRoute()
 const router = useRouter()
-const userStore = useUserStore()
+const loginStore = useLoginStore()
 
 const formData = reactive<User.LoginRequest>({
     account: '',
@@ -40,7 +40,7 @@ const hasBack = !!router.options.history.state.back
 const onSubmit = () => {
     showLoadingToast('登录中...')
 
-    userStore.userLogin(formData, true).then(() => {
+    loginStore.userLogin(formData, true).then(() => {
         const redirected = route.redirectedFrom
         if (redirected) {
             router.push({ ...redirected, replace: true })

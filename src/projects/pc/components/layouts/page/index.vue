@@ -32,13 +32,13 @@
                 <div class="dui-page__header-right g-flex">
                     <el-dropdown trigger="click">
                         <div class="dui-page__user">
-                            <span>{{ `${userStore.userInfo.realName}(${userStore.userInfo.userName})` }}</span>
+                            <span>{{ `${loginStore.loginInfo.realName}(${loginStore.loginInfo.userName})` }}</span>
                             <app-icon icon="ArrowDown" />
                         </div>
                         <template #dropdown>
                             <el-dropdown-menu>
                                 <el-dropdown-item icon="SwitchButton"
-                                    @click="userStore.userLogout()">退出登录</el-dropdown-item>
+                                    @click="loginStore.userLogout()">退出登录</el-dropdown-item>
                             </el-dropdown-menu>
                         </template>
                     </el-dropdown>
@@ -69,7 +69,7 @@ import { shallowRef, reactive, computed, onMounted, onBeforeUnmount, type Compon
 import { useRoute, useRouter, type RouteLocationNormalized } from 'vue-router'
 import type { SplitterInstance } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
-import { useUserStore } from '@/stores/user'
+import { useLoginStore } from '@/stores/login'
 import { useHistoryStore } from '@pc/router/history'
 import AppSideMenu from '@pc/components/layouts/side-menu/index.vue'
 import AppNavBar from '@pc/components/layouts/nav-bar/index.vue'
@@ -78,7 +78,7 @@ import AppIcon from '@pc/components/ui/icon/index.vue'
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
-const userStore = useUserStore()
+const loginStore = useLoginStore()
 const historyStore = useHistoryStore()
 
 const splitterRef = shallowRef<SplitterInstance>()

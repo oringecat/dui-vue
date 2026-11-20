@@ -9,7 +9,7 @@
                 <app-action :actions="getActions('product-list-add')" />
             </template>
             <template #action="{ row, index }">
-                <app-action type="link" :actions="getRowActions(row, index)" />
+                <app-action type="link" :actions="getRestActions(row, index)" />
             </template>
             <template #footer>
                 <app-pagination :total="pageTotal" v-model:page-size="pageSize" v-model:current-page="pageIndex"
@@ -32,7 +32,7 @@ import AppFilter from '@pc/components/ui/form-filter/index.vue'
 import AppPagination from '@pc/components/ui/pagination/index.vue'
 import AppAction from '@pc/components/ui/action/index.vue'
 
-const { actionComponent, contextMenus, getActions, getRowActions } = useAuthComponents<Product.ProductListItem>({
+const { actionComponent, contextMenus, getActions, getRestActions } = useAuthComponents<Product.ProductListItem>({
     rowActions: {
         'product-list-shelve': { visibility: (row) => row.status === 2 },
         'product-list-unshelve': { visibility: (row) => row.status === 1 },

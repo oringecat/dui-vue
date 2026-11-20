@@ -1,20 +1,20 @@
 <template>
     <div class="launch">
-        <van-loading v-if="userStore.loading" />
+        <van-loading v-if="loginStore.loading" />
     </div>
 </template>
 
 <script lang="ts" setup>
 import { showConfirmDialog } from 'vant'
 import { useRoute, useRouter } from 'vue-router'
-import { useUserStore } from '@/stores/user'
+import { useLoginStore } from '@/stores/login'
 
 const route = useRoute()
 const router = useRouter()
-const userStore = useUserStore()
+const loginStore = useLoginStore()
 
 const initializeApp = () => {
-    userStore.autoLogin().then(() => {
+    loginStore.autoLogin().then(() => {
         const redirected = route.redirectedFrom
         if (redirected) {
             router.replace(redirected.fullPath)

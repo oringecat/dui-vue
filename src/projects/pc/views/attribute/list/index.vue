@@ -8,7 +8,7 @@
                 <app-action :actions="getActions('attribute-list-add')" />
             </template>
             <template #action="{ row, index }">
-                <app-action type="link" :actions="getRowActions(row, index)" />
+                <app-action type="link" :actions="getRestActions(row, index)" />
             </template>
             <template #footer>
                 <app-pagination :total="pageTotal" v-model:page-size="pageSize" v-model:current-page="pageIndex"
@@ -34,7 +34,7 @@ import AppAction from '@pc/components/ui/action/index.vue'
 
 const attributeStore = useAttributeStore()
 
-const { actionComponent, getActions, getRowActions } = useAuthComponents<Attribute.AttributeItem>()
+const { actionComponent, getActions, getRestActions } = useAuthComponents<Attribute.AttributeItem>()
 
 const { dataList, pageIndex, pageSize, pageTotal, hasData, localFilterParams, updateItems } = useDataTable<Attribute.AttributeItem>()
 

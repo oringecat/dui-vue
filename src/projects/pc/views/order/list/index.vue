@@ -1,7 +1,7 @@
 <template>
     <app-table :data="dataList" :columns="tableColumns" :context-menus="contextMenus" :loading="loading">
         <template #action="{ row, index }">
-            <app-action type="link" :actions="getRowActions(row, index)" />
+            <app-action type="link" :actions="getRestActions(row, index)" />
         </template>
         <template #footer>
             <app-pagination :total="pageTotal" v-model:page-size="pageSize" v-model:current-page="pageIndex"
@@ -27,7 +27,7 @@ const props = defineProps<{
     queryParams: Partial<Order.OrderListRequest>
 }>()
 
-const { actionComponent, contextMenus, hasRowAction, getRowActions } = useAuthComponents({
+const { actionComponent, contextMenus, hasRestAction, getRestActions } = useAuthComponents({
     authCode: props.componentId
 })
 
@@ -49,7 +49,7 @@ const tableColumns: TableColumn<Order.OrderListItem>[] = [
     { field: 'orderNumber', label: '订单号' },
     { field: 'status', label: '状态' },
     { field: 'orderTime', label: '订单日期', formatValue: (row) => dayjs(row.orderTime).format('YYYY-MM-DD HH:mm:ss') },
-    { field: 'action', label: '操作', fixed: 'right', width: 160, visibility: () => hasRowAction.value }
+    { field: 'action', label: '操作', fixed: 'right', width: 160, visibility: () => hasRestAction.value }
 ]
 
 const loadData = (mode = LoadMode.Cache) => {

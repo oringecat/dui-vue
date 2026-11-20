@@ -28,8 +28,8 @@ declare global {
         }
 
         interface ProductDetail {
-            id: number; // 商品ID
-            shopId: number; // shopId = 0 自营商品
+            id: number;
+            shopId: number; // 0 = '自营'
             categoryId: number;
             shopCategoryId: number;
             title: string;
@@ -40,6 +40,8 @@ declare global {
             images: ProductImage[];
             description: string;
             status: number;
+            creatorId: number; // 0 = '系统'
+            creatorName: string;
             createTime: number;
             updateTime: number;
         }

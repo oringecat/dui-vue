@@ -1,13 +1,13 @@
 import { createWebHashHistory, type RouteRecordRaw } from 'vue-router'
 import { useHistoryStore } from './history'
-import { useUserStore } from '@/stores/user'
+import { useLoginStore } from '@/stores/login'
 import serviceConfig from '@/services/config'
 import MainLayout from '../components/layouts/page-main/index.vue'
 import HomeLayout from '../components/layouts/page-home/index.vue'
 
 export default function createRouter() {
   const historyStore = useHistoryStore()
-  const userStore = useUserStore()
+  const loginStore = useLoginStore()
 
   const routes: RouteRecordRaw[] = [
     {
@@ -117,7 +117,7 @@ export default function createRouter() {
 
   router.beforeEach(async (to) => {
     if (serviceConfig.isReady) {
-      if (to.meta.ignoreAuth || userStore.token) {
+      if (to.meta.ignoreAuth || loginStore.token) {
         return true
       }
       return { name: 'user-login' }

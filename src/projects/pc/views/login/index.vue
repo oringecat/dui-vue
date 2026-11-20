@@ -28,12 +28,12 @@
 import { reactive, shallowRef, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { useUserStore } from '@/stores/user'
+import { useLoginStore } from '@/stores/login'
 import { useAuthStore } from '@/stores/auth'
 
 const route = useRoute()
 const router = useRouter()
-const userStore = useUserStore()
+const loginStore = useLoginStore()
 const authStore = useAuthStore()
 
 const version = import.meta.env.REVISED || '0'
@@ -55,8 +55,8 @@ const formData = reactive<User.LoginRequest>({
 const onSubmit = async () => {
     try {
         loading.value = true
-        await userStore.userLogin(formData)
-        await authStore.fetchUserAuths(router)
+        await loginStore.userLogin(formData)
+        await authStore.fetchUserAuth(router)
 
         if (authStore.hasAuth) {
             const redirected = route.redirectedFrom

@@ -7,18 +7,14 @@
             <template #toolbar>
                 <app-action :actions="getActions('product-category-add')" />
             </template>
-            <template #attribute="{ row }">
-                <template v-for="item in getActions('product-category-attr', row)" :key="item.code">
-                    <el-button @click="item.onClick" link>管理</el-button>
-                </template>
+            <template #attrs="{ row }">
+                <el-button link @click="openComponent('product-category-attr', row)">管理</el-button>
             </template>
-            <template #sale="{ row }">
-                <template v-for="item in getActions('product-category-sale', row)" :key="item.code">
-                    <el-button @click="item.onClick" link>管理</el-button>
-                </template>
+            <template #sales="{ row }">
+                <el-button link @click="openComponent('product-category-sale', row)">管理</el-button>
             </template>
             <template #action="{ row, index }">
-                <app-action type="link" :actions="getRowActions(row, index)" />
+                <app-action type="link" :actions="getRestActions(row, index)" />
             </template>
         </app-table>
         <component :is="actionComponent" v-if="actionComponent" />
@@ -38,7 +34,11 @@ import AppAction from '@pc/components/ui/action/index.vue'
 
 const categoryList = shallowRef<Product.CategoryItem[]>([])
 
-const { actionComponent, hasAction, getActions, getRowActions } = useAuthComponents<Product.CategoryItem>({
+const { actionComponent, getActions, getRestActions, openComponent } = useAuthComponents<Product.CategoryItem>({
+    customComponents: {
+        'product-category-attr': () => import('./attribute/index.vue'),
+        'product-category-sale': () => import('./sale/index.vue')
+    },
     onClosed: () => loadData()
 })
 
@@ -51,8 +51,8 @@ const { loading, fetch } = createCategoryList({
 const tableColumns: TableColumn<Product.CategoryItem>[] = [
     { field: 'categoryName', label: '分类名称' },
     { field: 'code', label: '编码' },
-    { field: 'attribute', label: '基础属性', visibility: () => hasAction('product-category-attr') },
-    { field: 'sale', label: '销售属性', visibility: () => hasAction('product-category-sale') },
+    { field: 'attrs', label: '基础属性' },
+    { field: 'sales', label: '销售属性' },
     { field: 'status', label: '状态' },
     { field: 'action', label: '操作', fixed: 'right' }
 ]

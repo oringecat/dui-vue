@@ -1,12 +1,12 @@
 import { shallowRef, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { getHash } from '@/utils/crypto'
-import { useUserStore } from '@/stores/user'
+import { useLoginStore } from '@/stores/login'
 import type { TableColumn } from './types'
 
 export function useTableColumns<T extends object>(source: TableColumn<T>[]) {
     const route = useRoute()
-    const userStore = useUserStore()
+    const loginStore = useLoginStore()
 
     const rawColumns = shallowRef(source ?? []) // 原始列
     const hiddenFields = shallowRef(new Set<string>()) // 隐藏字段
@@ -15,7 +15,7 @@ export function useTableColumns<T extends object>(source: TableColumn<T>[]) {
     const hashKey = getHash(`${route.path}|${columnsKey}`)
 
     const storageKey = computed(() => {
-        const scope = String(userStore.userInfo.id)
+        const scope = String(loginStore.loginInfo.id)
         return `table-columns:user-${scope}:${hashKey}`
     })
 

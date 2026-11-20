@@ -4,7 +4,7 @@ import type { AxiosRequestConfig } from 'axios'
 import type { RequestConfig, RequestShape, BaseResponse } from './types'
 import { ResultCode } from './types'
 import { useTransitionStore } from '@/stores/transition'
-import { useUserStore } from '@/stores/user'
+import { useLoginStore } from '@/stores/login'
 import serviceConfig from '@/services/config'
 
 export type { ApiOptions, RequestOptions } from './types'
@@ -43,12 +43,12 @@ export default new (class {
 
     // 获取公共请求头
     getPublicHeaders() {
-        const userStore = useUserStore()
+        const loginStore = useLoginStore()
         const timestamp = Date.now()
 
         return {
             timestamp,
-            authorization: userStore.token
+            authorization: loginStore.token
         }
     }
 
