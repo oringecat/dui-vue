@@ -2,8 +2,8 @@
     <app-dialog class="product-category-sale" title="销售属性" :show="show" :loading="loading">
         <div class="product-category-sale__container">
             <div class="product-category-sale__aside">
-                <app-attribute-picker node-key="key" :data="treeData" v-model:checked-nodes="checkedNodes"
-                    :default-checked-keys="checkedKeys" />
+                <app-tree-picker node-key="key" :data="treeData" v-model:checked-nodes="checkedNodes"
+                    :default-checked-keys="checkedKeys" empty-text="暂无属性模板" />
             </div>
             <div class="product-category-sale__actions">
                 <el-button icon="ArrowRight" size="small" :disabled="checkedNodes.length < 1"
@@ -54,7 +54,7 @@ import type { TableColumn } from '@pc/components/ui/column-setting'
 import { useAttributeStore } from '@/stores/attribute'
 import AppDialog from '@pc/components/ui/dialog/index.vue'
 import AppTable from '@pc/components/ui/table/index.vue'
-import AppAttributePicker from '@pc/components/ui/attribute-picker/index.vue'
+import AppTreePicker from '@pc/components/ui/tree-picker/index.vue'
 
 const props = defineProps<{
     record: Product.CategoryItem

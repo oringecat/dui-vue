@@ -1,15 +1,16 @@
 <template>
-    <pc-view class="dui-attribute-picker">
+    <pc-view class="dui-tree-picker">
         <template #header>
             <el-input v-model="filterText" placeholder="关键字" @input="onFilter">
                 <template #prefix>
                     <app-icon icon="Search" />
                 </template>
             </el-input>
+            <slot></slot>
         </template>
         <el-scrollbar>
-            <el-tree ref="treeRef" v-bind="$attrs" empty-text="暂无属性模板"
-                :filter-node-method="filterNode" default-expand-all show-checkbox @check="onCheck" />
+            <el-tree ref="treeRef" v-bind="$attrs" :filter-node-method="filterNode" default-expand-all show-checkbox
+                @check="onCheck" />
         </el-scrollbar>
     </pc-view>
 </template>

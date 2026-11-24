@@ -43,10 +43,15 @@ declare namespace User {
 
     interface AdminRoleItem {
         id: number;
+        parentId: number;
         roleName: string;
+        authCodes: string[];
         status: number;
+        creatorId: number;
         creatorName: string;
+        createTime: number;
         updateTime: number;
+        children: AdminRoleItem[];
     }
 
     /** 管理员角色详情 */
@@ -64,6 +69,13 @@ declare namespace User {
         creatorName: string;
         createTime: number;
         updateTime: number;
-        children: AdminRoleDetail[];
+    }
+
+    /** 新增/更新管理员角色 */
+    interface AdminRoleUpdateRequest {
+        id: number; // 0 = 新增
+        parentId: number;
+        roleName: string;
+        authCodes: string[];
     }
 }

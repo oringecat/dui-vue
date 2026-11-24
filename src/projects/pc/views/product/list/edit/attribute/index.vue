@@ -32,7 +32,7 @@
 
 <script lang="ts" setup>
 import { shallowRef, computed, watch } from 'vue'
-import { ValueType } from '@/constants/enums'
+import { ValueType } from '@/constants/common'
 import { createCategoryList } from '@/services/api/product'
 import { useAttributeStore } from '@/stores/attribute'
 

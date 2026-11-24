@@ -18,7 +18,7 @@
     "browser-image-compression": "^2.0.2",
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.20",
-    "element-plus": "^2.13.2",
+    "element-plus": "^2.14.8",
     "jsencrypt": "^3.5.4",
     "mitt": "^3.0.1",
     "pinia": "^3.0.4",

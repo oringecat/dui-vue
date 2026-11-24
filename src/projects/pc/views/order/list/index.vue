@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts" setup>
-import { LoadMode } from '@/constants/enums'
+import { LoadMode } from '@/constants/common'
 import { createOrderList } from '@/services/api/order'
 import { useDataTable } from '@/composables/datatable'
 import { useAuthComponents } from '@/composables/auth-components'

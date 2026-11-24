@@ -42,7 +42,7 @@
 <script lang="ts" setup>
 import { shallowRef, reactive, computed } from 'vue'
 import type { ComponentSize, ListType } from 'element-plus'
-import { ImageTypes } from '@/constants/enums'
+import { ImageTypes } from '@/constants/common'
 import { uploadFile } from '@/services/api/common'
 import imageCompression from 'browser-image-compression'
 import AppIcon from '@pc/components/ui/icon/index.vue'

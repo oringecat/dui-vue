@@ -1,8 +1,7 @@
 import { shallowRef, shallowReactive, computed, defineAsyncComponent, toRaw, h, type Component } from 'vue'
 import { useRoute } from 'vue-router'
 import { findTreeNodeById } from '@/helpers/filters'
-import { useAuthStore } from '@/stores/auth'
-import { AuthType, type AuthRoute } from '@/stores/auth/types'
+import { useAuthStore, AuthType, type AuthRoute } from '@/stores/auth'
 import type { ContextMenuState, ContextMenuItem } from '@pc/components/ui/context-menu/types'
 import type { AuthComponentsOptions, ActionItem } from './types'
 

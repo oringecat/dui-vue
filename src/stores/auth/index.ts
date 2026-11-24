@@ -6,6 +6,8 @@ import { getAuthRoutes } from './routes'
 import { AuthType, type AuthRoute } from './types'
 import { useLoginStore } from '@/stores/login'
 
+export { AuthType, type AuthRoute }
+
 export const useAuthStore = defineStore('auth', () => {
     const loginStore = useLoginStore()
 
@@ -50,15 +52,17 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     // 过滤权限菜单
-    const filterAuthMenus = (data: AuthRoute[]) => data.reduce<AuthRoute[]>((pre, cur) => {
-        if (cur.authType === AuthType.Route || cur.authType === AuthType.Link) {
-            pre.push({
-                ...cur,
-                children: cur.children ? filterAuthMenus(cur.children) : []
-            })
-        }
-        return pre
-    }, [])
+    const filterAuthMenus = (data: AuthRoute[]) => {
+        return data.reduce<AuthRoute[]>((result, node) => {
+            if (node.authType === AuthType.Route || node.authType === AuthType.Link) {
+                result.push({
+                    ...node,
+                    children: node.children ? filterAuthMenus(node.children) : []
+                })
+            }
+            return result
+        }, [])
+    }
 
     // 解析路由
     const resolveRoute = (data: AuthRoute[]) => {

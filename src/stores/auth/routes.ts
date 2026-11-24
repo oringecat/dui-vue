@@ -242,13 +242,6 @@ export function getAuthRoutes(authCodes?: string[]) {
                             authType: AuthType.Action,
                             component: () => import('@pc/views/user/role/details/index.vue'),
                             icon: 'Search'
-                        },
-                        {
-                            code: 'user-role-children',
-                            title: '下级角色',
-                            authType: AuthType.Action,
-                            component: () => import('@pc/views/user/role/children/index.vue'),
-                            icon: 'SetUp'
                         }
                     ]
                 }

@@ -1,5 +1,5 @@
 <template>
-    <app-dialog :show="show">
+    <app-dialog title="详情" :show="show">
         {{ record }}
     </app-dialog>
 </template>

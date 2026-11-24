@@ -1,0 +1,18 @@
+.user-role {
+    &__name {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    &__add {
+        font-size: 20px;
+        color: var(--el-color-primary);
+        cursor: pointer;
+        visibility: hidden;
+    }
+
+    .el-table__row:hover &__add {
+        visibility: visible;
+    }
+}

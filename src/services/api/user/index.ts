@@ -46,7 +46,7 @@ export function createUserAuth(options?: ApiOptions<{ res: string[]; }>) {
 }
 
 /**
- * 获取同级及子级管理员列表
+ * 获取下级管理员列表
  */
 export function createAdminList(options?: ApiOptions<{ req: User.AdminListRequest; res: User.AdminListItem[]; }>) {
   return http.createRequest({
@@ -57,7 +57,7 @@ export function createAdminList(options?: ApiOptions<{ req: User.AdminListReques
 }
 
 /**
- * 获取同级管理员角色列表
+ * 获取下级管理员角色列表
  */
 export function createAdminRoleList(options?: ApiOptions<{ req: User.AdminRoleRequest; res: User.AdminRoleItem[]; }>) {
   return http.createRequest({

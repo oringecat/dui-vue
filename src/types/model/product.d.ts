@@ -1,4 +1,4 @@
-import { ValueType } from '@/constants/enums'
+import { ValueType } from '@/constants/common'
 
 declare global {
     namespace Product {

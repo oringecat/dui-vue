@@ -7,7 +7,7 @@
 </template>
 
 <script lang="ts" setup>
-import { LoadMode } from '@/constants/enums'
+import { LoadMode } from '@/constants/common'
 
 const props = defineProps({
     // 总条数

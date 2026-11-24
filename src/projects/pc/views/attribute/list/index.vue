@@ -21,7 +21,7 @@
 
 <script lang="ts" setup>
 import { watch } from 'vue'
-import { LoadMode } from '@/constants/enums'
+import { LoadMode } from '@/constants/common'
 import { useDataTable, useDataFilter } from '@/composables/datatable'
 import { useAuthComponents } from '@/composables/auth-components'
 import type { TableColumn } from '@pc/components/ui/column-setting'

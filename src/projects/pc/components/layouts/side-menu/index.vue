@@ -24,7 +24,7 @@
 
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue'
-import type { AuthRoute } from '@/stores/auth/types'
+import type { AuthRoute } from '@/stores/auth'
 import AppIcon from '@pc/components/ui/icon/index.vue'
 
 export default defineComponent({

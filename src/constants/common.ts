@@ -1,3 +1,5 @@
+export const emptyText = '-'
+
 export enum ValueType {
     Enum = 1, // 枚举值
     Text = 2, // 文本
@@ -22,14 +24,4 @@ export const ImageTypes: Readonly<string[]> = [
     'image/png',
     'image/webp',
     'image/bmp'
-]
-
-export enum EnableStatus {
-    Disabled = 0, // 禁用
-    Enabled = 1, // 启用
-}
-
-export const enableStatusOptions: Readonly<Common.SelectOption[]> = [
-    { label: '停用', value: EnableStatus.Disabled },
-    { label: '启用', value: EnableStatus.Enabled }
 ]
