@@ -64,13 +64,12 @@ const contextMenuState = shallowRef<ContextMenuState<T>>()
 const { rawColumns, tableColumns, hiddenFields } = useTableColumns(props.columns)
 
 // 鼠标右键
-const onContextmenu = (row: T, column: TableColumnCtx<T>, event: PointerEvent) => {
+const onContextmenu = (row: T, _: TableColumnCtx | null, event: PointerEvent) => {
     if (props.contextMenus.length) {
         event.preventDefault()
         contextMenuState.value = {
             x: event.clientX,
             y: event.clientY,
-            index: column.getColumnIndex(),
             row
         }
     }

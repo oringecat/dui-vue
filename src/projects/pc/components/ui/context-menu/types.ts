@@ -4,8 +4,8 @@
 export interface ContextMenuState<T> {
     x: number;
     y: number;
-    index: number;
     row: T;
+    index?: number; // 仅 table-v2 有 rowIndex
 }
 
 /**
@@ -13,7 +13,7 @@ export interface ContextMenuState<T> {
  */
 export interface ContextMenuItem<T> {
     code: string;
-    title: string;
+    title: (state: ContextMenuState<T>) => string;
     icon?: string;
     className?: string;
     disabled: (state: ContextMenuState<T>) => boolean;

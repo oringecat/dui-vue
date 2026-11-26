@@ -1,5 +1,4 @@
 declare namespace Brand {
-    /** 品牌列表 */
     interface BrandListRequest {
         pageIndex: number;
         pageSize: number;
@@ -9,6 +8,7 @@ declare namespace Brand {
         status?: number;
     }
 
+    /** 品牌列表 */
     interface BrandListItem {
         id: number;
         categoryId: number;
@@ -18,7 +18,6 @@ declare namespace Brand {
         createTime: number;
     }
 
-    /** 品牌分类列表 */
     interface CategoryListRequest {
         id?: number;
         code?: string;
@@ -26,6 +25,7 @@ declare namespace Brand {
         status?: number;
     }
 
+    /** 品牌分类列表 */
     interface CategoryItem {
         id: number;
         parentId: number;

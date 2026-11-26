@@ -1,5 +1,5 @@
 <template>
-    <app-dialog class="product-edit" title="编辑" width="1200" :loading="loading" :show="show">
+    <app-dialog class="product-edit" :title="authTitle" width="1200" :loading="loading" :show="show">
         <el-splitter>
             <el-splitter-panel size="200px">
                 <el-tree ref="treeRef" :class="{ 'readonly': !!props.record }" :data="categoryList"
@@ -80,6 +80,7 @@ import AppBrandSelect from '@pc/components/business/brand-select/index.vue'
 import AppAttribute from './attribute/index.vue'
 
 const props = defineProps<{
+    authTitle: string
     record?: Product.ProductListItem
 }>()
 

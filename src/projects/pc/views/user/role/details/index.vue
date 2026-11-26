@@ -1,5 +1,5 @@
 <template>
-    <app-dialog title="详情" :show="show">
+    <app-dialog :title="authTitle" :show="show">
         {{ record }}
     </app-dialog>
 </template>
@@ -9,6 +9,7 @@ import { shallowRef } from 'vue'
 import AppDialog from '@pc/components/ui/dialog/index.vue'
 
 const props = defineProps<{
+    authTitle: string
     record?: User.AdminRoleItem
 }>()
 

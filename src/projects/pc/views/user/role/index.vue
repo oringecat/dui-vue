@@ -12,10 +12,6 @@
                         @click="openComponent('user-role-add', row)" v-if="hasAction('user-role-add')" />
                 </div>
             </template>
-            <template #status="{ row }">
-                <el-switch :model-value="row.status" size="small" :active-value="1" :inactive-value="0"
-                    @update:model-value="(val) => updateStatus(row.id, val)" />
-            </template>
             <template #action="{ row, index }">
                 <app-action type="link" :actions="getRestActions(row, index)" />
             </template>
@@ -27,7 +23,7 @@
 <script lang="ts" setup>
 import { ElMessageBox } from 'element-plus'
 import { getEnableStatusLabel } from '@/constants/status'
-import { createAdminRoleList } from '@/services/api/user'
+import { createUserRoleList } from '@/services/api/user'
 import { useDataTable } from '@/composables/datatable'
 import { useAuthComponents } from '@/composables/auth-components'
 import type { TableColumn } from '@pc/components/ui/column-setting'
@@ -36,11 +32,18 @@ import AppTable from '@pc/components/ui/table/index.vue'
 import AppAction from '@pc/components/ui/action/index.vue'
 import AppIcon from '@pc/components/ui/icon/index.vue'
 
-const { actionComponent, contextMenus, hasAction, getActions, getRestActions, openComponent } = useAuthComponents<User.AdminRoleItem>()
+const { actionComponent, contextMenus, hasAction, getActions, getRestActions, openComponent } = useAuthComponents<User.UserRoleItem>({
+    rowActions: {
+        'user-role-status': {
+            title: (row) => getEnableStatusLabel(Number(!row.status)),
+            onClick: (row) => updateStatus(row.id, Number(!row.status))
+        }
+    }
+})
 
-const { dataList, updateItems } = useDataTable<User.AdminRoleItem>()
+const { dataList, updateItems } = useDataTable<User.UserRoleItem>()
 
-const { loading, fetch } = createAdminRoleList({
+const { loading, fetch } = createUserRoleList({
     onSuccess: (res) => {
         updateItems(res.data, res.total)
     }
@@ -53,10 +56,9 @@ const updateStatus = (id: number, value: unknown) => {
     })
 }
 
-const tableColumns: TableColumn<User.AdminRoleItem>[] = [
+const tableColumns: TableColumn<User.UserRoleItem>[] = [
     { field: 'roleName', label: '角色名称' },
-    { field: 'authCodes', label: '管理权限', formatValue: (row) => `${row.authCodes.length} 项` },
-    { field: 'status', label: '是否启用' },
+    { field: 'status', label: '角色状态', formatValue: (row) => getEnableStatusLabel(row.status) },
     { field: 'updateTime', label: '更新', formatValue: (row) => dayjs(row.updateTime).format('YYYY-MM-DD HH:mm:ss') },
     { field: 'action', label: '操作', fixed: 'right', width: 180 }
 ]

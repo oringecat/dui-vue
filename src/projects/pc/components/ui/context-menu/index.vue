@@ -2,15 +2,16 @@
 <template>
     <teleport to="body" v-if="state">
         <div class="dui-context-menu" :style="{ left: state.x + 'px', top: state.y + 'px' }" @click.stop>
-            <ul>
+            <ul v-if="visibleMenus.length">
                 <template v-for="(menu, index) in visibleMenus" :key="index">
                     <li :class="[menu.className, { 'is-disabled': menu.disabled(state) }]"
                         @click="onContextMenuClick(menu)">
                         <app-icon :icon="menu.icon" v-if="menu.icon" />
-                        <span>{{ menu.title }}</span>
+                        <span>{{ menu.title(state) }}</span>
                     </li>
                 </template>
             </ul>
+            <div v-else class="dui-context-menu__empty">无可用操作</div>
         </div>
     </teleport>
 </template>
@@ -30,10 +31,10 @@ const emit = defineEmits<{
 }>()
 
 // 可见的右键菜单列表
-const visibleMenus = computed(() => props.contextMenus.filter(({ visibility }) => {
+const visibleMenus = computed(() => {
     const state = props.state
-    return state ? visibility(state) : true
-}))
+    return props.contextMenus.filter(({ visibility }) => state ? visibility(state) : true)
+})
 
 // 右键菜单点击事件
 const onContextMenuClick = (menu: ContextMenuItem<T>) => {

@@ -3,7 +3,7 @@ import type { AsyncComponentLoader } from 'vue'
 /**
  * 权限路由
  */
-export interface AuthRoute {
+export type AuthRoute = Readonly<{
     code: string;
     title: string;
     authType: AuthType;
@@ -13,7 +13,7 @@ export interface AuthRoute {
     className?: string;
     remark?: string;
     children?: AuthRoute[];
-}
+}>
 
 /**
  * 权限类型

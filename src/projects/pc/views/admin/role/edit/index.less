@@ -1,0 +1,60 @@
+.admin-role-edit {
+    padding: 18px 36px;
+    padding-bottom: 0;
+
+    &__title {
+        margin-bottom: 8px;
+        line-height: 20px;
+        color: var(--el-text-color-secondary);
+    }
+
+    &__form .el-form-item {
+        position: relative;
+        margin-bottom: 0;
+        padding: 0 0 18px 26px;
+
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            width: 1px;
+            background-color: var(--el-border-color-lighter);
+        }
+
+        &:last-child::before {
+            display: none;
+        }
+
+        &__label {
+            position: relative;
+
+            &::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                bottom: 50%;
+                left: -26px;
+                width: 14px;
+                border-left: 1px solid var(--el-border-color-lighter);
+                border-bottom: 1px solid var(--el-border-color-lighter);
+            }
+        }
+    }
+
+    &__tree {
+        width: 100%;
+        min-height: 200px;
+        max-height: 400px;
+
+        .el-card__header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--el-fill-color-light);
+            padding-top: 6px;
+            padding-bottom: 6px;
+        }
+    }
+}

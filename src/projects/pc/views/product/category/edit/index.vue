@@ -1,5 +1,5 @@
 <template>
-    <app-dialog :show="show" @closed="emit('closed', refresh)">
+    <app-dialog :title="authTitle" :show="show" @closed="emit('closed', refresh)">
         <el-form class="el-form--vertical" :model="formData">
             <el-form-item label="所属分类">
                 <el-tree-select v-model="formData.parentId" :data="treeData" :props="{ label: 'categoryName' }"
@@ -25,6 +25,7 @@ import { createCategoryList } from '@/services/api/product'
 import AppDialog from '@pc/components/ui/dialog/index.vue'
 
 const props = defineProps<{
+    authTitle: string
     record?: Product.CategoryItem
 }>()
 

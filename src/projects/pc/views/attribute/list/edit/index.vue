@@ -1,5 +1,5 @@
 <template>
-    <app-dialog class="attribute-edit" title="编辑" :width="600" :show="show" @closed="emit('closed', refresh)">
+    <app-dialog class="attribute-edit" :title="authTitle" :width="600" :show="show" @closed="emit('closed', refresh)">
         <el-form class="el-form--vertical" :model="formData" label-width="auto">
             <el-form-item label="所在分组">
                 <el-select ref="selectRef" v-model="formData.groupId" :empty-values="[0]" :value-on-clear="0" filterable
@@ -38,6 +38,7 @@ import AppDialog from '@pc/components/ui/dialog/index.vue'
 import AppInputTag from '@pc/components/ui/input-tag/index.vue'
 
 const props = defineProps<{
+    authTitle: string
     record: Attribute.AttributeItem
 }>()
 

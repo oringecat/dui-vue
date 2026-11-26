@@ -59,18 +59,18 @@ export function getAuthRoutes(authCodes?: string[]) {
                             component: () => import('@pc/views/order/list/index.vue'),
                             children: [
                                 {
-                                    code: 'order-list-tb-ship',
-                                    title: '发货',
-                                    authType: AuthType.Action,
-                                    component: () => import('@pc/views/order/ship/index.vue'),
-                                    icon: 'Van'
-                                },
-                                {
                                     code: 'order-list-tb-details',
                                     title: '详情',
                                     authType: AuthType.Action,
                                     component: () => import('@pc/views/order/details/index.vue'),
                                     icon: 'Search'
+                                },
+                                {
+                                    code: 'order-list-tb-ship',
+                                    title: '发货',
+                                    authType: AuthType.Action,
+                                    component: () => import('@pc/views/order/ship/index.vue'),
+                                    icon: 'Van'
                                 }
                             ]
                         },
@@ -230,6 +230,13 @@ export function getAuthRoutes(authCodes?: string[]) {
                             icon: 'Plus'
                         },
                         {
+                            code: 'user-role-details',
+                            title: '详情',
+                            authType: AuthType.Action,
+                            component: () => import('@pc/views/user/role/details/index.vue'),
+                            icon: 'Search'
+                        },
+                        {
                             code: 'user-role-modify',
                             title: '修改',
                             authType: AuthType.Action,
@@ -237,11 +244,79 @@ export function getAuthRoutes(authCodes?: string[]) {
                             icon: 'Edit'
                         },
                         {
-                            code: 'user-role-details',
+                            code: 'user-role-status',
+                            title: '状态',
+                            authType: AuthType.Action,
+                            icon: 'SwitchButton'
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            code: 'admin',
+            title: '管理员管理',
+            authType: AuthType.Route,
+            url: '/admin',
+            component: Page,
+            icon: 'Avatar',
+            children: [
+                {
+                    code: 'admin-list',
+                    title: '管理员列表',
+                    authType: AuthType.Route,
+                    url: '/admin/list',
+                    component: () => import('@pc/views/admin/list/index.vue'),
+                    children: [
+                        {
+                            code: 'admin-list-details',
                             title: '详情',
                             authType: AuthType.Action,
-                            component: () => import('@pc/views/user/role/details/index.vue'),
+                            component: () => import('@pc/views/admin/list/details/index.vue'),
                             icon: 'Search'
+                        },
+                        {
+                            code: 'admin-list-modify',
+                            title: '修改',
+                            authType: AuthType.Action,
+                            component: () => import('@pc/views/admin/list/edit/index.vue'),
+                            icon: 'Edit'
+                        }
+                    ]
+                },
+                {
+                    code: 'admin-role',
+                    title: '管理员角色',
+                    authType: AuthType.Route,
+                    url: '/admin/role',
+                    component: () => import('@pc/views/admin/role/index.vue'),
+                    children: [
+                        {
+                            code: 'admin-role-add',
+                            title: '新增',
+                            authType: AuthType.Action,
+                            component: () => import('@pc/views/admin/role/edit/index.vue'),
+                            icon: 'Plus'
+                        },
+                        {
+                            code: 'admin-role-details',
+                            title: '详情',
+                            authType: AuthType.Action,
+                            component: () => import('@pc/views/admin/role/details/index.vue'),
+                            icon: 'Search'
+                        },
+                        {
+                            code: 'admin-role-modify',
+                            title: '修改',
+                            authType: AuthType.Action,
+                            component: () => import('@pc/views/admin/role/edit/index.vue'),
+                            icon: 'Edit'
+                        },
+                        {
+                            code: 'admin-role-status',
+                            title: '状态',
+                            authType: AuthType.Action,
+                            icon: 'SwitchButton'
                         }
                     ]
                 }

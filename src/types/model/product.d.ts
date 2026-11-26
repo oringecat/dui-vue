@@ -2,7 +2,6 @@ import { ValueType } from '@/constants/common'
 
 declare global {
     namespace Product {
-        /** 商品列表 */
         interface ProductListRequest {
             pageIndex: number;
             pageSize: number;
@@ -11,6 +10,7 @@ declare global {
             status?: number;
         }
 
+        /** 商品列表 */
         interface ProductListItem {
             id: number;
             categoryId: number;
@@ -21,12 +21,12 @@ declare global {
             createTime: number;
         }
 
-        /** 商品详情 */
         interface ProductDetailRequest {
             id: number;
             userId?: number;
         }
 
+        /** 商品详情 */
         interface ProductDetail {
             id: number;
             shopId: number; // 0 = '自营'
@@ -57,12 +57,12 @@ declare global {
             attributeId: number;
             attributeValue: string;
         }
-
-        /** 标准化商品单元列表 */
+        
         interface ProductSpuListRequest {
             productId: number;
         }
 
+        /** 标准化商品单元列表 */
         interface ProductSpuItem {
             id: number;
             code: string;
@@ -90,7 +90,6 @@ declare global {
             image: Common.UploadFile;
         }
 
-        /** 商品分类列表 */
         interface CategoryListRequest {
             id?: number;
             code?: string;
@@ -98,6 +97,7 @@ declare global {
             status?: number;
         }
 
+        /** 商品分类列表 */
         interface CategoryItem {
             id: number;
             parentId: number;

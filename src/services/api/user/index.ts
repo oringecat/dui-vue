@@ -46,6 +46,39 @@ export function createUserAuth(options?: ApiOptions<{ res: string[]; }>) {
 }
 
 /**
+ * 获取用户列表
+ */
+export function createUserList(options?: ApiOptions<{ req: User.UserListRequest; res: User.UserListItem[]; }>) {
+  return http.createRequest({
+    method: 'GET',
+    url: '/user/list',
+    options
+  })
+}
+
+/**
+ * 获取用户详情
+ */
+export function createUserInfo(options?: ApiOptions<{ req: User.UserInfoRequest; res: User.UserInfo[]; }>) {
+  return http.createRequest({
+    method: 'GET',
+    url: '/user/info',
+    options
+  })
+}
+
+/**
+ * 获取用户角色列表
+ */
+export function createUserRoleList(options?: ApiOptions<{ req: User.UserRoleRequest; res: User.UserRoleItem[]; }>) {
+  return http.createRequest({
+    method: 'GET',
+    url: '/user/role',
+    options
+  })
+}
+
+/**
  * 获取下级管理员列表
  */
 export function createAdminList(options?: ApiOptions<{ req: User.AdminListRequest; res: User.AdminListItem[]; }>) {
